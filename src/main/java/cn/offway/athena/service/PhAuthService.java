@@ -1,5 +1,8 @@
 package cn.offway.athena.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.athena.domain.PhAuth;
 
 /**
@@ -13,4 +16,6 @@ public interface PhAuthService{
 	PhAuth save(PhAuth phAuth);
 	
 	PhAuth findOne(Long id);
+
+	Page<PhAuth> findByPage(String status, String nickName, String unionid, Pageable page);
 }
