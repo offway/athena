@@ -1,5 +1,7 @@
 package cn.offway.athena.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +35,10 @@ public class PhBrandServiceImpl implements PhBrandService {
 	public PhBrand findOne(Long id){
 		return phBrandRepository.findOne(id);
 	}
+	
+	@Override
+	public List<PhBrand> findAll(){
+		return phBrandRepository.findAll();
+	}
+	
 }

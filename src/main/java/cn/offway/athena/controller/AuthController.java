@@ -82,15 +82,7 @@ public class AuthController {
 	@PostMapping("/auth-update")
 	@ResponseBody
 	public boolean authUpdate(Long id,String status,String approvalContent,Authentication authentication){
-		PhAuth phAuth = phAuthService.findOne(id);
-		if(StringUtils.isNotBlank(approvalContent)){
-			phAuth.setApprovalContent(approvalContent);
-		}
-		phAuth.setStatus(status);
-		phAuth.setApproval(new Date());
-		phAuth.setApprover(authentication.getName());
-		phAuthService.save(phAuth);
-		return true;
+		return phAuthService.authUpdate(id, status, approvalContent, authentication);
 	}
 	
 	

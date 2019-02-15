@@ -1,5 +1,7 @@
 package cn.offway.athena.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +35,20 @@ public class PhGoodsImageServiceImpl implements PhGoodsImageService {
 	public PhGoodsImage findOne(Long id){
 		return phGoodsImageRepository.findOne(id);
 	}
+	
+	@Override
+	public void delete(PhGoodsImage phGoodsImage){
+		phGoodsImageRepository.delete(phGoodsImage);
+	}
+	
+	@Override
+	public List<PhGoodsImage> save(List<PhGoodsImage> phGoodsImages){
+		return phGoodsImageRepository.save(phGoodsImages);
+	}
+	
+	@Override
+	public List<PhGoodsImage> findByGoodsId(Long goodsId){
+		return phGoodsImageRepository.findByGoodsId(goodsId);
+	}
+	
 }

@@ -13,5 +13,5 @@ import cn.offway.athena.domain.PhGoodsStock;
  */
 public interface PhGoodsStockRepository extends JpaRepository<PhGoodsStock,Long>,JpaSpecificationExecutor<PhGoodsStock> {
 
-	/** 此处写一些自定义的方法 **/
+	int countByGoodsIdAndColorAndSize(Long goodsId,String color,String size);
 }

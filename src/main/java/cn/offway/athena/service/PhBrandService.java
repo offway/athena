@@ -1,5 +1,7 @@
 package cn.offway.athena.service;
 
+import java.util.List;
+
 import cn.offway.athena.domain.PhBrand;
 
 /**
@@ -13,4 +15,6 @@ public interface PhBrandService{
 	PhBrand save(PhBrand phBrand);
 	
 	PhBrand findOne(Long id);
+
+	List<PhBrand> findAll();
 }

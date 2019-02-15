@@ -1,5 +1,7 @@
 package cn.offway.athena.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,5 +15,5 @@ import cn.offway.athena.domain.PhGoods;
  */
 public interface PhGoodsRepository extends JpaRepository<PhGoods,Long>,JpaSpecificationExecutor<PhGoods> {
 
-	/** 此处写一些自定义的方法 **/
+	List<PhGoods> findByBrandId(Long brandId);
 }

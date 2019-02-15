@@ -1,7 +1,10 @@
 package cn.offway.athena.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import cn.offway.athena.domain.PhGoodsImage;
 
@@ -13,5 +16,6 @@ import cn.offway.athena.domain.PhGoodsImage;
  */
 public interface PhGoodsImageRepository extends JpaRepository<PhGoodsImage,Long>,JpaSpecificationExecutor<PhGoodsImage> {
 
-	/** 此处写一些自定义的方法 **/
+	@Query(nativeQuery=true,value="select * from ph_goods_image where goods_id=?1 order by sort")
+	List<PhGoodsImage> findByGoodsId(Long goodsId);
 }

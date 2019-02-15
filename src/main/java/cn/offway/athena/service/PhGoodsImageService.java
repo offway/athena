@@ -1,5 +1,7 @@
 package cn.offway.athena.service;
 
+import java.util.List;
+
 import cn.offway.athena.domain.PhGoodsImage;
 
 /**
@@ -13,4 +15,10 @@ public interface PhGoodsImageService{
 	PhGoodsImage save(PhGoodsImage phGoodsImage);
 	
 	PhGoodsImage findOne(Long id);
+
+	List<PhGoodsImage> save(List<PhGoodsImage> phGoodsImages);
+
+	List<PhGoodsImage> findByGoodsId(Long goodsId);
+
+	void delete(PhGoodsImage phGoodsImage);
 }
