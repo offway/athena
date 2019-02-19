@@ -5,14 +5,14 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 订单
+ * VIEW
  *
  * @author wn
  * @version $v: 1.0.0, $time:2018-02-12 11:26:00 Exp $
  */
 @Entity
-@Table(name = "ph_order_info")
-public class PhOrderInfo implements Serializable {
+@Table(name = "v_order")
+public class VOrder implements Serializable {
 
     /** ID **/
     private Long id;
@@ -22,7 +22,7 @@ public class PhOrderInfo implements Serializable {
 
     /** 使用日期 **/
     private Date useDate;
-    
+
     /** 使用者 **/
     private String users;
 
@@ -64,6 +64,54 @@ public class PhOrderInfo implements Serializable {
 
     /** 备注 **/
     private String remark;
+    
+    /** 物流信息ID **/
+    private Long eId;
+
+    /** 物流订单号 **/
+    private String expressOrderNo;
+
+    /** 寄件方城市 **/
+    private String fromCity;
+
+    /** 寄件方详细地址 **/
+    private String fromContent;
+
+    /** 寄件方区/县 **/
+    private String fromCounty;
+
+    /** 寄件方手机 **/
+    private String fromPhone;
+
+    /** 寄件方省份 **/
+    private String fromProvince;
+
+    /** 寄件方姓名 **/
+    private String fromRealName;
+
+    /** 快递运单号 **/
+    private String mailNo;
+
+    /** 状态[0-新建,1-已下单,2-已接单,3-运送中,4-已签收] **/
+    private String eStatus;
+
+    /** 收件方城市 **/
+    private String toCity;
+
+    /** 收件方详细地址 **/
+    private String toContent;
+
+    /** 收件方区/县 **/
+    private String toCounty;
+
+    /** 收件方手机 **/
+    private String toPhone;
+
+    /** 收件方省份 **/
+    private String toProvince;
+
+    /** 收件方姓名 **/
+    private String toRealName;
 
 
     @Id
@@ -76,8 +124,26 @@ public class PhOrderInfo implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    @Column(name = "e_id", length = 11)
+    public Long geteId() {
+		return eId;
+	}
 
-    @Column(name = "order_no", length = 50)
+	public void seteId(Long eId) {
+		this.eId = eId;
+	}
+
+	@Column(name = "e_status", length = 2)
+	public String geteStatus() {
+		return eStatus;
+	}
+
+	public void seteStatus(String eStatus) {
+		this.eStatus = eStatus;
+	}
+
+	@Column(name = "order_no", length = 50)
     public String getOrderNo() {
         return orderNo;
     }
@@ -95,15 +161,15 @@ public class PhOrderInfo implements Serializable {
     public void setUseDate(Date useDate) {
         this.useDate = useDate;
     }
-    
+
     @Column(name = "users", length = 50)
     public String getUsers() {
-		return users;
-	}
+        return users;
+    }
 
-	public void setUsers(String users) {
-		this.users = users;
-	}
+    public void setUsers(String users) {
+        this.users = users;
+    }
 
     @Column(name = "unionid", length = 200)
     public String getUnionid() {
@@ -132,7 +198,7 @@ public class PhOrderInfo implements Serializable {
         this.brandName = brandName;
     }
 
-    @Column(name = "brand_logo", length = 50)
+    @Column(name = "brand_logo", length = 200)
     public String getBrandLogo() {
         return brandLogo;
     }
@@ -224,6 +290,132 @@ public class PhOrderInfo implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "express_order_no", length = 50)
+    public String getExpressOrderNo() {
+        return expressOrderNo;
+    }
+
+    public void setExpressOrderNo(String expressOrderNo) {
+        this.expressOrderNo = expressOrderNo;
+    }
+
+    @Column(name = "from_city", length = 20)
+    public String getFromCity() {
+        return fromCity;
+    }
+
+    public void setFromCity(String fromCity) {
+        this.fromCity = fromCity;
+    }
+
+    @Column(name = "from_content", length = 200)
+    public String getFromContent() {
+        return fromContent;
+    }
+
+    public void setFromContent(String fromContent) {
+        this.fromContent = fromContent;
+    }
+
+    @Column(name = "from_county", length = 20)
+    public String getFromCounty() {
+        return fromCounty;
+    }
+
+    public void setFromCounty(String fromCounty) {
+        this.fromCounty = fromCounty;
+    }
+
+    @Column(name = "from_phone", length = 50)
+    public String getFromPhone() {
+        return fromPhone;
+    }
+
+    public void setFromPhone(String fromPhone) {
+        this.fromPhone = fromPhone;
+    }
+
+    @Column(name = "from_province", length = 20)
+    public String getFromProvince() {
+        return fromProvince;
+    }
+
+    public void setFromProvince(String fromProvince) {
+        this.fromProvince = fromProvince;
+    }
+
+    @Column(name = "from_real_name", length = 50)
+    public String getFromRealName() {
+        return fromRealName;
+    }
+
+    public void setFromRealName(String fromRealName) {
+        this.fromRealName = fromRealName;
+    }
+
+    @Column(name = "mail_no", length = 50)
+    public String getMailNo() {
+        return mailNo;
+    }
+
+    public void setMailNo(String mailNo) {
+        this.mailNo = mailNo;
+    }
+
+    @Column(name = "to_city", length = 20)
+    public String getToCity() {
+        return toCity;
+    }
+
+    public void setToCity(String toCity) {
+        this.toCity = toCity;
+    }
+
+    @Column(name = "to_content", length = 200)
+    public String getToContent() {
+        return toContent;
+    }
+
+    public void setToContent(String toContent) {
+        this.toContent = toContent;
+    }
+
+    @Column(name = "to_county", length = 20)
+    public String getToCounty() {
+        return toCounty;
+    }
+
+    public void setToCounty(String toCounty) {
+        this.toCounty = toCounty;
+    }
+
+    @Column(name = "to_phone", length = 50)
+    public String getToPhone() {
+        return toPhone;
+    }
+
+    public void setToPhone(String toPhone) {
+        this.toPhone = toPhone;
+    }
+
+    @Column(name = "to_province", length = 20)
+    public String getToProvince() {
+        return toProvince;
+    }
+
+    public void setToProvince(String toProvince) {
+        this.toProvince = toProvince;
+    }
+
+    @Column(name = "to_real_name", length = 50)
+    public String getToRealName() {
+        return toRealName;
+    }
+
+    public void setToRealName(String toRealName) {
+        this.toRealName = toRealName;
     }
 
 }

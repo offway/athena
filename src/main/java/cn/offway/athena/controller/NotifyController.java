@@ -1,6 +1,7 @@
 package cn.offway.athena.controller;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -8,15 +9,27 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import cn.offway.athena.domain.PhOrderExpressDetail;
+import cn.offway.athena.domain.PhOrderExpressInfo;
+import cn.offway.athena.service.PhOrderExpressDetailService;
+import cn.offway.athena.service.PhOrderExpressInfoService;
 
 @RestController
 @RequestMapping("/notify/sf")
 public class NotifyController {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	private PhOrderExpressDetailService phOrderExpressDetailService;
+	
+	@Autowired
+	private PhOrderExpressInfoService phOrderExpressInfoService;
 	
 	/**
 	 * 快递路由推送
@@ -43,7 +56,13 @@ public class NotifyController {
 			String acceptAddress = WaybillRoute.elementText("acceptAddress");//路由节点发生的城市
 			String remark = WaybillRoute.elementText("remark");//路由节点具体描述
 
-
+			PhOrderExpressDetail phOrderExpressDetail = new PhOrderExpressDetail();
+			phOrderExpressDetail.setContent(remark);
+			phOrderExpressDetail.setCreateTime(new Date());
+			phOrderExpressDetail.setAcceptTime(acceptTime);
+			phOrderExpressDetail.setExpressOrderNo(orderNo);
+			phOrderExpressDetail.setMailNo(mailNo);
+			phOrderExpressDetailService.save(phOrderExpressDetail);
 
 			
 
@@ -78,6 +97,11 @@ public class NotifyController {
 			String empPhone = response.elementText("empPhone");
 			String lastTime = response.elementText("lastTime");//最晚上门时间
 			String bookTime = response.elementText("bookTime");//客户预约时间
+			
+			PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByExpressOrderNo(orderNo);
+			phOrderExpressInfo.setExPhone(empPhone);
+			phOrderExpressInfo.setLastTime(lastTime);
+			phOrderExpressInfoService.save(phOrderExpressInfo);
 		}
 		
 		

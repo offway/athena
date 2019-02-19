@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>认证</title>
+	<title>待发货订单</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
@@ -11,6 +11,10 @@
 	.form-group img{
 		max-width:400px;
 		max-height:300px;
+	}
+	a {
+     	color: blue; 
+    	text-decoration: none;
 	}
 	</style>
 </head>
@@ -25,7 +29,7 @@
 			<div class="page-title">
 				
 				<div class="title-env">
-					<h1 class="title">认证</h1>
+					<h1 class="title">待发货订单</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -33,8 +37,8 @@
 
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>审核</a></li>
-						<li class="active"><strong>认证</strong></li>
+						<li><a>业务管理</a></li>
+						<li class="active"><strong>待发货订单</strong></li>
 					</ol>
 
 				</div>
@@ -46,17 +50,7 @@
 					<form role="form" class="form-inline">
 						<div class="form-group ">
 							<div class="input-group">
-								<select name="status" class="form-control" style="height:35px" placeholder="状态">
-									<option value="">状态</option>
-									<option value="0">申请</option>
-									<option value="1">通过</option>
-									<option value="2">失败</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="nickName" class="form-control" style="height:35px" placeholder="用户昵称"/>
+								<input type="text" name="orderNo" class="form-control" style="height:35px" placeholder="订单号"/>
 							</div>
 						</div>
 						<div class="form-group ">
@@ -75,7 +69,8 @@
 					</table>
 					
 				</div>
-				<button class="btn btn-info check">审核</button>
+				<button class="btn btn-info addr">修改收货地址</button>
+				<button class="btn btn-info deliver">确认发货</button>
 			</div>
 			
 					
@@ -91,40 +86,40 @@
 				
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">审核</h4>
+					<h4 class="modal-title">修改收货地址</h4>
 				</div>
 				
 				<div class="modal-body">
 					<form role="form" id="authForm">
 					<input type="hidden" name="id"/>
-					<div class="row">
+					<!-- <div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								
-								<select id="checkStatus" class="form-control" style="height:35px">
-									<option value="1">通过</option>
-									<option value="2">失败</option>
-								</select>
-								
+								<input type="text" name="toProvince" class="form-control" style="height:35px" placeholder="收件方省份"/>
 							</div>	
 							
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								
-								<select id="content" class="form-control" style="height:35px">
-									<option value="">请选择拒绝原因</option>
-									<option value="拒绝原因文案1">拒绝原因文案1</option>
-									<option value="拒绝原因文案2">拒绝原因文案2</option>
-									<option value="拒绝原因文案3">拒绝原因文案3</option>
-									<option value="拒绝原因文案4">拒绝原因文案4</option>
-									<option value="拒绝原因文案5">拒绝原因文案5</option>
-									<option value="拒绝原因文案6">拒绝原因文案6</option>
-								</select>
+								<input type="text" name="toCity" class="form-control" style="height:35px" placeholder="收件方城市"/>
+							</div>	
+							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<input type="text" name="toCounty" class="form-control" style="height:35px" placeholder="收件方区/县"/>
+							</div>	
+							
+						</div>
+					</div> -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<input type="text" name="toContent" class="form-control" style="height:35px" placeholder="收件方详细地址"/>
 							</div>	
 							
 						</div>
@@ -134,7 +129,42 @@
 				
 				<div class="modal-footer">
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info saveRule">保存</button>
+					<button type="button" class="btn btn-info updateAddr">保存</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	
+	<div class="modal fade in" id="modal-goods">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 600px;">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">商品明细</h4>
+				</div>
+				
+				<div class="modal-body">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>商品图片</th>
+								<th>商品名称</th>
+								<th>尺码</th>
+								<th>颜色</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+						</tbody>
+					</table>
+									
+				</div>
+				
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
 				
 			</div>
@@ -160,7 +190,7 @@
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/auth-data",//通过ajax实现分页的url路径。
+            sAjaxSource : "/deliver-data",//通过ajax实现分页的url路径。
             fnServerParams : function(aData){
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
@@ -168,7 +198,7 @@
             columnDefs: [
 				{	
 					targets: 0,
-				    data: "id",
+				    data: "orderNo",
 				    width:"5%",
 				    orderable: false,
 				    className: 'select-checkbox',
@@ -184,106 +214,88 @@
                 },
                 {
                		targets: 2,
-	                data: "unionid",
-	                title: "用户ID"
+	                data: "orderNo",
+	                title: "订单号"
             	},
-                {
+            	
+            	{
                		targets: 3,
-	                data: "nickname",
-	                title: "用户昵称"
+	                data: "useDate",
+	                title: "使用日期",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd");
+                    }
             	}, 
             	{
                		targets: 4,
-	                data: "headimgurl",
-	                title: "用户头像",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
-            	}, 
-            	
+	                data: "unionid",
+	                title: "用户ID"
+            	},
             	{
                		targets: 5,
-	                data: "phone",
-	                title: "手机"
-            	}, 
-            	
+	                data: "users",
+	                title: "使用者"
+            	},
             	{
                		targets: 6,
-	                data: "status",
-	                title: "状态",
-                    render: function (data, type, row, meta) {
-                        return "0"==data?"申请":"1"==data?"通过":"失败";
-                    }
+	                data: "brandName",
+	                title: "品牌名称"
             	},
             	{
                		targets: 7,
-	                data: "companyName",
-	                title: "企业名称"
+	                data: "isOffway",
+	                title: "是否自营",
+                    render: function (data, type, row, meta) {
+                        return "1"==data?"是":"否";
+                    }
             	},
             	{
                		targets: 8,
-	                data: "position",
-	                title: "职位"
+	                data: "toRealName",
+	                title: "收件方姓名"
             	},
             	{
                		targets: 9,
-	                data: "realName",
-	                title: "姓名"
+	                data: "toPhone",
+	                title: "收件方手机"
             	},
-            	{
+            	/* {
                		targets: 10,
-	                data: "idcardPositive",
-	                title: "身份证正面",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
+	                data: "toProvince",
+	                title: "收件方省份"
             	},
             	{
                		targets: 11,
-	                data: "idcardObverse",
-	                title: "身份证反面",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
+	                data: "toCity",
+	                title: "收件方城市"
             	},
             	{
                		targets: 12,
-	                data: "inCert",
-	                title: "在职证明",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
+	                data: "toCounty",
+	                title: "收件方区/县"
+            	}, */
+            	{
+               		targets: 10,
+	                data: "toContent",
+	                title: "收件方详细地址"
+            	},
+            	{
+               		targets: 11,
+	                data: "orderNo",
+	                title: "商品明细",
+	                render: function (data, type, row, meta) {
+                        return "<a href='javascript:void(0)' class='showGoods' orderNo='"+data+"' color='blue'>查看</a>";
                     }
             	},
+            	
                 {
-                    targets: 13,
+                    targets: 12,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
-                },
-            	{
-               		targets: 14,
-	                data: "approver",
-	                title: "审批人"
-            	},
-            	{
-               		targets: 15,
-	                data: "approval",
-	                title: "审批时间",
-                    render: function (data, type, row, meta) {
-                    	if(data==null){
-                    		return "";
-                    	}else{
-	                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    	}
-                    }
-            	},
-            	{
-               		targets: 16,
-	                data: "approvalContent",
-	                title: "失败原因"
-            	}
+                }
                ]
 		});
 		
@@ -301,8 +313,7 @@
 		})
 			 
 			
-		//快递单号
-		$(".btn.btn-info.check").click(function(){
+		$(".btn.btn-info.addr").click(function(){
 			var activityPrizeId = $("input[name='authId']:checked");
 			if(activityPrizeId.length!=1){
 				toastr.error("请选择一条数据操作", "温馨提示");
@@ -312,39 +323,74 @@
 			activityPrizeId = activityPrizeId[0].value;
 			
 			var form = $("#authForm");
-			form.find("input[name='id']").val(activityPrizeId);
-			
-			$.post("/auth-one",{id:activityPrizeId},function(data){
-				$("#content").val(data.approvalContent);
-				if(data.status !='0'){
-					toastr.error("不能重复审核", "温馨提示");
-				}else{
-					jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
-				}
-			}); 
+			form.find("input[name='id']").val(activityPrizeId); 
+			$.get("/deliver-one",{id:activityPrizeId},function(data){
+				/* form.find("input[name='toProvince']").val(data.toProvince); 
+				form.find("input[name='toCity']").val(data.toCity); 
+				form.find("input[name='toCounty']").val(data.toCounty);  */
+				form.find("input[name='toContent']").val(data.toContent); 
+				jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
+			});
 			
 		});
+		 
+		 
+		 $("body").on("click","a.showGoods",function(){
+			 var orderNo = $(this).attr("orderNo");
+			 $.get("/deliver-goods",{orderNo:orderNo},function(data){
+				var html = "";
+				$('#modal-goods tbody').html("");
+				 $.each(data,function(i,e){
+					 html+="<tr><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
+				 });
+				 $('#modal-goods tbody').html(html);
+			 
+			 });
+			 
+			 jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+		 });
+		 
 		
-		$(".btn.btn-info.saveRule").click(function(){
+		$(".btn.btn-info.updateAddr").click(function(){
 			
 			var form = $("#authForm");
-			var activityId = form.find("input[name='id']").val();
-			
-			var content = $("#content").val();
-			var checkStatus = $("#checkStatus").val();
-			
-			if(checkStatus=='2' && content==''){
-				toastr.error("请输入拒绝原因", "温馨提示");
-				return ;
+			/* var toProvince = form.find("input[name='toProvince']").val(); 
+			var toCity = form.find("input[name='toCity']").val(); 
+			var toCounty = form.find("input[name='toCounty']").val();  */
+			var toContent = form.find("input[name='toContent']").val(); 
+
+			/* if(''==toProvince ||''==toCity||''==toCounty||''==toContent){ */
+				
+			if(''==toContent){
+				toastr.error("请填写完整信息", "温馨提示");
+				return false;
 			}
-			
-			$.post("/auth-update",{id:activityId,status:checkStatus,approvalContent:content},function(data){
+			$.post("/deliver-updateAddr",form.serialize(),function(data){
 				if(data){
 					jQuery('#modal-rule').modal('hide');
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();
 				}
 			})
+			
+		});
+		
+		
+		$(".btn.btn-info.deliver").click(function(){
+			var activityPrizeId = $("input[name='authId']:checked");
+			if(activityPrizeId.length!=1){
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return ;
+			}
+			
+			activityPrizeId = activityPrizeId[0].value;
+			
+			$.post("/deliver-save",{orderNo:activityPrizeId},function(data){
+				if(data){
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
 			
 		});
 		

@@ -19,47 +19,49 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.offway.athena.domain.PhOrderExpressInfo;
 import cn.offway.athena.domain.PhOrderGoods;
-import cn.offway.athena.domain.PhOrderInfo;
 import cn.offway.athena.domain.VOrder;
 import cn.offway.athena.service.PhOrderExpressInfoService;
 import cn.offway.athena.service.PhOrderGoodsService;
 import cn.offway.athena.service.PhOrderInfoService;
+import cn.offway.athena.service.VOrderService;
 import cn.offway.athena.utils.JsonResult;
 
 /**
- * 订单查询
+ * 发货
  * @author wn
  *
  */
 @Controller
-public class OrderController {
+public class DeliverController {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
-	private PhOrderInfoService phOrderInfoService;
+	private VOrderService vOrderService;
+	
+	@Autowired
+	private PhOrderExpressInfoService phOrderExpressInfoService;
 	
 	@Autowired
 	private PhOrderGoodsService phOrderGoodsService;
 	
 	@Autowired
-	private PhOrderExpressInfoService phOrderExpressInfoService;
+	private PhOrderInfoService phOrderInfoService;
 	
-	
-	@RequestMapping("/order.html")
-	public String order(ModelMap map){
-		return "order";
+	@RequestMapping("/deliver.html")
+	public String deliver(ModelMap map){
+		return "deliver";
 	}
 	
 	/**
 	 * 查询数据
 	 * @param request
-	 * @param order
+	 * @param deliver
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/order-data")
-	public Map<String, Object> orderData(HttpServletRequest request,String orderNo, String unionid){
+	@RequestMapping("/deliver-data")
+	public Map<String, Object> deliverData(HttpServletRequest request,String orderNo, String unionid){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -67,7 +69,7 @@ public class OrderController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(orderNo.trim(),unionid.trim(), new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<VOrder> pages = vOrderService.findByPage(orderNo.trim(),unionid.trim(), new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
@@ -79,15 +81,33 @@ public class OrderController {
 	}
 	
 	@ResponseBody
-	@RequestMapping("/order-goods")
+	@RequestMapping("/deliver-one")
+	public VOrder findOne(Long id){
+		return vOrderService.findOne(id);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/deliver-updateAddr")
+	public boolean updateAddr(String id,String toProvince,String toCity,String toCounty,String toContent){
+		PhOrderExpressInfo phOrderExpressInfo =  phOrderExpressInfoService.findByOrderNoAndType(id, "0");
+//		phOrderExpressInfo.setToCity(toCity);
+		phOrderExpressInfo.setToContent(toContent);
+//		phOrderExpressInfo.setToCounty(toCounty);
+//		phOrderExpressInfo.setToProvince(toProvince);
+		phOrderExpressInfoService.save(phOrderExpressInfo);
+		return true;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/deliver-goods")
 	public List<PhOrderGoods> phOrderGoods(String orderNo){
 		return phOrderGoodsService.findByOrderNo(orderNo);
 	}
 	
 	@ResponseBody
-	@RequestMapping("/order-express")
-	public PhOrderExpressInfo phOrderExpress(String orderNo,String type){
-		return phOrderExpressInfoService.findByOrderNoAndType(orderNo, type);
+	@RequestMapping("/deliver-save")
+	public JsonResult save(String orderNo){
+		return phOrderInfoService.saveOrder(orderNo);
 	}
 	
 	
