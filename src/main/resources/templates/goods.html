@@ -121,6 +121,19 @@
 							</div>	
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">是否发售</label>
+								
+								<select name="isRelease" class="form-control" style="height:35px" >
+									<option value="0">否</option>
+									<option value="1">是</option>
+								</select>
+							</div>	
+						</div>
+					</div>
 					
 					<div class="row">
 						<div class="col-md-12">
@@ -148,7 +161,7 @@
 									<option value="短裤">短裤</option>
 									<option value="长裤">长裤</option>
 									<option value="配饰">配饰</option>
-									<option value="未发售">未发售</option>
+									<option value="鞋">鞋</option>
 								</select>
 							</div>	
 						</div>
@@ -290,9 +303,18 @@
                		targets: 8,
                		data: "category",
 	                title: "类目"
-            	},
+            	}, 
+            	
             	{
                		targets: 9,
+	                data: "isRelease",
+	                title: "是否发售",
+                    render: function (data, type, row, meta) {
+                       	return "1"==data?"是":"否";
+                    }
+            	},
+            	{
+               		targets: 10,
 	                data: "status",
 	                title: "是否上架",
                     render: function (data, type, row, meta) {
@@ -300,7 +322,7 @@
                     }
             	},
                 {
-                    targets: 10,
+                    targets: 11,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -374,6 +396,7 @@
 				var name = form.find("input[name='name']").val();
 				var brandId = form.find("[name='brandId']").val();
 				var isOffway = form.find("[name='isOffway']").val();
+				var isRelease = form.find("[name='isRelease']").val();
 				var type = form.find("[name='type']").val();
 				var category = form.find("[name='category']").val();
 				//文件
@@ -384,7 +407,7 @@
 				
 				
 				
-				if(brandId=='' ||isOffway=='' ||type=='' ||name =='' ||category=='' || 
+				if(brandId=='' ||isOffway==''||isRelease==''  ||type=='' ||name =='' ||category=='' || 
 					(imageVal=='' && imageVals=='')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
@@ -617,6 +640,7 @@
 					form.find("[name='category']").val(data.category);
 					form.find("[name='brandId']").val(data.brandId);
 					form.find("[name='isOffway']").val(data.isOffway);
+					form.find("[name='isRelease']").val(data.isRelease);
 					form.find("[name='type']").val(data.type);
 					
 					

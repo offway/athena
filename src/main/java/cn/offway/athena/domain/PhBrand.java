@@ -22,9 +22,12 @@ public class PhBrand implements Serializable {
 
     /** 品牌LOGO **/
     private String logo;
-    
+
     /** 简介 **/
     private String info;
+
+    /** 地址ID **/
+    private Long addrId;
 
     /** 创建时间 **/
     private Date createTime;
@@ -53,7 +56,7 @@ public class PhBrand implements Serializable {
         this.name = name;
     }
 
-    @Column(name = "logo", length = 50)
+    @Column(name = "logo", length = 200)
     public String getLogo() {
         return logo;
     }
@@ -61,17 +64,26 @@ public class PhBrand implements Serializable {
     public void setLogo(String logo) {
         this.logo = logo;
     }
-    
+
     @Column(name = "info")
     public String getInfo() {
-		return info;
-	}
+        return info;
+    }
 
-	public void setInfo(String info) {
-		this.info = info;
-	}
+    public void setInfo(String info) {
+        this.info = info;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "addr_id", length = 11)
+    public Long getAddrId() {
+        return addrId;
+    }
+
+    public void setAddrId(Long addrId) {
+        this.addrId = addrId;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_time")
     public Date getCreateTime() {
         return createTime;
