@@ -357,10 +357,11 @@
 					 html = html.replace(new RegExp("null","g"),"暂无");
 					 $('#modal-ex tbody').html(html);
 				}
+				 jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
 			 
 			 });
 			 
-			 jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
+			
 		 });
 		 
 		
