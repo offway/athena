@@ -91,10 +91,23 @@ public class StockController {
 		try {
 			
 			Long goodsId = phGoodsStock.getGoodsId();
-			int count = phGoodsStockService.countByGoodsIdAndColorAndSize(goodsId, phGoodsStock.getColor(), phGoodsStock.getSize());
-			if(count>0){
-				return false;
+
+			boolean check = true;
+			if(null!=phGoodsStock.getId()){
+				
+				PhGoodsStock goodsStock = phGoodsStockService.findOne(phGoodsStock.getId());
+				if(goodsStock.getColor().equals(phGoodsStock.getColor()) && goodsStock.getSize().equals(phGoodsStock.getSize())){
+					check = false;
+				}
 			}
+			
+			if(check){
+				int count = phGoodsStockService.countByGoodsIdAndColorAndSize(goodsId, phGoodsStock.getColor(), phGoodsStock.getSize());
+				if(count>0){
+					return false;
+				}
+			}
+			
 			PhGoods phGoods = phGoodsService.findOne(goodsId);
 			phGoodsStock.setGoodsName(phGoods.getName());
 			phGoodsStock.setImage(phGoods.getImage());
