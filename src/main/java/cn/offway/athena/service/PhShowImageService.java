@@ -1,5 +1,8 @@
 package cn.offway.athena.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.athena.domain.PhShowImage;
 
 /**
@@ -13,4 +16,8 @@ public interface PhShowImageService{
 	PhShowImage save(PhShowImage phShowImage);
 	
 	PhShowImage findOne(Long id);
+
+	Page<PhShowImage> findByPage(String orderNo, String unionid, String status, Pageable page);
+
+	PhShowImage findByOrderNo(String orderNo);
 }

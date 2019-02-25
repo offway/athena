@@ -13,5 +13,5 @@ import cn.offway.athena.domain.PhShowImage;
  */
 public interface PhShowImageRepository extends JpaRepository<PhShowImage,Long>,JpaSpecificationExecutor<PhShowImage> {
 
-	/** 此处写一些自定义的方法 **/
+	PhShowImage findByOrderNo(String orderNo);
 }
