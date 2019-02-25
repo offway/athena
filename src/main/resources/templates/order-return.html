@@ -256,13 +256,9 @@
                         }else if("1"==data){
                         	return "已发货";
                         }else if("2"==data){
-                        	return "已归还";
+                        	return "已寄回";
                         }else if("3"==data){
-                        	return "已晒图";
-                        }else if("4"==data){
-                        	return "已拒绝";
-                        }else if("5"==data){
-                        	return "已通过";
+                        	return "已收货";
                         }
                     }
             	},
@@ -391,6 +387,8 @@
 				return ;
 			}
 			
+			stockId = stockId[0].value;
+
 			$("#orderid").val(stockId);
 			
 			jQuery('#modal-add').modal('show', {backdrop: 'fade'});
@@ -401,7 +399,9 @@
 			 var orderNo = $("#orderid").val();
 			 $.post("/order-check",{orderNo:orderNo},function(data){
 				 if(data){
-					 toastr.success("操作已成功！", "温馨提示");
+					 	jQuery('#modal-add').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw();
 				 }else{
 					 toastr.error("操作失败", "温馨提示");
 				 }

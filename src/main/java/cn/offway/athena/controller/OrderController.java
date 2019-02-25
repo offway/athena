@@ -21,6 +21,7 @@ import cn.offway.athena.domain.PhOrderExpressInfo;
 import cn.offway.athena.domain.PhOrderGoods;
 import cn.offway.athena.domain.PhOrderInfo;
 import cn.offway.athena.domain.VOrder;
+import cn.offway.athena.service.PhGoodsStockService;
 import cn.offway.athena.service.PhOrderExpressInfoService;
 import cn.offway.athena.service.PhOrderGoodsService;
 import cn.offway.athena.service.PhOrderInfoService;
@@ -44,6 +45,9 @@ public class OrderController {
 	
 	@Autowired
 	private PhOrderExpressInfoService phOrderExpressInfoService;
+	
+	@Autowired
+	private PhGoodsStockService phGoodsStockService;
 	
 	
 	@RequestMapping("/order.html")
@@ -98,10 +102,17 @@ public class OrderController {
 	@ResponseBody
 	@RequestMapping("/order-check")
 	public boolean orderCheck(String orderNo){
-		PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
-		phOrderInfo.setStatus("3");
-		phOrderInfoService.save(phOrderInfo);
-		return true;
+		
+		//恢复库存
+		int count = phGoodsStockService.updateStock(orderNo);
+		if(count>0){
+			PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
+			phOrderInfo.setStatus("3");
+			phOrderInfoService.save(phOrderInfo);
+			return true;
+		}
+		return false;
+		
 	}
 	
 	

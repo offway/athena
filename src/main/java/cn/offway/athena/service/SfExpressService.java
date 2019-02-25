@@ -56,9 +56,9 @@ public class SfExpressService {
 			req = req.replaceAll("J_ADDRESS", addOrder.getJ_address());
 			req = req.replaceAll("D_CONTACT", addOrder.getD_contact());
 			req = req.replaceAll("D_TEL", addOrder.getD_tel());
-			req = req.replaceAll("D_PROVINCE", addOrder.getD_province());
-			req = req.replaceAll("D_CITY", addOrder.getD_city());
-			req = req.replaceAll("D_COUNTY", addOrder.getD_county());
+			req = req.replaceAll("D_PROVINCE", null==addOrder.getD_province()?"":addOrder.getD_province());
+			req = req.replaceAll("D_CITY", null==addOrder.getD_city()?"":addOrder.getD_city());
+			req = req.replaceAll("D_COUNTY", null==addOrder.getD_county()?"":addOrder.getD_county());
 			req = req.replaceAll("D_ADDRESS", addOrder.getD_address());
 			req = req.replaceAll("PAY_METHOD", addOrder.getPay_method());//付款方式：1:寄方付2:收方付3:第三方付
 			req = req.replaceAll("SENDSTARTTIME", addOrder.getSendstarttime());

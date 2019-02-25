@@ -82,8 +82,8 @@ public class DeliverController {
 	
 	@ResponseBody
 	@RequestMapping("/deliver-one")
-	public VOrder findOne(Long id){
-		return vOrderService.findOne(id);
+	public VOrder findByOrderNo(String orderNo){
+		return vOrderService.findByOrderNo(orderNo);
 	}
 	
 	@ResponseBody

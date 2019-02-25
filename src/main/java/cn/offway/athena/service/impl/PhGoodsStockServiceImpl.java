@@ -52,6 +52,11 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 	}
 	
 	@Override
+	public int updateStock(String orderNo){
+		return phGoodsStockRepository.updateStock(orderNo);
+	}
+	
+	@Override
 	public Page<PhGoodsStock> findByPage(final Long brandId,final String brandName,final Long goodsId,final String goodsName,
 			final String isOffway,final String color,final String size,Pageable page){
 		return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {

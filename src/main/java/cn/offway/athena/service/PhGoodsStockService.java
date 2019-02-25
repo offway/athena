@@ -21,4 +21,6 @@ public interface PhGoodsStockService{
 
 	Page<PhGoodsStock> findByPage(Long brandId, String brandName, Long goodsId, String goodsName, String isOffway,
 			String color, String size, Pageable page);
+
+	int updateStock(String orderNo);
 }

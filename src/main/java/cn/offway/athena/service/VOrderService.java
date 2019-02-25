@@ -18,4 +18,6 @@ public interface VOrderService{
 	VOrder findOne(Long id);
 
 	Page<VOrder> findByPage(String orderNo, String unionid, Pageable page);
+
+	VOrder findByOrderNo(String orderNo);
 }

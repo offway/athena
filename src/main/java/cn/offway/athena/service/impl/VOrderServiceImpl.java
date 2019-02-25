@@ -48,6 +48,12 @@ public class VOrderServiceImpl implements VOrderService {
 	}
 	
 	@Override
+	public VOrder findByOrderNo(String orderNo){
+		return vOrderRepository.findByOrderNo(orderNo);
+	}
+ 
+	
+	@Override
 	public Page<VOrder> findByPage(final String orderNo,final String unionid,Pageable page){
 		return vOrderRepository.findAll(new Specification<VOrder>() {
 			

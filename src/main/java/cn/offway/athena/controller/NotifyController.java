@@ -49,12 +49,12 @@ public class NotifyController {
 			
 			Element response = document.getRootElement();
 			Element WaybillRoute = response.element("Body").element("WaybillRoute");
-			String id = WaybillRoute.elementText("id");
-			String mailNo = WaybillRoute.elementText("mailno");
-			String orderNo = WaybillRoute.elementText("orderid");
-			String acceptTime = WaybillRoute.elementText("acceptTime");//路由节点产生的时间，格式：YYYY-MM-DD HH24:MM:SS，示例：2012-7-30 09:30:00
-			String acceptAddress = WaybillRoute.elementText("acceptAddress");//路由节点发生的城市
-			String remark = WaybillRoute.elementText("remark");//路由节点具体描述
+			String id = WaybillRoute.attributeValue("id");
+			String mailNo = WaybillRoute.attributeValue("mailno");
+			String orderNo = WaybillRoute.attributeValue("orderid");
+			String acceptTime = WaybillRoute.attributeValue("acceptTime");//路由节点产生的时间，格式：YYYY-MM-DD HH24:MM:SS，示例：2012-7-30 09:30:00
+			String acceptAddress = WaybillRoute.attributeValue("acceptAddress");//路由节点发生的城市
+			String remark = WaybillRoute.attributeValue("remark");//路由节点具体描述
 
 			PhOrderExpressDetail phOrderExpressDetail = new PhOrderExpressDetail();
 			phOrderExpressDetail.setContent(remark);
@@ -101,6 +101,7 @@ public class NotifyController {
 			PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByExpressOrderNo(orderNo);
 			phOrderExpressInfo.setExPhone(empPhone);
 			phOrderExpressInfo.setLastTime(lastTime);
+			phOrderExpressInfo.setStatus("2");
 			phOrderExpressInfoService.save(phOrderExpressInfo);
 		}
 		

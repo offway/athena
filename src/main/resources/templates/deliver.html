@@ -324,7 +324,7 @@
 			
 			var form = $("#authForm");
 			form.find("input[name='id']").val(activityPrizeId); 
-			$.get("/deliver-one",{id:activityPrizeId},function(data){
+			$.get("/deliver-one",{orderNo:activityPrizeId},function(data){
 				/* form.find("input[name='toProvince']").val(data.toProvince); 
 				form.find("input[name='toCity']").val(data.toCity); 
 				form.find("input[name='toCounty']").val(data.toCounty);  */
@@ -375,22 +375,29 @@
 			
 		});
 		
-		
+		var sub = false;
 		$(".btn.btn-info.deliver").click(function(){
-			var activityPrizeId = $("input[name='authId']:checked");
-			if(activityPrizeId.length!=1){
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return ;
-			}
 			
-			activityPrizeId = activityPrizeId[0].value;
-			
-			$.post("/deliver-save",{orderNo:activityPrizeId},function(data){
-				if(data){
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
+			if(!sub){
+				sub = true;
+				var activityPrizeId = $("input[name='authId']:checked");
+				if(activityPrizeId.length!=1){
+					toastr.error("请选择一条数据操作", "温馨提示");
+					sub = false;
+				}else{
+					
+					activityPrizeId = activityPrizeId[0].value;
+					
+					$.post("/deliver-save",{orderNo:activityPrizeId},function(data){
+						sub = false;
+						if(data){
+							toastr.success("操作已成功！", "温馨提示");
+							oTable.fnDraw();
+						}
+					});
 				}
-			});
+				
+			}
 			
 		});
 		

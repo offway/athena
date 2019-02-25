@@ -138,6 +138,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 		if("200".equals(result.getCode())){
 			String mailNo = String.valueOf(result.getData());
 			phOrderExpressInfo.setMailNo(mailNo);
+			phOrderExpressInfo.setStatus("1");//已下单
 			phOrderExpressInfoService.save(phOrderExpressInfo);
 			save(phOrderInfo);
 		}

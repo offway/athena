@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import cn.offway.athena.domain.VOrder;
+import java.lang.String;
+import java.util.List;
 
 
 /**
@@ -14,5 +16,5 @@ import cn.offway.athena.domain.VOrder;
  */
 public interface VOrderRepository extends JpaRepository<VOrder,Long>,JpaSpecificationExecutor<VOrder> {
 
-	/** 此处写一些自定义的方法 **/
+	VOrder findByOrderNo(String orderNo);
 }

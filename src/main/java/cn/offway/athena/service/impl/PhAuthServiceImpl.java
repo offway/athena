@@ -98,6 +98,17 @@ public class PhAuthServiceImpl implements PhAuthService {
 		save(phAuth);
 		
 		PhUserInfo phUserInfo = phUserInfoService.findByUnionid(phAuth.getUnionid());
+		
+		if("1".equals(status)){
+			phUserInfo.setIsAuth("1");
+			phUserInfo.setPhone(phAuth.getPhone());
+			phUserInfo.setPosition(phAuth.getPosition());
+			phUserInfo.setIdcardObverse(phAuth.getIdcardObverse());
+			phUserInfo.setIdcardPositive(phAuth.getIdcardPositive());
+			phUserInfo.setRealName(phAuth.getRealName());
+			phUserInfo.setInCert(phUserInfo.getInCert());
+			phUserInfoService.save(phUserInfo);
+		}
 		String openid = phUserInfo.getMiniopenid();
 		String formid = phAuth.getFormId();
 		
