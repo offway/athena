@@ -41,26 +41,23 @@ public class VOrder implements Serializable {
     /** 是否自营[0-否,1-是] **/
     private String isOffway;
 
-    /** 状态[0-已下单,1-已发货,2-已归还,3-已晒图,4-已拒绝,5-已通过] **/
+    /** 状态[0-已下单,1-已发货,2-已寄回,3-已收货] **/
     private String status;
+    
+    /** 是否晒图[0-否,1-是]**/
+    private String isUpload;
 
     /** 创建时间 **/
     private Date createTime;
 
-    /** 归还时间 **/
+    /** 寄回时间 **/
     private Date returnTime;
-
+    
     /** 晒图时间 **/
     private Date showTime;
-
-    /** 审核人 **/
-    private String checkName;
-
-    /** 审核时间 **/
-    private Date checkTime;
-
-    /** 拒绝原因 **/
-    private String checkContent;
+    
+    /** 收货时间 **/
+    private Date receiptTime;
 
     /** 备注 **/
     private String remark;
@@ -255,34 +252,6 @@ public class VOrder implements Serializable {
         this.showTime = showTime;
     }
 
-    @Column(name = "check_name", length = 50)
-    public String getCheckName() {
-        return checkName;
-    }
-
-    public void setCheckName(String checkName) {
-        this.checkName = checkName;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "check_time")
-    public Date getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Date checkTime) {
-        this.checkTime = checkTime;
-    }
-
-    @Column(name = "check_content", length = 200)
-    public String getCheckContent() {
-        return checkContent;
-    }
-
-    public void setCheckContent(String checkContent) {
-        this.checkContent = checkContent;
-    }
-
     @Column(name = "remark", length = 200)
     public String getRemark() {
         return remark;
@@ -417,5 +386,26 @@ public class VOrder implements Serializable {
     public void setToRealName(String toRealName) {
         this.toRealName = toRealName;
     }
+
+    @Column(name = "is_upload", length = 2)
+    public String getIsUpload() {
+		return isUpload;
+	}
+
+	public void setIsUpload(String isUpload) {
+		this.isUpload = isUpload;
+	}
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "receipt_time")
+	public Date getReceiptTime() {
+		return receiptTime;
+	}
+
+	public void setReceiptTime(Date receiptTime) {
+		this.receiptTime = receiptTime;
+	}
+    
+    
 
 }

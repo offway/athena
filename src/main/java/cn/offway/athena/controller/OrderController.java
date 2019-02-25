@@ -51,6 +51,11 @@ public class OrderController {
 		return "order";
 	}
 	
+	@RequestMapping("/order-return.html")
+	public String orderReturn(ModelMap map){
+		return "order-return";
+	}
+	
 	/**
 	 * 查询数据
 	 * @param request
@@ -59,7 +64,7 @@ public class OrderController {
 	 */
 	@ResponseBody
 	@RequestMapping("/order-data")
-	public Map<String, Object> orderData(HttpServletRequest request,String orderNo, String unionid){
+	public Map<String, Object> orderData(HttpServletRequest request,String orderNo, String unionid,String status){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -67,7 +72,7 @@ public class OrderController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(orderNo.trim(),unionid.trim(), new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(orderNo.trim(),unionid.trim(),status.trim(), new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
@@ -89,6 +94,17 @@ public class OrderController {
 	public PhOrderExpressInfo phOrderExpress(String orderNo,String type){
 		return phOrderExpressInfoService.findByOrderNoAndType(orderNo, type);
 	}
+	
+	@ResponseBody
+	@RequestMapping("/order-check")
+	public boolean orderCheck(String orderNo){
+		PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
+		phOrderInfo.setStatus("3");
+		phOrderInfoService.save(phOrderInfo);
+		return true;
+	}
+	
+	
 	
 	
 	
