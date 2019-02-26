@@ -20,6 +20,6 @@ public interface PhGoodsStockRepository extends JpaRepository<PhGoodsStock,Long>
 	
 	@Transactional
 	@Modifying
-	@Query(nativeQuery=true,value="update ph_goods_stock s set s.stock =  s.stock+1 where EXISTS(SELECT 1 from ph_order_goods g where g.order_no =?1 and g.goods_id = s.goods_id and g.color = s.color and g.size= s.size)")
-	int updateStock(String orderNo);
+	@Query(nativeQuery=true,value="update ph_goods_stock s set s.stock =  s.stock+1 where  s.goods_id=?1  and s.color =?2 and s.size=?3")
+	int updateStock(Long goodsId,String color,String size);
 }

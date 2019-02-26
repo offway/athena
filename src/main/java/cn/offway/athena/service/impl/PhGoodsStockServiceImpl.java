@@ -16,9 +16,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import cn.offway.athena.service.PhGoodsStockService;
+import cn.offway.athena.service.PhOrderGoodsService;
+import cn.offway.athena.service.PhOrderInfoService;
 import cn.offway.athena.domain.PhGoods;
 import cn.offway.athena.domain.PhGoodsStock;
+import cn.offway.athena.domain.PhOrderGoods;
+import cn.offway.athena.domain.PhOrderInfo;
 import cn.offway.athena.repository.PhGoodsStockRepository;
 
 
@@ -36,6 +44,12 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 	@Autowired
 	private PhGoodsStockRepository phGoodsStockRepository;
 	
+	@Autowired
+	private PhOrderGoodsService phOrderGoodsService;
+	
+	@Autowired
+	private PhOrderInfoService phOrderInfoService;
+	
 	@Override
 	public PhGoodsStock save(PhGoodsStock phGoodsStock){
 		return phGoodsStockRepository.save(phGoodsStock);
@@ -52,8 +66,21 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 	}
 	
 	@Override
-	public int updateStock(String orderNo){
-		return phGoodsStockRepository.updateStock(orderNo);
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
+	public boolean updateStock(String orderNo) throws Exception{
+		List<PhOrderGoods> orderGoods =  phOrderGoodsService.findByOrderNo(orderNo);
+		int i = 0;
+		for (PhOrderGoods phOrderGoods : orderGoods) {
+			i += phGoodsStockRepository.updateStock(phOrderGoods.getGoodsId(),phOrderGoods.getColor(),phOrderGoods.getSize());
+		}
+		if(i==orderGoods.size()){
+			PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
+			phOrderInfo.setStatus("3");
+			phOrderInfoService.save(phOrderInfo);
+			return true;
+		}
+		throw new Exception("加库存失败,orderNo="+orderNo);
+		
 	}
 	
 	@Override

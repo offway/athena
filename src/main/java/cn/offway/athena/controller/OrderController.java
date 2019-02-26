@@ -102,16 +102,13 @@ public class OrderController {
 	@ResponseBody
 	@RequestMapping("/order-check")
 	public boolean orderCheck(String orderNo){
-		
-		//恢复库存
-		int count = phGoodsStockService.updateStock(orderNo);
-		if(count>0){
-			PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
-			phOrderInfo.setStatus("3");
-			phOrderInfoService.save(phOrderInfo);
-			return true;
+		try {
+			return phGoodsStockService.updateStock(orderNo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("order-check异常orderNo:{}",orderNo,e);
+			return false;
 		}
-		return false;
 		
 	}
 	

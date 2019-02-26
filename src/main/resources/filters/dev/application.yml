@@ -65,8 +65,10 @@ qiniu:
 #顺丰
 sf:
   url:  https://bsp-oisp.sf-express.com/bsp-oisp/sfexpressService
-  client-code:  WN_apRz9
-  checkword:  MIRhOcNsVB2zGn4h7VxsFnGC3Uh4H9kD
+  #client-code:  WN_apRz9
+  client-code:  PHKJ
+  #checkword:  MIRhOcNsVB2zGn4h7VxsFnGC3Uh4H9kD
+  checkword:  axrniSIMsFhltVwmUPKVPBooFluvX8TR
 #极光推送
 jpush:
   apns-production: false
