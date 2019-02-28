@@ -90,7 +90,8 @@ public class NotifyController {
 		
 		Element response = document.getRootElement();
 		String orderStateCode = response.elementText("orderStateCode");
-		if("40001".equals(orderStateCode)){
+		//05-40003 已正常收件状态
+		if("40001".equals(orderStateCode)||"04-40001".equals(orderStateCode)){
 			//调度成功
 			String orderNo = response.elementText("orderNo");
 			String waybillNo = response.elementText("waybillNo");
