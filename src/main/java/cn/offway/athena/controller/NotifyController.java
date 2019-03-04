@@ -55,6 +55,7 @@ public class NotifyController {
 			String acceptTime = WaybillRoute.attributeValue("acceptTime");//路由节点产生的时间，格式：YYYY-MM-DD HH24:MM:SS，示例：2012-7-30 09:30:00
 			String acceptAddress = WaybillRoute.attributeValue("acceptAddress");//路由节点发生的城市
 			String remark = WaybillRoute.attributeValue("remark");//路由节点具体描述
+			String opCode = WaybillRoute.attributeValue("opCode");//路由信息操作码
 
 			PhOrderExpressDetail phOrderExpressDetail = new PhOrderExpressDetail();
 			phOrderExpressDetail.setContent(remark);
@@ -62,7 +63,19 @@ public class NotifyController {
 			phOrderExpressDetail.setAcceptTime(acceptTime);
 			phOrderExpressDetail.setExpressOrderNo(orderNo);
 			phOrderExpressDetail.setMailNo(mailNo);
+			phOrderExpressDetail.setAcceptAddress(acceptAddress);
+			phOrderExpressDetail.setOpCode(opCode);
 			phOrderExpressDetailService.save(phOrderExpressDetail);
+			
+			PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByExpressOrderNo(orderNo);
+
+			if("50".equals(opCode)){
+				phOrderExpressInfo.setStatus("3");
+				phOrderExpressInfoService.save(phOrderExpressInfo);
+			}else if("80".equals(opCode)){
+				phOrderExpressInfo.setStatus("4");
+				phOrderExpressInfoService.save(phOrderExpressInfo);
+			}
 
 			
 

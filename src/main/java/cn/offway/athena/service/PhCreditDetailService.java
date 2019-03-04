@@ -1,5 +1,8 @@
 package cn.offway.athena.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.athena.domain.PhCreditDetail;
 
 /**
@@ -13,4 +16,6 @@ public interface PhCreditDetailService{
 	PhCreditDetail save(PhCreditDetail phCreditDetail);
 	
 	PhCreditDetail findOne(Long id);
+
+	Page<PhCreditDetail> findByPage(String orderNo, String unionid, String type, Pageable page);
 }

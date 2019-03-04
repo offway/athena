@@ -19,15 +19,18 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.druid.sql.visitor.functions.Now;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.offway.athena.domain.PhAuth;
+import cn.offway.athena.domain.PhCreditDetail;
 import cn.offway.athena.domain.PhUserInfo;
 import cn.offway.athena.dto.Template;
 import cn.offway.athena.dto.TemplateParam;
 import cn.offway.athena.repository.PhAuthRepository;
 import cn.offway.athena.service.PhAuthService;
+import cn.offway.athena.service.PhCreditDetailService;
 import cn.offway.athena.service.PhUserInfoService;
 import cn.offway.athena.utils.HttpClientUtil;
 
@@ -48,6 +51,9 @@ public class PhAuthServiceImpl implements PhAuthService {
 	
 	@Autowired
 	private PhUserInfoService phUserInfoService;
+	
+	@Autowired
+	private PhCreditDetailService phCreditDetailService;
 	
 	@Override
 	public PhAuth save(PhAuth phAuth){
@@ -107,7 +113,20 @@ public class PhAuthServiceImpl implements PhAuthService {
 			phUserInfo.setIdcardPositive(phAuth.getIdcardPositive());
 			phUserInfo.setRealName(phAuth.getRealName());
 			phUserInfo.setInCert(phUserInfo.getInCert());
+			phUserInfo.setCreditScore(50L);
 			phUserInfoService.save(phUserInfo);
+			
+			PhCreditDetail creditDetail = new PhCreditDetail();
+			creditDetail.setChannel("认证通过");
+			creditDetail.setCreateName(phAuth.getApprover());
+			creditDetail.setCreateTime(new Date());
+			creditDetail.setOrderNo(null);
+			creditDetail.setRemark(null);
+			creditDetail.setScore(50L);
+			creditDetail.setType("0");
+			creditDetail.setUnionid(phAuth.getUnionid());
+			phCreditDetailService.save(creditDetail);
+			
 		}
 		String openid = phUserInfo.getMiniopenid();
 		String formid = phAuth.getFormId();

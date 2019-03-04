@@ -16,4 +16,6 @@ public interface PhOrderExpressInfoRepository extends JpaRepository<PhOrderExpre
 	PhOrderExpressInfo findByOrderNoAndType(String orderNo,String type);
 	
 	PhOrderExpressInfo findByExpressOrderNo(String expressOrderNo);
+	
+	PhOrderExpressInfo findByMailNo(String mailNo);
 }

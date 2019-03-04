@@ -20,7 +20,7 @@ public class PhCreditDetail implements Serializable {
     /** 只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。 **/
     private String unionid;
 
-    /** 渠道[0-初始,1-已晒图,2-未晒图] **/
+    /** 渠道 **/
     private String channel;
 
     /** 类型[0-加,1-减] **/
@@ -37,6 +37,9 @@ public class PhCreditDetail implements Serializable {
     
     /** 订单号 **/
     private String orderNo;
+    
+    /** 创建者 **/
+    private String createName;
 
 
     @Id
@@ -113,5 +116,16 @@ public class PhCreditDetail implements Serializable {
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
+
+    @Column(name = "create_name", length = 50)
+	public String getCreateName() {
+		return createName;
+	}
+
+	public void setCreateName(String createName) {
+		this.createName = createName;
+	}
+    
+    
 
 }

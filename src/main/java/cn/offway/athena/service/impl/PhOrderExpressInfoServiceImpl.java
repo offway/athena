@@ -43,4 +43,9 @@ public class PhOrderExpressInfoServiceImpl implements PhOrderExpressInfoService 
 	public PhOrderExpressInfo findByExpressOrderNo(String expressOrderNo){
 		return phOrderExpressInfoRepository.findByExpressOrderNo(expressOrderNo);
 	}
+	
+	@Override
+	public PhOrderExpressInfo findByMailNo(String mailNo){
+		return phOrderExpressInfoRepository.findByMailNo(mailNo);
+	}
 }
