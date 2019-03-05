@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>邀请码</title>
+	<title>用户查询</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
@@ -25,7 +25,7 @@
 			<div class="page-title">
 				
 				<div class="title-env">
-					<h1 class="title">邀请码</h1>
+					<h1 class="title">用户查询</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -34,7 +34,7 @@
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>业务管理</a></li>
-						<li class="active"><strong>邀请码</strong></li>
+						<li class="active"><strong>用户查询</strong></li>
 					</ol>
 
 				</div>
@@ -46,21 +46,26 @@
 					<form role="form" class="form-inline">
 						<div class="form-group ">
 							<div class="input-group">
-								<select name="status" class="form-control" style="height:35px" placeholder="状态">
-									<option value="">状态</option>
-									<option value="0">未使用</option>
-									<option value="1">已使用</option>
-								</select>
+								<input type="text" name="nickname" class="form-control" style="height:35px" placeholder="微信昵称"/>
 							</div>
 						</div>
 						<div class="form-group ">
 							<div class="input-group">
-								<input type="text" name="code" class="form-control" style="height:35px" placeholder="邀请码"/>
+								<input type="text" name="unionid" class="form-control" style="height:35px" placeholder="用户ID"/>
 							</div>
 						</div>
 						<div class="form-group ">
 							<div class="input-group">
 								<input type="text" name="phone" class="form-control" style="height:35px" placeholder="手机"/>
+							</div>
+						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<select name="isAuth" class="form-control" style="height:35px" placeholder="是否认证">
+									<option value="">是否认证</option>
+									<option value="0">未认证</option>
+									<option value="1">已认证</option>
+								</select>
 							</div>
 						</div>
 						<div class="form-group">
@@ -74,7 +79,6 @@
 					</table>
 					
 				</div>
-				<button class="btn btn-info check">生成邀请码</button>
 			</div>
 			
 					
@@ -83,56 +87,6 @@
 	</div>
 	
 	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" id="modal-rule">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 600px;">
-				
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">生成邀请码</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="authForm">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" id="phone" class="form-control" style="height:35px" placeholder="手机"/>
-								
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" id="realName" class="form-control" style="height:35px" placeholder="姓名"/>
-								
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" id="position" class="form-control" style="height:35px" placeholder="职位"/>
-								
-							</div>	
-							
-						</div>
-					</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info saveRule">生成</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
 	
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
@@ -153,60 +107,97 @@
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/code-data",//通过ajax实现分页的url路径。
+            sAjaxSource : "/phUsers-data",//通过ajax实现分页的url路径。
             fnServerParams : function(aData){
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
             columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="authId" value="'+data+'" />';  
-				    }
-				},
                 {
-                    targets: 1,
+                    targets: 0,
                     data: "id",
                     title: "序号"
                 },
                 {
+                    targets: 1,
+                    data: "headimgurl",
+                    title: "头像",
+                    render: function (data, type, row, meta) {
+                        return "<img src="+data+"></img>";
+                    }
+                },
+                {
                		targets: 2,
-	                data: "code",
-	                title: "邀请码"
+	                data: "nickname",
+	                title: "用户昵称"
+            	},
+            	 {
+               		targets: 3,
+	                data: "unionid",
+	                title: "用户ID"
             	},
             	
             	{
-               		targets: 3,
+               		targets: 4,
 	                data: "phone",
 	                title: "手机"
             	}, 
             	{
-               		targets: 4,
+               		targets: 5,
 	                data: "position",
 	                title: "职位"
             	},
             	{
-               		targets: 5,
+               		targets: 6,
 	                data: "realName",
 	                title: "姓名"
             	},
             	{
-               		targets: 6,
-	                data: "status",
-	                title: "状态",
+               		targets: 7,
+	                data: "companyName",
+	                title: "企业名称"
+            	},
+            	{
+               		targets: 8,
+	                data: "creditScore",
+	                title: "信用分"
+            	},
+            	{
+                    targets: 9,
+                    data: "idcardPositive",
+                    title: "身份证正面",
                     render: function (data, type, row, meta) {
-                        return "0"==data?"未使用":"已使用";
+                        return  null==data?"":"<img src="+data+"></img>";
+                    }
+                },
+                {
+                    targets: 10,
+                    data: "idcardObverse",
+                    title: "身份证反面",
+                    render: function (data, type, row, meta) {
+                        return  null==data?"":"<img src="+data+"></img>";
+                    }
+                },
+                {
+                    targets: 11,
+                    data: "inCert",
+                    title: "在职证明",
+                    render: function (data, type, row, meta) {
+                    	
+                        return null==data?"":"<img src="+data+"></img>";
+                    }
+                },
+            	{
+               		targets: 12,
+	                data: "isAuth",
+	                title: "是否认证",
+                    render: function (data, type, row, meta) {
+                        return "1"==data?"已认证":"未认证";
                     }
             	},
             	
                 {
-                    targets: 7,
+                    targets: 13,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -222,42 +213,6 @@
 			return false;
 		});
 		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
-			var obj = $(this);
-			$("input[name='authId']").each(function(i,e){
-				 this.checked = obj[0].checked;
-			});
-		})
-			 
-			
-		//快递单号
-		$(".btn.btn-info.check").click(function(){
-			$("#realName").val("");
-			$("#position").val("");
-			$("#phone").val("");
-			jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
-			
-		});
-		
-		$(".btn.btn-info.saveRule").click(function(){
-			
-			var realName = $("#realName").val();
-			var position = $("#position").val();
-			var phone = $("#phone").val();
-
-			if(''==realName ||''==position||''==phone){
-				toastr.error("请填写完整信息", "温馨提示");
-				return false;
-			}
-			$.post("/code-save",{phone:phone,position:position,realName:realName},function(data){
-				if(data){
-					jQuery('#modal-rule').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
-			
-		});
 		
 	});
 	/*]]>*/

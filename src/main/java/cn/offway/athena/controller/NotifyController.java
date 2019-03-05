@@ -70,9 +70,11 @@ public class NotifyController {
 			PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByExpressOrderNo(orderNo);
 
 			if("50".equals(opCode)){
+				//已收取快件
 				phOrderExpressInfo.setStatus("3");
 				phOrderExpressInfoService.save(phOrderExpressInfo);
 			}else if("80".equals(opCode)){
+				//已签收
 				phOrderExpressInfo.setStatus("4");
 				phOrderExpressInfoService.save(phOrderExpressInfo);
 			}
