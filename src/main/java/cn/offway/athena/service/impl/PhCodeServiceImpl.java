@@ -48,6 +48,11 @@ public class PhCodeServiceImpl implements PhCodeService {
 	}
 	
 	@Override
+	public PhCode findByCodeAndStatusAndPhoneAndPositionAndRealName(String code,String status,String phone,String position,String realName){
+		return phCodeRepository.findByCodeAndStatusAndPhoneAndPositionAndRealName(code, status, phone, position, realName);
+	}
+	
+	@Override
 	public Page<PhCode> findByPage(final String status,final String code,final String phone,Pageable page){
 		return phCodeRepository.findAll(new Specification<PhCode>() {
 			

@@ -18,4 +18,7 @@ public interface PhCodeService{
 	PhCode findOne(Long id);
 
 	Page<PhCode> findByPage(String status, String code, String phone, Pageable page);
+
+	PhCode findByCodeAndStatusAndPhoneAndPositionAndRealName(String code, String status, String phone, String position,
+			String realName);
 }

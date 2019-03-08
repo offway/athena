@@ -390,9 +390,11 @@
 					
 					$.post("/deliver-save",{orderNo:activityPrizeId},function(data){
 						sub = false;
-						if(data){
+						if(data.code=="200"){
 							toastr.success("操作已成功！", "温馨提示");
 							oTable.fnDraw();
+						}else{
+							toastr.error(data.msg, "温馨提示");
 						}
 					});
 				}

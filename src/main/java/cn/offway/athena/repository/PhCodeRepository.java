@@ -14,5 +14,6 @@ import cn.offway.athena.domain.PhCode;
  */
 public interface PhCodeRepository extends JpaRepository<PhCode,Long>,JpaSpecificationExecutor<PhCode> {
 
-	/** 此处写一些自定义的方法 **/
+	PhCode findByCodeAndStatusAndPhoneAndPositionAndRealName(String code,String status,String phone,String position,String realName);
+
 }

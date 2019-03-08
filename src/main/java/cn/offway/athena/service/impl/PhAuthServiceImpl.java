@@ -19,17 +19,18 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.druid.sql.visitor.functions.Now;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.offway.athena.domain.PhAuth;
+import cn.offway.athena.domain.PhCode;
 import cn.offway.athena.domain.PhCreditDetail;
 import cn.offway.athena.domain.PhUserInfo;
 import cn.offway.athena.dto.Template;
 import cn.offway.athena.dto.TemplateParam;
 import cn.offway.athena.repository.PhAuthRepository;
 import cn.offway.athena.service.PhAuthService;
+import cn.offway.athena.service.PhCodeService;
 import cn.offway.athena.service.PhCreditDetailService;
 import cn.offway.athena.service.PhUserInfoService;
 import cn.offway.athena.utils.HttpClientUtil;
@@ -54,6 +55,9 @@ public class PhAuthServiceImpl implements PhAuthService {
 	
 	@Autowired
 	private PhCreditDetailService phCreditDetailService;
+	
+	@Autowired
+	private PhCodeService phCodeService;
 	
 	@Override
 	public PhAuth save(PhAuth phAuth){
@@ -112,7 +116,8 @@ public class PhAuthServiceImpl implements PhAuthService {
 			phUserInfo.setIdcardObverse(phAuth.getIdcardObverse());
 			phUserInfo.setIdcardPositive(phAuth.getIdcardPositive());
 			phUserInfo.setRealName(phAuth.getRealName());
-			phUserInfo.setInCert(phUserInfo.getInCert());
+			phUserInfo.setInCert(phAuth.getInCert());
+			phUserInfo.setCompanyName(phAuth.getCompanyName());
 			phUserInfo.setCreditScore(50L);
 			phUserInfoService.save(phUserInfo);
 			
@@ -137,12 +142,17 @@ public class PhAuthServiceImpl implements PhAuthService {
 		tem.setFormId(formid);
 		tem.setTopColor("#00DD00");
 		tem.setToUser(openid);
-		tem.setPage("pages/details/details?");
+		tem.setPage("pages/index/index");
 		String result = "您的身份审核已通过";
 		String content = "您可以借衣啦！";
 		if("2".equals(status)){
 			result = "您的身份审核未通过";
 			content = approvalContent;
+			
+			PhCode phCode = phCodeService.findOne(phAuth.getCodeId());
+			phCode.setStatus("0");
+			phCodeService.save(phCode);
+
 		}
 
 		List<TemplateParam> paras = new ArrayList<TemplateParam>();

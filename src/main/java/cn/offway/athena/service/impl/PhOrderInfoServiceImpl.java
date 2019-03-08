@@ -113,8 +113,6 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 			return new JsonResult("500", "订单已发货！", null);
 		}
 		
-		phOrderInfo.setStatus("1");
-		
 		
 		PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByOrderNoAndType(orderNo, "0");
 		phOrderExpressInfo.setExpressOrderNo(generateOrderNo("SF"));
@@ -140,6 +138,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 			phOrderExpressInfo.setMailNo(mailNo);
 			phOrderExpressInfo.setStatus("1");//已下单
 			phOrderExpressInfoService.save(phOrderExpressInfo);
+			phOrderInfo.setStatus("1");
 			save(phOrderInfo);
 		}
 		return result;
