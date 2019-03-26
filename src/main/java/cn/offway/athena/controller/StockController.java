@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSON;
 
 import cn.offway.athena.domain.PhGoods;
 import cn.offway.athena.domain.PhGoodsStock;
+import cn.offway.athena.properties.QiniuProperties;
 import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhGoodsService;
 import cn.offway.athena.service.PhGoodsStockService;
@@ -46,6 +47,9 @@ public class StockController {
 	@Autowired
 	private PhGoodsService phGoodsService;
 	
+	@Autowired
+	private QiniuProperties qiniuProperties;
+	
 
 	/**
 	 * 库存
@@ -54,6 +58,7 @@ public class StockController {
 	 */
 	@RequestMapping("/stock.html")
 	public String stock(ModelMap map){
+		map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
 		map.addAttribute("brands", phBrandService.findAll());
 		return "stock";
 	}
@@ -110,7 +115,7 @@ public class StockController {
 			
 			PhGoods phGoods = phGoodsService.findOne(goodsId);
 			phGoodsStock.setGoodsName(phGoods.getName());
-			phGoodsStock.setImage(phGoods.getImage());
+			phGoodsStock.setGoodsImage(phGoods.getImage());
 			phGoodsStock.setBrandId(phGoods.getBrandId());
 			phGoodsStock.setBrandLogo(phGoods.getBrandLogo());
 			phGoodsStock.setBrandName(phGoods.getBrandName());
@@ -119,6 +124,8 @@ public class StockController {
 			phGoodsStock.setType(phGoods.getType());
 			phGoodsStock.setCreateTime(new Date());
 			phGoodsStockService.save(phGoodsStock);
+			
+			phGoodsStockService.updateImage(goodsId, phGoodsStock.getColor(), phGoodsStock.getImage());
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -132,6 +139,12 @@ public class StockController {
 	@PostMapping("/stock-one")
 	public PhGoodsStock findOne(Long id){
 		return phGoodsStockService.findOne(id);
+	}
+	
+	@ResponseBody
+	@PostMapping("/stock-image")
+	public String image(String color,Long goodsId){
+		return phGoodsStockService.findImage(color, goodsId);
 	}
 	
 }

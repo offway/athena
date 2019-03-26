@@ -23,4 +23,8 @@ public interface PhGoodsStockService{
 			String color, String size, Pageable page);
 
 	boolean updateStock(String orderNo) throws Exception;
+
+	String findImage(String color, Long goodsId);
+
+	int updateImage(Long goodsId, String color, String image);
 }

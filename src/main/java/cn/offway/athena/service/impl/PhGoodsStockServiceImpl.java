@@ -61,8 +61,18 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 	}
 	
 	@Override
+	public String findImage(String color,Long goodsId){
+		return phGoodsStockRepository.findImage(color, goodsId);
+	}
+	
+	@Override
 	public int countByGoodsIdAndColorAndSize(Long goodsId,String color,String size){
 		return phGoodsStockRepository.countByGoodsIdAndColorAndSize(goodsId, color, size);
+	}
+	
+	@Override
+	public int updateImage(Long goodsId,String color,String image){
+		return phGoodsStockRepository.updateImage(goodsId, color, image);
 	}
 	
 	@Override

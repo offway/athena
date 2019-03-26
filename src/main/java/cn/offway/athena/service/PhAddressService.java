@@ -13,4 +13,6 @@ public interface PhAddressService{
 	PhAddress save(PhAddress phAddress);
 	
 	PhAddress findOne(Long id);
+
+	void delete(Long id);
 }

@@ -33,4 +33,9 @@ public class PhAddressServiceImpl implements PhAddressService {
 	public PhAddress findOne(Long id){
 		return phAddressRepository.findOne(id);
 	}
+	
+	@Override
+	public void delete(Long id){
+		 phAddressRepository.delete(id);
+	}
 }
