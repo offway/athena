@@ -1,9 +1,8 @@
-var addressInit = function(_cmbProvince, _cmbCity, _cmbArea, _cmbStreet, defaultProvince, defaultCity, defaultArea,defaultStreet)  
+var addressInit = function(_cmbProvince, _cmbCity, _cmbArea, defaultProvince, defaultCity, defaultArea)  
 {  
     var cmbProvince = document.getElementById(_cmbProvince);  
     var cmbCity = document.getElementById(_cmbCity);  
     var cmbArea = document.getElementById(_cmbArea); 
-	var cmbStreet = document.getElementById(_cmbStreet);
       
     function cmbSelect(cmb, str)  
     {  

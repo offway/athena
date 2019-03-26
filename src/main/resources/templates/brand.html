@@ -115,7 +115,7 @@
 							
 							<div class="form-group">
 								<label for="field-4" class="control-label">品牌简介</label>
-								<textarea id="info" name="info" class="form-control autogrow" placeholder="简介"></textarea>
+								<textarea id="info" name="info" class="form-control autogrow" style="height: 100px;" placeholder="简介"></textarea>
 							</div>	
 							
 						</div>
@@ -336,6 +336,8 @@
 				form.find("input").val("");
 				form.find("img").attr("src","");
 				form.find("img").hide();
+				form.find("[name='info']").val("");
+				form.find("[name='content']").val("");
 				form.find("input[type='file']").show();
 				form.find(".btn.btn-info.modify").text("更换");
 				form.find(".btn.btn-info.modify").hide();
@@ -491,9 +493,12 @@
 					form.find("input[name='phone']").val(data.phone);
 					form.find("[name='content']").val(data.content);
 					
-					form.find("[name='province']").val(data.province);
+					
+					addressInit('province', 'city', 'county',data.province,data.city,data.county); 
+					
+					/* form.find("[name='province']").val(data.province);
 					form.find("[name='city']").val(data.city);
-					form.find("[name='county']").val(data.county);
+					form.find("[name='county']").val(data.county); */
 					
 					form.find("input[name='logo']").val(data.logo);
 					form.find("input[name='background']").val(data.background);
