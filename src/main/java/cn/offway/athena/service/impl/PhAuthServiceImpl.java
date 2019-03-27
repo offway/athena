@@ -173,7 +173,7 @@ public class PhAuthServiceImpl implements PhAuthService {
 	 * 获取 access_token
 	 */
 	public String getToken() {
-		String requestUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx12d022a9493f1b26&secret=52ba3a89ae58aa6a2294806d516d6107";
+		String requestUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx8dac79ed90eb9311&secret=8e2d761b60cd91b7ca8d3883c378fa0d";
 		String result = HttpClientUtil.post(requestUrl, "");
 		JSONObject jsonObject = JSON.parseObject(result);
 		if (jsonObject != null) {
