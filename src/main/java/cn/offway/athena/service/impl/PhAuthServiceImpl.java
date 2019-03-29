@@ -144,7 +144,7 @@ public class PhAuthServiceImpl implements PhAuthService {
 		tem.setToUser(openid);
 		tem.setPage("pages/index/index");
 		String result = "您的身份审核已通过";
-		String content = "您可以借衣啦！";
+		String content = "恭喜！可以借衣啦！";
 		if("2".equals(status)){
 			result = "您的身份审核未通过";
 			content = approvalContent;
