@@ -7,7 +7,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaBuilder.In;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +54,7 @@ public class PhShowImageServiceImpl implements PhShowImageService {
 	}
 	
 	@Override
-	public Page<PhShowImage> findByPage(final String orderNo,final String unionid,final String status,Pageable page){
+	public Page<PhShowImage> findByPage(final String orderNo,final String unionid,final String status,final List<Long> brandIds,Pageable page){
 		return phShowImageRepository.findAll(new Specification<PhShowImage>() {
 			
 			@Override
@@ -69,6 +71,14 @@ public class PhShowImageServiceImpl implements PhShowImageService {
 				
 				if(StringUtils.isNotBlank(status)){
 					params.add(criteriaBuilder.equal(root.get("status"), status));
+				}
+				
+				if(CollectionUtils.isNotEmpty(brandIds)){
+					In<Object> in = criteriaBuilder.in(root.get("brandId"));
+					for (Object brandId : brandIds) {
+						in.value(brandId);
+					}
+					params.add(in);
 				}
 				
 				

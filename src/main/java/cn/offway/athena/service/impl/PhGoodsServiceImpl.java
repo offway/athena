@@ -9,7 +9,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaBuilder.In;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +84,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 	}
 	
 	@Override
-	public Page<PhGoods> findByPage(final String name,Pageable page){
+	public Page<PhGoods> findByPage(final String name,final List<Long> brandIds,Pageable page){
 		return phGoodsRepository.findAll(new Specification<PhGoods>() {
 			
 			@Override
@@ -91,6 +93,14 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 				
 				if(StringUtils.isNotBlank(name)){
 					params.add(criteriaBuilder.like(root.get("name"), "%"+name+"%"));
+				}
+				
+				if(CollectionUtils.isNotEmpty(brandIds)){
+					In<Object> in = criteriaBuilder.in(root.get("brandId"));
+					for (Object brandId : brandIds) {
+						in.value(brandId);
+					}
+					params.add(in);
 				}
 				
                 Predicate[] predicates = new Predicate[params.size()];

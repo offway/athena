@@ -22,4 +22,6 @@ public interface PhBrandService{
 	List<PhBrand> findAll();
 
 	Page<PhBrand> findByPage(Long brandId, String brandName, Pageable page);
+
+	List<PhBrand> findByIds(List<Long> ids);
 }

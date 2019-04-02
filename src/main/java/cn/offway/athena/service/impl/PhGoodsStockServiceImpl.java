@@ -7,7 +7,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.CriteriaBuilder.In;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +97,7 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 	
 	@Override
 	public Page<PhGoodsStock> findByPage(final Long brandId,final String brandName,final Long goodsId,final String goodsName,
-			final String isOffway,final String color,final String size,Pageable page){
+			final String isOffway,final String color,final String size,final List<Long> brandIds,Pageable page){
 		return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {
 			
 			@Override
@@ -105,6 +107,15 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 				if(StringUtils.isNotBlank(brandName)){
 					params.add(criteriaBuilder.like(root.get("brandName"), "%"+brandName+"%"));
 				}
+				
+				if(CollectionUtils.isNotEmpty(brandIds)){
+					In<Object> in = criteriaBuilder.in(root.get("brandId"));
+					for (Object brandId : brandIds) {
+						in.value(brandId);
+					}
+					params.add(in);
+				}
+				
 				
 				if(null != brandId){
 					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));

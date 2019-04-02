@@ -53,6 +53,9 @@ public class PhAdmin implements UserDetails {
     private Set<String> urls = new HashSet<>();
     
     private List<PhResource> resources = new ArrayList<>();
+    
+    private List<Long> brandIds = new ArrayList<>();
+
 
 
     @Id
@@ -150,6 +153,17 @@ public class PhAdmin implements UserDetails {
 	public void setResources(List<PhResource> resources) {
 		this.resources = resources;
 	}
+
+	@Transient
+	public List<Long> getBrandIds() {
+		return brandIds;
+	}
+
+	public void setBrandIds(List<Long> brandIds) {
+		this.brandIds = brandIds;
+	}
+	
+	
 	
 	
 

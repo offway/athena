@@ -26,8 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.ListUtils;
 
 import cn.offway.athena.domain.PhAdmin;
+import cn.offway.athena.domain.PhBrandadmin;
 import cn.offway.athena.domain.PhRoleadmin;
 import cn.offway.athena.repository.PhAdminRepository;
+import cn.offway.athena.repository.PhBrandadminRepository;
 import cn.offway.athena.repository.PhRoleadminRepository;
 import cn.offway.athena.service.PhAdminService;
 
@@ -48,6 +50,9 @@ public class PhAdminServiceImpl implements PhAdminService {
 	
 	@Autowired
 	private PhRoleadminRepository phRoleadminRepository;
+	
+	@Autowired
+	private PhBrandadminRepository phBrandadminRepository;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -71,6 +76,7 @@ public class PhAdminServiceImpl implements PhAdminService {
 	public void deleteAdmin(String ids) throws Exception{
 		List<Long> idList = (List<Long>)ListUtils.toList(ids.split(","));
 		phRoleadminRepository.deleteByAdminIds(idList);
+		phBrandadminRepository.deleteByAdminIds(idList);
 		phAdminRepository.deleteByIds(idList);
 	}
 	
@@ -100,7 +106,7 @@ public class PhAdminServiceImpl implements PhAdminService {
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
-	public void save(PhAdmin phAdmin,Long[] roleIds){
+	public void save(PhAdmin phAdmin,Long[] roleIds,String[] brandIds){
 		
 		Date now = new Date();
 		phAdmin.setCreatedtime(now);
@@ -109,17 +115,33 @@ public class PhAdminServiceImpl implements PhAdminService {
 		
 		Long adminId = phAdmin.getId();
 		
-		List<PhRoleadmin> phRoleadmins = new ArrayList<>();
-		for (Long roleId : roleIds) {
-			PhRoleadmin phRoleadmin = new PhRoleadmin();
-			phRoleadmin.setAdminId(adminId);
-			phRoleadmin.setCreatedtime(now);
-			phRoleadmin.setRoleId(roleId);
-			phRoleadmins.add(phRoleadmin);
+		phRoleadminRepository.deleteByAdminId(adminId);
+		if(null!=roleIds){
+			List<PhRoleadmin> phRoleadmins = new ArrayList<>();
+			for (Long roleId : roleIds) {
+				PhRoleadmin phRoleadmin = new PhRoleadmin();
+				phRoleadmin.setAdminId(adminId);
+				phRoleadmin.setCreatedtime(now);
+				phRoleadmin.setRoleId(roleId);
+				phRoleadmins.add(phRoleadmin);
+			}
+			phRoleadminRepository.save(phRoleadmins);
 		}
 		
-		phRoleadminRepository.deleteByAdminId(adminId);
-		phRoleadminRepository.save(phRoleadmins);
+		
+		phBrandadminRepository.deleteByAdminId(adminId);
+		if(null!=brandIds){
+			
+			List<PhBrandadmin> phBrandadmins = new ArrayList<>();
+			for (String brandId : brandIds) {
+				PhBrandadmin phBrandadmin = new PhBrandadmin();
+				phBrandadmin.setAdminId(adminId);
+				phBrandadmin.setCreatedtime(now);
+				phBrandadmin.setBrandId(Long.parseLong(brandId));
+				phBrandadmins.add(phBrandadmin);
+			}
+			phBrandadminRepository.save(phBrandadmins);
+		}
 		
 	}
 	

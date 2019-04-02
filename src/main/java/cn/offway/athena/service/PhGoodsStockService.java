@@ -1,5 +1,7 @@
 package cn.offway.athena.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,12 +21,12 @@ public interface PhGoodsStockService{
 
 	int countByGoodsIdAndColorAndSize(Long goodsId, String color, String size);
 
-	Page<PhGoodsStock> findByPage(Long brandId, String brandName, Long goodsId, String goodsName, String isOffway,
-			String color, String size, Pageable page);
-
 	boolean updateStock(String orderNo) throws Exception;
 
 	String findImage(String color, Long goodsId);
 
 	int updateImage(Long goodsId, String color, String image);
+
+	Page<PhGoodsStock> findByPage(Long brandId, String brandName, Long goodsId, String goodsName, String isOffway,
+			String color, String size, List<Long> brandIds, Pageable page);
 }

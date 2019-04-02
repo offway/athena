@@ -2,6 +2,7 @@ package cn.offway.athena.controller;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.offway.athena.domain.PhAdmin;
 import cn.offway.athena.domain.PhGoods;
 import cn.offway.athena.domain.PhGoodsStock;
 import cn.offway.athena.properties.QiniuProperties;
@@ -57,9 +60,13 @@ public class StockController {
 	 * @return
 	 */
 	@RequestMapping("/stock.html")
-	public String stock(ModelMap map){
+	public String stock(ModelMap map,Authentication authentication){
 		map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
-		map.addAttribute("brands", phBrandService.findAll());
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		
+		map.addAttribute("brands", phBrandService.findByIds(brandIds));
 		return "stock";
 	}
 	
@@ -71,7 +78,7 @@ public class StockController {
 	 */
 	@ResponseBody
 	@RequestMapping("/stock-data")
-	public Map<String, Object> stockData(HttpServletRequest request,Long brandId,String brandName,Long goodsId,String goodsName,String isOffway,String color,String size){
+	public Map<String, Object> stockData(HttpServletRequest request,Long brandId,String brandName,Long goodsId,String goodsName,String isOffway,String color,String size,Authentication authentication){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -79,7 +86,10 @@ public class StockController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhGoodsStock> pages = phGoodsStockService.findByPage(brandId,null!=brandName?brandName.trim():brandName, goodsId, null!=goodsName?goodsName.trim():goodsName, isOffway.trim(), color.trim(), size.trim(), new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		Page<PhGoodsStock> pages = phGoodsStockService.findByPage(brandId,null!=brandName?brandName.trim():brandName, goodsId, null!=goodsName?goodsName.trim():goodsName, isOffway.trim(), color.trim(), size.trim(),brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

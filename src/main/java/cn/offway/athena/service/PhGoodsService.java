@@ -19,8 +19,6 @@ public interface PhGoodsService{
 	
 	PhGoods findOne(Long id);
 
-	Page<PhGoods> findByPage(String name, Pageable page);
-
 	void save(PhGoods phGoods, String banner, String detail);
 
 	List<PhGoods> findAll(List<Long> ids);
@@ -30,4 +28,6 @@ public interface PhGoodsService{
 	boolean imagesDelete(Long goodsImageId);
 
 	List<PhGoods> findByBrandId(Long brandId);
+
+	Page<PhGoods> findByPage(String name, List<Long> brandIds, Pageable page);
 }

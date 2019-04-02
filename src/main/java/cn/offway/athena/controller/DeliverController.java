@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.offway.athena.domain.PhAdmin;
 import cn.offway.athena.domain.PhOrderExpressInfo;
 import cn.offway.athena.domain.PhOrderGoods;
 import cn.offway.athena.domain.VOrder;
@@ -61,7 +63,7 @@ public class DeliverController {
 	 */
 	@ResponseBody
 	@RequestMapping("/deliver-data")
-	public Map<String, Object> deliverData(HttpServletRequest request,String orderNo, String unionid){
+	public Map<String, Object> deliverData(HttpServletRequest request,String orderNo, String unionid,Authentication authentication){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -69,7 +71,10 @@ public class DeliverController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<VOrder> pages = vOrderService.findByPage(orderNo.trim(),unionid.trim(), new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		Page<VOrder> pages = vOrderService.findByPage(orderNo.trim(),unionid.trim(), brandIds,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

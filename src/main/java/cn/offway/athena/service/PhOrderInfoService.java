@@ -1,5 +1,7 @@
 package cn.offway.athena.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,5 +26,5 @@ public interface PhOrderInfoService{
 
 	PhOrderInfo findByOrderNo(String orderNo);
 
-	Page<PhOrderInfo> findByPage(String orderNo, String unionid, String status, Pageable page);
+	Page<PhOrderInfo> findByPage(String orderNo, String unionid, String status, List<Long> brandIds, Pageable page);
 }

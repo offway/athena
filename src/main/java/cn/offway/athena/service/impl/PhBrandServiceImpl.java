@@ -53,6 +53,11 @@ public class PhBrandServiceImpl implements PhBrandService {
 	}
 	
 	@Override
+	public List<PhBrand> findByIds(List<Long> ids){
+		return phBrandRepository.findByIds(ids);
+	}
+	
+	@Override
 	public Page<PhBrand> findByPage(final Long brandId,final String brandName,Pageable page){
 		return phBrandRepository.findAll(new Specification<PhBrand>() {
 			

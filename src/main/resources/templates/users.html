@@ -158,6 +158,22 @@
 							
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class=" control-label" for="tagsinput-1">选择品牌</label>
+								
+								<div class="col-md-12">
+									<select class="form-control" multiple="multiple" id="multi-select1" name="brandIds">
+										<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+									</select>
+									
+								</div>
+							</div>
+								
+							
+						</div>
+					</div>
 				
 					</form>
 				</div>
@@ -299,6 +315,21 @@
 				});
 				
 				$('#multi-select').multiSelect('refresh');
+				
+				$("#multi-select1").multiSelect({
+					afterInit: function()
+					{
+						// Add alternative scrollbar to list
+						this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
+					},
+					afterSelect: function()
+					{
+						// Update scrollbar size
+						this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
+					}
+				});
+				
+				$('#multi-select1').multiSelect('refresh');
 
 				
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
@@ -325,11 +356,18 @@
 			
 			var id = form.find("input[name='id']").val();
 			
+			var brandIdsArray = $("#multi-select1").val();
+			var brandIds = "";
+			 $.each(brandIdsArray,function(i,e){
+				 brandIds+=e+","
+			});
+			 
 			$.post("/users-save",{
 				id:id,
 				username:username,
 				nickname:nickname,
-				roles:$("#multi-select").val()
+				roles:$("#multi-select").val(),
+				brandIds:brandIds
 			},function(data){
 				if(data){
 					jQuery('#modal-6').modal('hide');
@@ -374,6 +412,7 @@
 				form.find("input[name='username']").val(data.user.username);
 				form.find("input[name='nickname']").val(data.user.nickname);
 				var roleIds = data.roleIds;
+				var brandIds = data.brandIds;
 				$.get("/roles-all",{},function(data){
 					$('#multi-select').empty();
 					 $.each(data,function(i,e){
@@ -399,6 +438,33 @@
 					});
 					
 					$('#multi-select').multiSelect('refresh');
+					
+				    var brands = [[${brands}]];
+
+					$('#multi-select1').empty();
+					 $.each(brands,function(i,e){
+						 if($.inArray(e.id, brandIds) == -1){
+							$('#multi-select1').append("<option value="+e.id+">"+e.name+"</option>");
+						 }else{
+							$('#multi-select1').append("<option value="+e.id+" selected='selected'>"+e.name+"</option>");
+						 }
+						 
+					});
+					 
+				 	$("#multi-select1").multiSelect({
+						afterInit: function()
+						{
+							// Add alternative scrollbar to list
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
+						},
+						afterSelect: function()
+						{
+							// Update scrollbar size
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
+						}
+					});
+					
+					$('#multi-select1').multiSelect('refresh');
 					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 				});
 				

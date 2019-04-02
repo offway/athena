@@ -21,9 +21,9 @@ public interface PhAdminService{
 
 	Page<PhAdmin> findByPage(String username, String nickname, Pageable page);
 
-	void save(PhAdmin phAdmin, Long[] roles);
-
 	void resetPwd(Long id) throws Exception;
 
 	boolean editPwd(Long id, String password, String newpassword) throws Exception;
+
+	void save(PhAdmin phAdmin, Long[] roleIds, String[] brandIds);
 }

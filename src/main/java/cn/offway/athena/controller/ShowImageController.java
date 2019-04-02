@@ -2,6 +2,7 @@ package cn.offway.athena.controller;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.offway.athena.domain.PhAdmin;
 import cn.offway.athena.domain.PhShowImage;
 import cn.offway.athena.service.PhShowImageService;
 
@@ -39,6 +41,11 @@ public class ShowImageController {
 		return "showImage";
 	}
 	
+	@RequestMapping("/showImage-info.html")
+	public String showImageInfo(ModelMap map){
+		return "showImage-info";
+	}
+	
 	/**
 	 * 查询数据
 	 * @param request
@@ -47,7 +54,7 @@ public class ShowImageController {
 	 */
 	@ResponseBody
 	@RequestMapping("/showImage-data")
-	public Map<String, Object> showImageData(HttpServletRequest request,String orderNo, String unionid,String status){
+	public Map<String, Object> showImageData(HttpServletRequest request,String orderNo, String unionid,String status,Authentication authentication){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -55,7 +62,10 @@ public class ShowImageController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhShowImage> pages = phShowImageService.findByPage(orderNo.trim(),unionid.trim(),status.trim(), new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		Page<PhShowImage> pages = phShowImageService.findByPage(orderNo.trim(),unionid.trim(),status.trim(), brandIds,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

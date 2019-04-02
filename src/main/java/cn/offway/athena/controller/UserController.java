@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import cn.offway.athena.domain.PhAdmin;
 import cn.offway.athena.service.PhAdminService;
+import cn.offway.athena.service.PhBrandService;
+import cn.offway.athena.service.PhBrandadminService;
 import cn.offway.athena.service.PhRoleadminService;
 
 /**
@@ -41,9 +44,16 @@ public class UserController {
 	
 	@Autowired
 	private PhRoleadminService phRoleadminService;
+	
+	@Autowired
+	private PhBrandService phBrandService;
+	
+	@Autowired
+	private PhBrandadminService phBrandadminService;
 
 	@RequestMapping("/users.html")
-	public String users(){
+	public String users(ModelMap map){
+		map.addAttribute("brands", phBrandService.findAll());
 		return "users";
 	}
 	
@@ -94,9 +104,12 @@ public class UserController {
 	
 	@ResponseBody
 	@PostMapping("/users-save")
-	public boolean save(PhAdmin phAdmin,@RequestParam(required = false, value="roles[]") Long[] roles){
+	public boolean save(
+			PhAdmin phAdmin,
+			@RequestParam(required = false, value="roles[]") Long[] roles,
+			@RequestParam(required = false) String brandIds){
 		try {
-			phAdminService.save(phAdmin, roles);
+			phAdminService.save(phAdmin, roles,brandIds.split(","));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -112,6 +125,8 @@ public class UserController {
 		Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("user", phAdminService.findOne(id));
 		resultMap.put("roleIds", phRoleadminService.findRoleIdByAdminId(id));
+		resultMap.put("brandIds", phBrandadminService.findBrandIdByAdminId(id));
+
 		return resultMap;
 	}
 	

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.offway.athena.domain.PhAdmin;
 import cn.offway.athena.domain.PhGoods;
 import cn.offway.athena.domain.PhGoodsImage;
 import cn.offway.athena.properties.QiniuProperties;
@@ -61,9 +63,13 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/goods.html")
-	public String goods(ModelMap map){
+	public String goods(ModelMap map,Authentication authentication){
 		map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
-		map.addAttribute("brands", phBrandService.findAll());
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		
+		map.addAttribute("brands", phBrandService.findByIds(brandIds));
 
 		return "goods";
 	}
@@ -76,7 +82,7 @@ public class GoodsController {
 	 */
 	@ResponseBody
 	@RequestMapping("/goods-data")
-	public Map<String, Object> goodsData(HttpServletRequest request,String name){
+	public Map<String, Object> goodsData(HttpServletRequest request,String name,Authentication authentication){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -84,7 +90,11 @@ public class GoodsController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhGoods> pages = phGoodsService.findByPage(name.trim(), new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		
+		Page<PhGoods> pages = phGoodsService.findByPage(name.trim(),brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
