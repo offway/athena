@@ -21,5 +21,6 @@ public interface VOrderService{
 
 	VOrder findByOrderNo(String orderNo);
 
-	Page<VOrder> findByPage(String orderNo, String unionid, List<Long> brandIds, Pageable page);
+	Page<VOrder> findByPage(String orderNo, String unionid, Long brandId, String isOffway, List<Long> brandIds,
+			Pageable page);
 }

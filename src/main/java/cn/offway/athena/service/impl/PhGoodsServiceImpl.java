@@ -84,7 +84,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 	}
 	
 	@Override
-	public Page<PhGoods> findByPage(final String name,final List<Long> brandIds,Pageable page){
+	public Page<PhGoods> findByPage(final String name,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
 		return phGoodsRepository.findAll(new Specification<PhGoods>() {
 			
 			@Override
@@ -93,6 +93,14 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 				
 				if(StringUtils.isNotBlank(name)){
 					params.add(criteriaBuilder.like(root.get("name"), "%"+name+"%"));
+				}
+				
+				if(null != brandId){
+					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
+				}
+				
+				if(StringUtils.isNotBlank(isOffway)){
+					params.add(criteriaBuilder.equal(root.get("isOffway"), isOffway));
 				}
 				
 				if(CollectionUtils.isNotEmpty(brandIds)){

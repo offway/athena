@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.offway.athena.domain.PhAdmin;
 import cn.offway.athena.domain.PhShowImage;
+import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhShowImageService;
 
 /**
@@ -36,13 +37,26 @@ public class ShowImageController {
 	@Autowired
 	private PhShowImageService phShowImageService;
 	
+	@Autowired
+	private PhBrandService phBrandService;
+	
 	@RequestMapping("/showImage.html")
-	public String showImage(ModelMap map){
+	public String showImage(ModelMap map,Authentication authentication){
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		
+		map.addAttribute("brands", phBrandService.findByIds(brandIds));
 		return "showImage";
 	}
 	
 	@RequestMapping("/showImage-info.html")
-	public String showImageInfo(ModelMap map){
+	public String showImageInfo(ModelMap map,Authentication authentication){
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		
+		map.addAttribute("brands", phBrandService.findByIds(brandIds));
 		return "showImage-info";
 	}
 	
@@ -54,7 +68,7 @@ public class ShowImageController {
 	 */
 	@ResponseBody
 	@RequestMapping("/showImage-data")
-	public Map<String, Object> showImageData(HttpServletRequest request,String orderNo, String unionid,String status,Authentication authentication){
+	public Map<String, Object> showImageData(HttpServletRequest request,String orderNo, String unionid,String status,Long brandId,String isOffway,Authentication authentication){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -65,7 +79,7 @@ public class ShowImageController {
 		
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
-		Page<PhShowImage> pages = phShowImageService.findByPage(orderNo.trim(),unionid.trim(),status.trim(), brandIds,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhShowImage> pages = phShowImageService.findByPage(orderNo.trim(),unionid.trim(),status.trim(),brandId,isOffway, brandIds,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

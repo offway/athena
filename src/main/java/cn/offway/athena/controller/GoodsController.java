@@ -82,7 +82,7 @@ public class GoodsController {
 	 */
 	@ResponseBody
 	@RequestMapping("/goods-data")
-	public Map<String, Object> goodsData(HttpServletRequest request,String name,Authentication authentication){
+	public Map<String, Object> goodsData(HttpServletRequest request,String name,Long brandId,String isOffway,Authentication authentication){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -94,7 +94,7 @@ public class GoodsController {
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
 		
-		Page<PhGoods> pages = phGoodsService.findByPage(name.trim(),brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhGoods> pages = phGoodsService.findByPage(name.trim(),brandId,isOffway,brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

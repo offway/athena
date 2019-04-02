@@ -22,6 +22,7 @@ import cn.offway.athena.domain.PhAdmin;
 import cn.offway.athena.domain.PhOrderExpressInfo;
 import cn.offway.athena.domain.PhOrderGoods;
 import cn.offway.athena.domain.VOrder;
+import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhOrderExpressInfoService;
 import cn.offway.athena.service.PhOrderGoodsService;
 import cn.offway.athena.service.PhOrderInfoService;
@@ -50,8 +51,16 @@ public class DeliverController {
 	@Autowired
 	private PhOrderInfoService phOrderInfoService;
 	
+	@Autowired
+	private PhBrandService phBrandService;
+	
 	@RequestMapping("/deliver.html")
-	public String deliver(ModelMap map){
+	public String deliver(ModelMap map,Authentication authentication){
+		
+		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		List<Long> brandIds = phAdmin.getBrandIds();
+		
+		map.addAttribute("brands", phBrandService.findByIds(brandIds));
 		return "deliver";
 	}
 	
@@ -63,7 +72,7 @@ public class DeliverController {
 	 */
 	@ResponseBody
 	@RequestMapping("/deliver-data")
-	public Map<String, Object> deliverData(HttpServletRequest request,String orderNo, String unionid,Authentication authentication){
+	public Map<String, Object> deliverData(HttpServletRequest request,String orderNo, String unionid,Long brandId,String isOffway,Authentication authentication){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -74,7 +83,7 @@ public class DeliverController {
 		
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
-		Page<VOrder> pages = vOrderService.findByPage(orderNo.trim(),unionid.trim(), brandIds,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<VOrder> pages = vOrderService.findByPage(orderNo.trim(),unionid.trim(),brandId,isOffway, brandIds,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

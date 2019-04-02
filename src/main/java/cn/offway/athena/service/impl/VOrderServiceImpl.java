@@ -56,7 +56,7 @@ public class VOrderServiceImpl implements VOrderService {
  
 	
 	@Override
-	public Page<VOrder> findByPage(final String orderNo,final String unionid,final List<Long> brandIds,Pageable page){
+	public Page<VOrder> findByPage(final String orderNo,final String unionid,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
 		return vOrderRepository.findAll(new Specification<VOrder>() {
 			
 			@Override
@@ -69,6 +69,14 @@ public class VOrderServiceImpl implements VOrderService {
 				
 				if(StringUtils.isNotBlank(unionid)){
 					params.add(criteriaBuilder.equal(root.get("unionid"), unionid));
+				}
+				
+				if(null != brandId){
+					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
+				}
+				
+				if(StringUtils.isNotBlank(isOffway)){
+					params.add(criteriaBuilder.equal(root.get("isOffway"), isOffway));
 				}
 				
 				if(CollectionUtils.isNotEmpty(brandIds)){

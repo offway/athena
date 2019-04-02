@@ -75,7 +75,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 	}
 	
 	@Override
-	public Page<PhOrderInfo> findByPage(final String orderNo,final String unionid,final String status,final List<Long> brandIds,Pageable page){
+	public Page<PhOrderInfo> findByPage(final String orderNo,final String unionid,final String status,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
 		return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
 			
 			@Override
@@ -92,6 +92,14 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 				
 				if(StringUtils.isNotBlank(status)){
 					params.add(criteriaBuilder.equal(root.get("status"), status));
+				}
+				
+				if(null != brandId){
+					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
+				}
+				
+				if(StringUtils.isNotBlank(isOffway)){
+					params.add(criteriaBuilder.equal(root.get("isOffway"), isOffway));
 				}
 				
 				if(CollectionUtils.isNotEmpty(brandIds)){

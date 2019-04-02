@@ -21,5 +21,6 @@ public interface PhShowImageService{
 
 	PhShowImage findByOrderNo(String orderNo);
 
-	Page<PhShowImage> findByPage(String orderNo, String unionid, String status, List<Long> brandIds, Pageable page);
+	Page<PhShowImage> findByPage(String orderNo, String unionid, String status, Long brandId, String isOffway,
+			List<Long> brandIds, Pageable page);
 }

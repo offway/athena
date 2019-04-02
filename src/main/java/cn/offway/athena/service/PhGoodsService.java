@@ -29,5 +29,5 @@ public interface PhGoodsService{
 
 	List<PhGoods> findByBrandId(Long brandId);
 
-	Page<PhGoods> findByPage(String name, List<Long> brandIds, Pageable page);
+	Page<PhGoods> findByPage(String name, Long brandId, String isOffway, List<Long> brandIds, Pageable page);
 }
