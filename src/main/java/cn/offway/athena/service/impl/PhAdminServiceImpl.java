@@ -109,11 +109,18 @@ public class PhAdminServiceImpl implements PhAdminService {
 	public void save(PhAdmin phAdmin,Long[] roleIds,String[] brandIds){
 		
 		Date now = new Date();
-		phAdmin.setCreatedtime(now);
-		phAdmin.setPassword(passwordEncoder.encode(DEFAULT_PWD));
+
+		Long adminId = phAdmin.getId();
+		if(null!=phAdmin.getId()){
+			PhAdmin phAdmin1 = findOne(adminId);
+			phAdmin.setPassword(phAdmin1.getPassword());
+			phAdmin.setCreatedtime(phAdmin1.getCreatedtime());
+		}else{
+			phAdmin.setCreatedtime(now);
+			phAdmin.setPassword(passwordEncoder.encode(DEFAULT_PWD));
+		}
 		phAdmin = save(phAdmin);
 		
-		Long adminId = phAdmin.getId();
 		
 		phRoleadminRepository.deleteByAdminId(adminId);
 		if(null!=roleIds){
