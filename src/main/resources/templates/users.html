@@ -358,9 +358,11 @@
 			
 			var brandIdsArray = $("#multi-select1").val();
 			var brandIds = "";
-			 $.each(brandIdsArray,function(i,e){
-				 brandIds+=e+","
-			});
+			if(null !=brandIdsArray){
+				$.each(brandIdsArray,function(i,e){
+					 brandIds+=e+","
+				});
+			}
 			 
 			$.post("/users-save",{
 				id:id,

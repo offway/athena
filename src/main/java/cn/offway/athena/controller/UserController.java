@@ -109,7 +109,7 @@ public class UserController {
 			@RequestParam(required = false, value="roles[]") Long[] roles,
 			@RequestParam(required = false) String brandIds){
 		try {
-			phAdminService.save(phAdmin, roles,brandIds.split(","));
+			phAdminService.save(phAdmin, roles,"".equals(brandIds)?null:brandIds.split(","));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
