@@ -513,7 +513,7 @@
 					$.get("/goods-brandId?brandId="+brandId,{},function(data){
 						goodsSelect.empty();
 						$.each(data,function(i,e){
-							goodsSelect.append("<option value="+e.id+">"+e.name+"</option>");
+							goodsSelect.append("<option value="+e.id+">"+e.name+"-----"+e.type+"</option>");
 						});
 						goodsSelect.val(goodsId);
 						jQuery('#modal-6').modal('show', {backdrop: 'fade'});
