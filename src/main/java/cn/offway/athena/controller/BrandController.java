@@ -2,6 +2,7 @@ package cn.offway.athena.controller;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -98,6 +100,13 @@ public class BrandController {
 	@PostMapping("/brand-one")
 	public PhBrand findOne(Long id){
 		return phBrandService.findOne(id);
+	}
+	
+	
+	@ResponseBody
+	@GetMapping("/brand-showImgId")
+	public List<PhBrand> findByShowImgId(Long showImgId){
+		return phBrandService.findByShowImgId(showImgId);
 	}
 	
 	

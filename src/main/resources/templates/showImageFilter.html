@@ -51,28 +51,8 @@
 						<div class="form-group ">
 							<div class="input-group">
 								<select name="brandId" class="form-control" style="height:35px" placeholder="品牌">
-									<option value="">品牌</option>
 									<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
 								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="isOffway" class="form-control" style="height:35px">
-									<option value="">是否自营</option>
-									<option value="0">否</option>
-									<option value="1">是</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="orderNo" class="form-control" style="height:35px" placeholder="订单号"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="unionid" class="form-control" style="height:35px" placeholder="用户ID"/>
 							</div>
 						</div>
 						
@@ -149,41 +129,21 @@
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/showImage-data?status=1",//通过ajax实现分页的url路径。
+            sAjaxSource : "/showImageFilter-data",//通过ajax实现分页的url路径。
             fnServerParams : function(aData){
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
             columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="authId" value="'+data+'" />';  
-				    }
-				},
+		
                 {
-                    targets: 1,
+                    targets: 0,
                     data: "id",
                     title: "序号"
                 },
-                {
-               		targets: 2,
-	                data: "orderNo",
-	                title: "订单号"
-            	},
-            	
+               
             	{
-               		targets: 3,
-	                data: "unionid",
-	                title: "用户ID"
-            	},
-            	{
-               		targets: 4,
+               		targets: 1,
 	                data: "brandLogo",
 	                title: "品牌LOGO",
                     render: function (data, type, row, meta) {
@@ -191,98 +151,40 @@
                     }
             	},
             	{
-               		targets: 5,
+               		targets: 2,
 	                data: "brandName",
 	                title: "品牌名称"
             	},
             	{
-               		targets: 6,
-	                data: "isOffway",
-	                title: "是否自营",
-                    render: function (data, type, row, meta) {
-                        return "1"==data?"是":"否";
-                    }
-            	},
-            	{
-               		targets: 7,
+               		targets: 3,
 	                data: "showImage",
 	                title: "图片",
                     render: function (data, type, row, meta) {
-                    	var a = data.split(",");
-                    	var html = "";
-                    	$.each(a,function(i,e){
-                    		html +="<img src="+e+"></img><p></p>";
-                    	});
-                    	return html;
+                    	return "<img src="+data+"></img>";
                     }
             	},
             	{
-               		targets: 8,
-	                data: "content",
-	                title: "内容"
-            	},
-            	{
-               		targets: 9,
-	                data: "url",
-	                title: "链接",
+               		targets: 4,
+	                data: "useDate",
+	                title: "使用时间",
                     render: function (data, type, row, meta) {
-                    	return "<a href="+data+" target='_blank'>"+data+"</a>";
+                        return new Date(data).Format("yyyy-MM-dd");
                     }
             	},
             	{
-               		targets: 10,
-	                data: "status",
-	                title: "状态",
-                    render: function (data, type, row, meta) {
-                        if("0"==data){
-                        	return "提交";
-                        }else if("1"==data){
-                        	return "通过";
-                        }else if("2"==data){
-                        	return "拒绝";
-                        }
-                    }
+               		targets: 5,
+	                data: "starName",
+	                title: "明星"
             	},
             	
-            	{
-               		targets: 11,
-	                data: "orderNo",
-	                title: "商品明细",
-	                render: function (data, type, row, meta) {
-                        return "<a href='javascript:void(0)' class='showGoods' orderNo='"+data+"' color='blue'>查看</a>";
-                    }
-            	},
                 {
-                    targets: 12,
+                    targets: 6,
                     data: "createTime",
-                    title: "上传时间",
+                    title: "创建时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
-                },
-            	{
-               		targets: 13,
-	                data: "checkName",
-	                title: "审核人"
-            	},
-                
-                {
-                    targets: 14,
-                    data: "checkTime",
-                    title: "审核时间",
-                    render: function (data, type, row, meta) {
-                    	if(data==null){
-                    		return "";
-                    	}else{
-	                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    	}
-                    }
-                },
-                {
-               		targets: 15,
-	                data: "checkContent",
-	                title: "拒绝原因"
-            	}
+                }
                ]
 		});
 		

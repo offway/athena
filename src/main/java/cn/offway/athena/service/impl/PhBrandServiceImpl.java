@@ -80,4 +80,9 @@ public class PhBrandServiceImpl implements PhBrandService {
 		}, page);
 	}
 	
+	@Override
+	public List<PhBrand> findByShowImgId(Long showImgId){
+		return phBrandRepository.findByShowImgId(showImgId);
+	}
+	
 }

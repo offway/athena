@@ -16,6 +16,9 @@
      	color: blue; 
     	text-decoration: none;
 	}
+	html .select2-drop .select2-results li.select2-highlighted {
+    background-color: rgb(200, 200, 200);
+}
 	</style>
 </head>
 <body class="page-body">
@@ -82,6 +85,7 @@
 									<option value="0">提交</option>
 									<option value="1">通过</option>
 									<option value="2">拒绝</option>
+									<option value="3">已分类</option>
 								</select>
 							</div>
 						</div>
@@ -97,6 +101,8 @@
 					</table>
 				</div>
 				<button class="btn btn-info add" >审核</button>
+				<button class="btn btn-info addImg" >图片分类</button>
+				
 			</div>
 			<footer th:replace="footer"></footer>
 		</div>
@@ -209,6 +215,62 @@
 		</div>
 	</div>
 	
+	<div class="modal fade" id="modal-img">
+		<div class="modal-dialog" style="width:800px;margin: 30px auto;">
+			<div class="modal-content">
+				<input type="hidden" id="showImgId"/>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">温馨提示</h4>
+				</div>
+				
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								
+								<div class="form-group">
+									<label class="control-label">请选择图片</label>
+									<select class="form-control" id="s2example-3"></select>
+								</div>
+							</div>	
+							
+						</div>
+						
+					</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">品牌</label>
+								 <div class="form-block brandsDiv">
+								 
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">使用艺人</label>
+								<input type="text" class="form-control" name="starName" placeholder="使用艺人"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info saveImg">确定</button>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
@@ -297,19 +359,28 @@
             	},
             	{
                		targets: 8,
+	                data: "starName",
+	                title: "使用艺人"
+            	},
+            	{
+               		targets: 9,
 	                data: "content",
 	                title: "内容"
             	},
             	{
-               		targets: 9,
+               		targets: 10,
 	                data: "url",
 	                title: "链接",
                     render: function (data, type, row, meta) {
-                    	return "<a href="+data+" target='_blank'>"+data+"</a>";
+                    	if(null != data){
+	                    	return "<a href="+data+" target='_blank'>"+data+"</a>";
+                    	}else{
+                    		return data;
+                    	}
                     }
             	},
             	{
-               		targets: 10,
+               		targets: 11,
 	                data: "status",
 	                title: "状态",
                     render: function (data, type, row, meta) {
@@ -324,7 +395,7 @@
             	},
             	
             	{
-               		targets: 11,
+               		targets: 12,
 	                data: "orderNo",
 	                title: "商品明细",
 	                render: function (data, type, row, meta) {
@@ -332,7 +403,7 @@
                     }
             	},
                 {
-                    targets: 12,
+                    targets: 13,
                     data: "createTime",
                     title: "上传时间",
                     render: function (data, type, row, meta) {
@@ -340,13 +411,13 @@
                     }
                 },
             	{
-               		targets: 13,
+               		targets: 14,
 	                data: "checkName",
 	                title: "审核人"
             	},
                 
                 {
-                    targets: 14,
+                    targets: 15,
                     data: "checkTime",
                     title: "审核时间",
                     render: function (data, type, row, meta) {
@@ -358,7 +429,7 @@
                     }
                 },
                 {
-               		targets: 15,
+               		targets: 16,
 	                data: "checkContent",
 	                title: "拒绝原因"
             	}
@@ -414,9 +485,69 @@
 					jQuery('#modal-add').modal('show', {backdrop: 'fade'});
 				}
 			});
-			
 				
 		 });
+		 
+		 $(".btn.btn-info.addImg").click(function(){
+				
+				var stockId = $("input[name='authId']:checked");
+				if(stockId.length!=1){
+					toastr.error("请选择一条数据操作", "温馨提示");
+					return ;
+				}
+				
+				stockId = stockId[0].value;
+				$("#orderid").val(stockId);
+				
+				
+				$.post("/showImageFilter-exists",{showImgId:stockId},function(data){
+					 
+					/* if(data.status !='1'){
+						toastr.error("只有审核通过的图片才能分类", "温馨提示");
+					}else{ */
+						var urls = data.split(",");
+						 $('#s2example-3').empty();
+						 
+						  $.each(urls,function(i,e){
+							  if(e!=""){
+								$('#s2example-3').append("<option value='"+e+"'>"+e+"</option>");
+							  }
+						}); 
+						 
+						  $("#s2example-3").select2({
+							placeholder: 'Select country...',
+							allowClear: true,
+							minimumResultsForSearch: -1, // Hide the search bar
+							formatResult: function(state)
+							{
+								return '<div style="background:url(' + state.id + ') no-repeat center center;background-size:100%;display:inline-block;position:relative;width:200px;height:200px;margin-right: 10px;top:2px;"></div>' 
+										+ state.text;
+							}
+						}).on('select2-open', function()
+						{
+							// Adding Custom Scrollbar
+							$(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+						}); 
+						 
+						  $("#showImgId").val(stockId);
+						//查询品牌
+						 $.get("/brand-showImgId",{showImgId:stockId},function(data){
+							
+							  var html = "";
+							 $('.brandsDiv').html("");
+							 $.each(data,function(i,e){
+								 html+= "<label><input type=\"checkbox\" name =\"brandCheckBox\" value=\""+e.id+"\"/>"+e.name+"</label><br />"
+							 });
+							 $('.brandsDiv').html(html);
+							 
+							 jQuery('#modal-img').modal('show', {backdrop: 'fade'});
+							
+						}); 
+					//}
+					
+					 
+				});
+		});
 		 
 		 $(".btn.btn-info.save").click(function(){
 			 var id = $("#orderid").val();
@@ -429,6 +560,38 @@
 				 $.post("/showImage-check",{id:id,status:status,checkContent:content},function(data){
 					 if(data){
 						 	jQuery('#modal-add').modal('hide');
+							toastr.success("操作已成功！", "温馨提示");
+							oTable.fnDraw();
+					 }else{
+						 toastr.error("操作失败", "温馨提示");
+					 }
+				 });
+			 }
+		 });
+		 
+		 $(".btn.btn-info.saveImg").click(function(){
+			 var image = $('#s2example-3').val();
+			 var starName = $("input[name='starName']").val();
+			 var showImgId = $('#showImgId').val();
+		     var brandIds= ""; //品牌
+		     $.each($('input[name="brandCheckBox"]'),function(){
+	                if(this.checked){
+	                	brandIds +=$(this).val()+",";
+	                }
+	            });
+		     
+			 if(brandIds=='' || starName==''){
+				 toastr.error("请填写完整信息后提交", "温馨提示");
+				 return false;
+			 }else{
+				  $.post("/showImageFilter-save",{
+					  showImgId:showImgId,
+					  image:image,
+					  brandIds:brandIds,
+					  starName:starName
+				  },function(data){
+					 if(data){
+						 	jQuery('#modal-img').modal('hide');
 							toastr.success("操作已成功！", "温馨提示");
 							oTable.fnDraw();
 					 }else{
