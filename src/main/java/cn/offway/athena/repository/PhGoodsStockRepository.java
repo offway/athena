@@ -1,5 +1,7 @@
 package cn.offway.athena.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -30,4 +32,9 @@ public interface PhGoodsStockRepository extends JpaRepository<PhGoodsStock,Long>
 	@Modifying
 	@Query(nativeQuery=true,value="update ph_goods_stock s set s.image = ?3 where  s.goods_id=?1  and s.color =?2 ")
 	int updateImage(Long goodsId,String color,String image);
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery=true,value="delete from ph_goods_stock where goods_id in(?1)")
+	int deleteByGoodsIds(List<Long> goodsIds);
 }

@@ -26,9 +26,12 @@ import cn.offway.athena.domain.PhGoods;
 import cn.offway.athena.domain.PhGoodsImage;
 import cn.offway.athena.properties.QiniuProperties;
 import cn.offway.athena.repository.PhGoodsRepository;
+import cn.offway.athena.repository.PhOrderGoodsRepository;
+import cn.offway.athena.repository.PhWardrobeRepository;
 import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhGoodsImageService;
 import cn.offway.athena.service.PhGoodsService;
+import cn.offway.athena.service.PhGoodsStockService;
 import cn.offway.athena.service.QiniuService;
 
 
@@ -58,6 +61,15 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 	@Autowired
 	private PhBrandService phBrandService;
 	
+	@Autowired
+	private PhGoodsStockService phGoodsStockService;
+	
+	@Autowired
+	private PhWardrobeRepository phWardrobeRepository;
+
+	@Autowired
+	private PhOrderGoodsRepository phOrderGoodsRepository;
+	
 	@Override
 	public PhGoods save(PhGoods phGoods){
 		return phGoodsRepository.save(phGoods);
@@ -76,6 +88,25 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 	@Override
 	public List<PhGoods> findAll(List<Long> ids){
 		return phGoodsRepository.findAll(ids);
+	}
+	
+	@Override
+	public String delete(List<Long> goodsIds){
+		
+		int c =  phGoodsRepository.countByGoodsIds(goodsIds);
+		if(c>0){
+			return "1";
+		}
+		int count = phOrderGoodsRepository.countByGoodsIds(goodsIds);
+		if(count>0){
+			return "2";
+		}
+		phWardrobeRepository.deleteByGoodsIds(goodsIds);
+		phGoodsImageService.deleteByGoodsIds(goodsIds);
+		phGoodsStockService.deleteByGoodsIds(goodsIds);
+		phGoodsRepository.deleteByGoodsIds(goodsIds);
+		
+		return "0";
 	}
 	
 	@Override

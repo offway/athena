@@ -167,7 +167,7 @@
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
-            columnDefs: [
+            order: [[ 1, "desc" ]],columnDefs: [
 				{	
 					targets: 0,
 				    data: "orderNo",

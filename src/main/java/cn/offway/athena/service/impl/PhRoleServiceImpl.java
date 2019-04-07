@@ -113,14 +113,16 @@ public class PhRoleServiceImpl implements PhRoleService {
 		
 		Long phRoleId = phRole.getId();
 		
-		List<Long> idList = (List<Long>)ListUtils.toList(resourceIds);
-		List<PhResource> phResources = phResourceRepository.findByIds(idList);
-		List<PhRoleresource> roleresources = new ArrayList<>();
-		for (PhResource phResource : phResources) {
-			getResources(now, phRoleId, roleresources, phResource);
+		if(null != resourceIds){
+			List<Long> idList = (List<Long>)ListUtils.toList(resourceIds);
+			List<PhResource> phResources = phResourceRepository.findByIds(idList);
+			List<PhRoleresource> roleresources = new ArrayList<>();
+			for (PhResource phResource : phResources) {
+				getResources(now, phRoleId, roleresources, phResource);
+			}
+			phRoleresourceRepository.deleteByRoleId(phRoleId);
+			phRoleresourceRepository.save(roleresources);
 		}
-		phRoleresourceRepository.deleteByRoleId(phRoleId);
-		phRoleresourceRepository.save(roleresources);
 	}
 
 	/**

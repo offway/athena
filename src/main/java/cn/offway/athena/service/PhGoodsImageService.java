@@ -21,4 +21,6 @@ public interface PhGoodsImageService{
 	List<PhGoodsImage> findByGoodsId(Long goodsId);
 
 	void delete(PhGoodsImage phGoodsImage);
+
+	int deleteByGoodsIds(List<Long> goodsIds);
 }

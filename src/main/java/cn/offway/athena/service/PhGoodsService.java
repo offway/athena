@@ -30,4 +30,6 @@ public interface PhGoodsService{
 	List<PhGoods> findByBrandId(Long brandId);
 
 	Page<PhGoods> findByPage(String name, Long brandId, String isOffway, List<Long> brandIds, Pageable page);
+
+	String delete(List<Long> goodsIds);
 }

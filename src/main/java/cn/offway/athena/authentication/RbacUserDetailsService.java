@@ -21,6 +21,7 @@ import cn.offway.athena.domain.PhResource;
 import cn.offway.athena.repository.PhAdminRepository;
 import cn.offway.athena.service.PhBrandadminService;
 import cn.offway.athena.service.PhResourceService;
+import cn.offway.athena.service.PhRoleadminService;
 import cn.offway.athena.utils.TreeParser;
 
 /**
@@ -41,6 +42,9 @@ public class RbacUserDetailsService implements UserDetailsService {
 	
 	@Autowired
 	private PhBrandadminService phBrandadminService;
+	
+	@Autowired
+	private PhRoleadminService phRoleadminService;
 
 	/*
 	 * (non-Javadoc)
@@ -69,6 +73,10 @@ public class RbacUserDetailsService implements UserDetailsService {
 		
 		//用户品牌
 		admin.setBrandIds(phBrandadminService.findBrandIdByAdminId(admin.getId())); 
+		
+		//用户角色
+		admin.setRoleIds(phRoleadminService.findRoleIdByAdminId(admin.getId()));
+		
 		
 		return admin;
 	}

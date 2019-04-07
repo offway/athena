@@ -79,6 +79,7 @@
 				</div>
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
+				<button class="btn btn-info delete">删除</button>
 				<button class="btn btn-info updateStatus">上架</button>
 				<button class="btn btn-info updateStatus">下架</button>
 			</div>
@@ -125,7 +126,7 @@
 							</div>	
 						</div>
 					</div>
-					<div class="row">
+					<!-- <div class="row">
 						<div class="col-md-12">
 							
 							<div class="form-group">
@@ -137,7 +138,7 @@
 								</select>
 							</div>	
 						</div>
-					</div>
+					</div> -->
 					<div class="row">
 						<div class="col-md-12">
 							
@@ -145,8 +146,8 @@
 								<label for="field-4" class="control-label">是否发售</label>
 								
 								<select name="isRelease" class="form-control" style="height:35px" >
-									<option value="0">否</option>
 									<option value="1">是</option>
+									<option value="0">否</option>
 								</select>
 							</div>	
 						</div>
@@ -236,6 +237,28 @@
 		</div>
 	</div>
 	
+	<div class="modal fade" id="modal-delete">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<input type="hidden" id="orderid"/>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">温馨提示</h4>
+				</div>
+				
+				<div class="modal-body">
+					请确认要删除该商品吗？
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info submitDel">确定</button>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
@@ -262,7 +285,7 @@
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
-            columnDefs: [
+            order: [[ 0, "desc" ]],columnDefs: [
 				{	
 					targets: 0,
 				    data: "id",
@@ -401,8 +424,10 @@
 				    		  params: {"x:param":param},
 				    		  mimeType: ["image/png", "image/jpeg", "image/gif"] || null
 				    		};
-				    var observable = qiniu.upload(file, "image/wx/"+UUID.randomUUID()+postf, token,
-				    		putExtra, config);
+				    /* var observable = qiniu.upload(file, "image/wx/"+UUID.randomUUID()+postf, token,
+				    		putExtra, config); */
+				    var observable = qiniu.upload(file, "image/wx/"+param+"/"+file.lastModified+postf, token,
+				    		putExtra, config); 
 					var subscription = observable.subscribe(next, error, complete);
 			    }
 				
@@ -417,7 +442,7 @@
 				var form = $("#saveForm");
 				var name = form.find("input[name='name']").val();
 				var brandId = form.find("[name='brandId']").val();
-				var isOffway = form.find("[name='isOffway']").val();
+				//var isOffway = form.find("[name='isOffway']").val();
 				var isRelease = form.find("[name='isRelease']").val();
 				var type = form.find("[name='type']").val();
 				var category = form.find("[name='category']").val();
@@ -429,7 +454,7 @@
 				
 				
 				
-				if(brandId=='' ||isOffway==''||isRelease==''  ||type=='' ||name =='' ||category=='' || 
+				if(brandId==''||isRelease==''  ||type=='' ||name =='' ||category=='' || 
 					(imageVal=='' && imageVals=='')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
@@ -763,8 +788,43 @@
 				
 			});
 			
+			$(".btn.btn-info.delete").click(function(){
+				
+				var goodsId = $("input[name='goodsId']:checked");
+				if(goodsId.length < 1){
+					toastr.error("请至少选择一条数据操作", "温馨提示");
+					return ;
+				}
+				
+				jQuery('#modal-delete').modal('show', {backdrop: 'fade'});
+				
+				
+			});
 			
-		
+			$(".btn.btn-info.submitDel").click(function(){
+				
+				var goodsId = $("input[name='goodsId']:checked");
+				
+				var ids = new Array();
+				goodsId.each(function(i,e){
+					ids.push(e.value);
+				});
+				
+				$.post("/goods-delete",{ids:ids},function(data){
+					if(data=='0'){
+						jQuery('#modal-delete').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw();
+					}else if(data=='1'){
+						toastr.error("操作失败，存在上架的商品！", "温馨提示");
+					}else{
+						toastr.error("操作失败，订单中存在商品！", "温馨提示");
+					}
+				})
+			});
+			
+			
+			
 	});
 	/*]]>*/
 	</script>

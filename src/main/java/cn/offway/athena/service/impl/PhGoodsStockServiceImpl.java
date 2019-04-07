@@ -78,6 +78,11 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 	}
 	
 	@Override
+	public  int deleteByGoodsIds(List<Long> goodsIds){
+		return phGoodsStockRepository.deleteByGoodsIds(goodsIds);
+	}
+	
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
 	public boolean updateStock(String orderNo) throws Exception{
 		List<PhOrderGoods> orderGoods =  phOrderGoodsService.findByOrderNo(orderNo);
@@ -147,4 +152,6 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 			}
 		}, page);
 	}
+	
+	
 }

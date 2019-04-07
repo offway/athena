@@ -55,6 +55,8 @@ public class PhAdmin implements UserDetails {
     private List<PhResource> resources = new ArrayList<>();
     
     private List<Long> brandIds = new ArrayList<>();
+    
+    private List<Long> roleIds = new ArrayList<>();
 
 
 
@@ -162,6 +164,17 @@ public class PhAdmin implements UserDetails {
 	public void setBrandIds(List<Long> brandIds) {
 		this.brandIds = brandIds;
 	}
+
+	@Transient
+	public List<Long> getRoleIds() {
+		return roleIds;
+	}
+
+	public void setRoleIds(List<Long> roleIds) {
+		this.roleIds = roleIds;
+	}
+	
+	
 	
 	
 	

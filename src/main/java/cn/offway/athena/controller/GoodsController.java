@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,8 +108,19 @@ public class GoodsController {
 	
 	@ResponseBody
 	@PostMapping("/goods-save")
-	public boolean save(PhGoods phGoods,String banner,String detail){
+	public boolean save(PhGoods phGoods,String banner,String detail,Authentication authentication){
 		try {
+			
+			String isOffway = "0";
+			PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+			List<Long> roleIds = phAdmin.getRoleIds();
+			for (Object roleId : roleIds) {
+				if("6".equals(String.valueOf(roleId))){
+					isOffway = "1"; 
+				}
+			}
+			
+			phGoods.setIsOffway(isOffway);
 			phGoodsService.save(phGoods, banner, detail);
 			return true;
 		} catch (Exception e) {
@@ -156,6 +168,12 @@ public class GoodsController {
 	@ResponseBody
 	public List<PhGoods> goodsBybrandId(Long brandId){
 		return phGoodsService.findByBrandId(brandId);
+	}
+	
+	@PostMapping("/goods-delete")
+	@ResponseBody
+	public String goodsDelete(@RequestParam("ids[]") Long[] ids){
+		return phGoodsService.delete(Arrays.asList(ids));
 	}
 	
 	
