@@ -99,6 +99,11 @@
 								<input type="text" name="color" class="form-control" style="height:35px" placeholder="颜色" value=""/>
 							</div>
 						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="sku" class="form-control" style="height:35px" placeholder="商品编码" value=""/>
+							</div>
+						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
@@ -194,6 +199,16 @@
 							</div>	
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">商品编码</label>
+								<input type="text" name="sku" class="form-control" style="height:35px" placeholder="商品编码"/>
+
+							</div>	
+						</div>
+					</div>
 					
 					<div class="row">
 						<div class="col-md-12">
@@ -279,6 +294,11 @@
                 },
                 {
                		targets: 2,
+	                data: "sku",
+	                title: "商品编码"
+            	},
+                {
+               		targets: 3,
 	                data: "image",
 	                title: "图片",
                     render: function (data, type, row, meta) {
@@ -286,12 +306,12 @@
                     }
             	},
                 {
-               		targets: 3,
+               		targets: 4,
 	                data: "goodsName",
 	                title: "商品名称"
             	}, 
             	{
-               		targets: 4,
+               		targets: 5,
                	 	data: "brandLogo",
 	                title: "品牌LOGO",
 	                render: function (data, type, row, meta) {
@@ -301,13 +321,13 @@
             	}, 
             	
             	{
-               		targets: 5,
+               		targets: 6,
                		data: "brandName",
 	                title: "品牌名称"
             	}, 
             	
             	{
-               		targets: 6,
+               		targets: 7,
 	                data: "isOffway",
 	                title: "是否自营",
                     render: function (data, type, row, meta) {
@@ -315,17 +335,17 @@
                     }
             	},
             	{
-               		targets: 7,
+               		targets: 8,
 	                data: "size",
 	                title: "尺码"
             	},
             	{
-               		targets: 8,
+               		targets: 9,
                		data: "color",
 	                title: "颜色"
             	},
             	{
-               		targets: 9,
+               		targets: 10,
 	                data: "stock",
 	                title: "库存余量",
                     render: function (data, type, row, meta) {
@@ -333,7 +353,7 @@
                     }
             	},
                 {
-                    targets: 10,
+                    targets: 11,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -409,6 +429,8 @@
 				var size = form.find("input[name='size']").val();
 				var color = form.find("input[name='color']").val();
 				var stock = form.find("input[name='stock']").val();
+				var sku = form.find("input[name='sku']").val();
+
 
 				//文件
 				var imageVal = form.find("input[name='imageFile']")[0].value;
@@ -417,7 +439,7 @@
 				var imageVals = form.find("input[name='image']").val();
 				
 				
-				if(goodsId=='' ||size=='' ||color=='' ||stock =='' || 
+				if(goodsId=='' ||size=='' ||color=='' ||stock ==''||sku =='' || 
 						(imageVal=='' && imageVals=='')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
@@ -492,7 +514,7 @@
 					form.find("[name='size']").val(data.size);
 					form.find("input[name='color']").val(data.color);
 					form.find("input[name='stock']").val(data.stock);
-					
+					form.find("input[name='sku']").val(data.sku);
 					form.find("input[name='image']").val(data.image);
 					
 					if(''!=data.image){

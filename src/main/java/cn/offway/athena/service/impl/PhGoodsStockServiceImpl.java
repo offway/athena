@@ -101,7 +101,7 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 	}
 	
 	@Override
-	public Page<PhGoodsStock> findByPage(final Long brandId,final String brandName,final Long goodsId,final String goodsName,
+	public Page<PhGoodsStock> findByPage(final String sku,final Long brandId,final String brandName,final Long goodsId,final String goodsName,
 			final String isOffway,final String color,final String size,final List<Long> brandIds,Pageable page){
 		return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {
 			
@@ -111,6 +111,10 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 				
 				if(StringUtils.isNotBlank(brandName)){
 					params.add(criteriaBuilder.like(root.get("brandName"), "%"+brandName+"%"));
+				}
+				
+				if(StringUtils.isNotBlank(sku)){
+					params.add(criteriaBuilder.equal(root.get("sku"), sku));
 				}
 				
 				if(CollectionUtils.isNotEmpty(brandIds)){

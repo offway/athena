@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>晒图审核</title>
+	<title>返图审核</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
@@ -32,7 +32,7 @@
 			<div class="page-title">
 				
 				<div class="title-env">
-					<h1 class="title">晒图审核</h1>
+					<h1 class="title">返图审核</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -41,7 +41,7 @@
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>业务管理</a></li>
-						<li class="active"><strong>晒图审核</strong></li>
+						<li class="active"><strong>返图审核</strong></li>
 					</ol>
 
 				</div>
@@ -127,6 +127,8 @@
 							<tr>
 								<th>商品图片</th>
 								<th>商品名称</th>
+								<th>品牌LOGO</th>
+								<th>品牌名称</th>
 								<th>尺码</th>
 								<th>颜色</th>
 							</tr>
@@ -457,7 +459,7 @@
 				var html = "";
 				$('#modal-goods tbody').html("");
 				 $.each(data,function(i,e){
-					 html+="<tr><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
+					 html+="<tr><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td><img width='100px' src=\""+e.brandLogo+"\" /></td><td>"+e.brandName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
 				 });
 				 $('#modal-goods tbody').html(html);
 			 

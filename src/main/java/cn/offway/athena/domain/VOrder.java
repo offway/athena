@@ -44,7 +44,7 @@ public class VOrder implements Serializable {
     /** 状态[0-已下单,1-已发货,2-已寄回,3-已收货] **/
     private String status;
     
-    /** 是否晒图[0-否,1-是]**/
+    /** 是否返图[0-否,1-是]**/
     private String isUpload;
 
     /** 创建时间 **/
@@ -53,7 +53,7 @@ public class VOrder implements Serializable {
     /** 寄回时间 **/
     private Date returnTime;
     
-    /** 晒图时间 **/
+    /** 返图时间 **/
     private Date showTime;
     
     /** 收货时间 **/

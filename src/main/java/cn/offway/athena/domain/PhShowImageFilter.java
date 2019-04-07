@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 晒图筛选
+ * 返图筛选
  *
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $

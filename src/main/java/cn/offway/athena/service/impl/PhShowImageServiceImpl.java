@@ -25,7 +25,7 @@ import cn.offway.athena.service.PhShowImageService;
 
 
 /**
- * 晒图Service接口实现
+ * 返图Service接口实现
  *
  * @author wn
  * @version $v: 1.0.0, $time:2018-02-12 11:26:00 Exp $

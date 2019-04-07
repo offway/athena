@@ -25,7 +25,7 @@ import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhShowImageService;
 
 /**
- * 晒图审核
+ * 返图审核
  * @author wn
  *
  */

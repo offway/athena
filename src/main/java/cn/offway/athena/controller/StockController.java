@@ -78,7 +78,7 @@ public class StockController {
 	 */
 	@ResponseBody
 	@RequestMapping("/stock-data")
-	public Map<String, Object> stockData(HttpServletRequest request,Long brandId,String brandName,Long goodsId,String goodsName,String isOffway,String color,String size,Authentication authentication){
+	public Map<String, Object> stockData(HttpServletRequest request,String sku,Long brandId,String brandName,Long goodsId,String goodsName,String isOffway,String color,String size,Authentication authentication){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -89,7 +89,7 @@ public class StockController {
 		
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
-		Page<PhGoodsStock> pages = phGoodsStockService.findByPage(brandId,null!=brandName?brandName.trim():brandName, goodsId, null!=goodsName?goodsName.trim():goodsName, isOffway.trim(), color.trim(), size.trim(),brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhGoodsStock> pages = phGoodsStockService.findByPage(sku.trim(),brandId,null!=brandName?brandName.trim():brandName, goodsId, null!=goodsName?goodsName.trim():goodsName, isOffway.trim(), color.trim(), size.trim(),brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

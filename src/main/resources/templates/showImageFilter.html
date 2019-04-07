@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>晒图查看</title>
+	<title>返图查看</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
@@ -29,7 +29,7 @@
 			<div class="page-title">
 				
 				<div class="title-env">
-					<h1 class="title">晒图查看</h1>
+					<h1 class="title">返图查看</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -38,7 +38,7 @@
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>业务管理</a></li>
-						<li class="active"><strong>晒图查看</strong></li>
+						<li class="active"><strong>返图查看</strong></li>
 					</ol>
 
 				</div>
@@ -158,29 +158,28 @@
             	{
                		targets: 3,
 	                data: "showImage",
-	                title: "图片",
+	                title: "明星返图",
                     render: function (data, type, row, meta) {
                     	return "<img src="+data+"></img>";
                     }
             	},
             	{
                		targets: 4,
+	                data: "starName",
+	                title: "艺人名称"
+            	},
+            	{
+               		targets: 5,
 	                data: "useDate",
-	                title: "使用时间",
+	                title: "艺人使用时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd");
                     }
             	},
-            	{
-               		targets: 5,
-	                data: "starName",
-	                title: "明星"
-            	},
-            	
                 {
                     targets: 6,
                     data: "createTime",
-                    title: "创建时间",
+                    title: "返图时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }

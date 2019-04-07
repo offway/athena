@@ -32,7 +32,7 @@ import cn.offway.athena.service.PhShowImageFilterService;
 import cn.offway.athena.service.PhShowImageService;
 
 /**
- * 晒图查看
+ * 返图查看
  * @author wn
  *
  */

@@ -25,7 +25,7 @@ import cn.offway.athena.repository.PhShowImageFilterRepository;
 
 
 /**
- * 晒图筛选Service接口实现
+ * 返图筛选Service接口实现
  *
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
