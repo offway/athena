@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<link rel="stylesheet" href="assets/css/pictureViewer.css"/>
 	<style type="text/css">
 	.form-group img{
 		max-width:400px;
@@ -17,8 +18,9 @@
     	text-decoration: none;
 	}
 	html .select2-drop .select2-results li.select2-highlighted {
-    background-color: rgb(200, 200, 200);
-}
+	    background-color: rgb(200, 200, 200);
+	}
+
 	</style>
 </head>
 <body class="page-body">
@@ -278,6 +280,8 @@
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/jquery.mousewheel.min.js"></script>
+	<script src="assets/js/pictureViewer.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/	
 	jQuery(document).ready(function($)
@@ -352,10 +356,11 @@
 	                title: "图片",
                     render: function (data, type, row, meta) {
                     	var a = data.split(",");
-                    	var html = "";
+                    	var html = "<div class=\"image-list\">";
                     	$.each(a,function(i,e){
-                    		html +="<img src="+e+"></img><p></p>";
+                    		html +="<div class=\"cover\" index="+i+"><img src="+e+"></img></div><p></p>";
                     	});
+                    	html += "</div>";
                     	return html;
                     }
             	},
@@ -466,6 +471,20 @@
 			 });
 			 
 			 jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+		 });
+		 
+		 $("body").on("click",".image-list .cover",function(){
+			 var this_ = $(this);
+				var images = this_.parents('.image-list').find('.cover');
+				var imagesArr = new Array();
+				$.each(images, function (i, image) {
+					imagesArr.push($(image).children('img').attr('src'));
+				});
+				$.pictureViewer({
+					images: imagesArr, //需要查看的图片，数据类型为数组
+					initImageIndex: parseInt(this_.attr("index")) + 1, //初始查看第几张图片，默认1
+					scrollSwitch: true //是否使用鼠标滚轮切换图片，默认false
+				});
 		 });
 		 
 		 
