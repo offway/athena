@@ -207,7 +207,9 @@
 						<div class="col-md-12">
 							<div class="form-group">
 								<label for="field-4" class="control-label">轮播图片</label>
-								<button class="btn btn-info appendBanner">添加</button>
+								<button class="btn btn-info appendBanner" onclick="getFile()">添加</button>
+						        <input style="display: none" type="file"  name="file" id="getF" />
+								
 								<!-- <input type="file" class="form-control" name="bannerFile" placeholder="轮播图片"/> -->
 								<input type="hidden" class="form-control" name="banner" />
 							</div>
@@ -434,7 +436,38 @@
 				
 			 };
 			 
+			 
+			 function getFile(){
+				   $("#getF").click();
+			 }
+			 
 			 var qiniuUrl = [[${qiniuUrl}]];
+			 
+			 //文件修改时上传
+			 $("input[type='file']").change(function(){
+				var that = $(this);
+				var type= that.attr("type");
+				var file = that[0].files[0];
+				if(file==''){
+					return ;
+				}
+				
+				if(file.size/1024>500){
+					toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
+					return ;
+				}
+				upload(type,token,file,function(res){},function(err){
+					console.log("上传type异常:"+err);
+				},function(res){
+					//上传成功
+					console.log(res);
+					if(res!=''){
+						$("#saveForm").find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+					}
+				});
+				
+			 });
+			 
 			//保存
 			$(".btn.btn-info.save").click(function(){
 				var footer = $(this).parent(".modal-footer")
