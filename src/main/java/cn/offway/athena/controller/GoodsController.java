@@ -115,7 +115,7 @@ public class GoodsController {
 			PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 			List<Long> roleIds = phAdmin.getRoleIds();
 			for (Object roleId : roleIds) {
-				if("6".equals(String.valueOf(roleId))){
+				if("8".equals(String.valueOf(roleId))){
 					isOffway = "1"; 
 				}
 			}
