@@ -31,4 +31,6 @@ public interface PhGoodsStockService{
 
 	Page<PhGoodsStock> findByPage(String sku, Long brandId, String brandName, Long goodsId, String goodsName,
 			String isOffway, String color, String size, List<Long> brandIds, Pageable page);
+
+	int deleteByIds(List<Long> ids);
 }

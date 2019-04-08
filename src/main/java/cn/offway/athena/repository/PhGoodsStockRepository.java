@@ -37,4 +37,9 @@ public interface PhGoodsStockRepository extends JpaRepository<PhGoodsStock,Long>
 	@Modifying
 	@Query(nativeQuery=true,value="delete from ph_goods_stock where goods_id in(?1)")
 	int deleteByGoodsIds(List<Long> goodsIds);
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery=true,value="delete from ph_goods_stock where id in(?1)")
+	int deleteByIds(List<Long> ids);
 }

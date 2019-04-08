@@ -117,6 +117,8 @@
 				</div>
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
+				<button class="btn btn-info delete">删除</button>
+				
 			</div>
 			
 					
@@ -245,6 +247,27 @@
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
 				
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="modal-delete">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">温馨提示</h4>
+				</div>
+				
+				<div class="modal-body">
+					请确认要删除该商品库存吗？
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info submitDel">确定</button>
+					
+				</div>
 			</div>
 		</div>
 	</div>
@@ -610,6 +633,40 @@
 			
 			
 			$("#saveForm [name='brandId']").trigger("change");
+			
+			
+			$(".btn.btn-info.delete").click(function(){
+				
+				var goodsId = $("input[name='stockId']:checked");
+				if(goodsId.length < 1){
+					toastr.error("请至少选择一条数据操作", "温馨提示");
+					return ;
+				}
+				
+				jQuery('#modal-delete').modal('show', {backdrop: 'fade'});
+				
+				
+			});
+			
+			$(".btn.btn-info.submitDel").click(function(){
+				
+				var goodsId = $("input[name='stockId']:checked");
+				
+				var ids = new Array();
+				goodsId.each(function(i,e){
+					ids.push(e.value);
+				});
+				
+				$.post("/stock-delete",{ids:ids},function(data){
+					if(data){
+						jQuery('#modal-delete').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw();
+					}else{
+						toastr.error("操作失败，请联系管理员！", "温馨提示");
+					}
+				})
+			});
 			
 		
 	});

@@ -1,5 +1,6 @@
 package cn.offway.athena.controller;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
@@ -155,6 +157,16 @@ public class StockController {
 	@PostMapping("/stock-image")
 	public String image(String color,Long goodsId){
 		return phGoodsStockService.findImage(color, goodsId);
+	}
+	
+	@ResponseBody
+	@PostMapping("/stock-delete")
+	public boolean delete(@RequestParam("ids[]") Long[] ids){
+		int count =  phGoodsStockService.deleteByIds(Arrays.asList(ids));
+		if(count>0){
+			return true;
+		}
+		return false;
 	}
 	
 }
