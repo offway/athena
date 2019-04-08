@@ -426,7 +426,8 @@
 				    		};
 				    /* var observable = qiniu.upload(file, "image/wx/"+UUID.randomUUID()+postf, token,
 				    		putExtra, config); */
-				    var observable = qiniu.upload(file, "image/wx/"+param+"/"+file.lastModified+postf, token,
+				    var fname = filename.replace(postf,"");
+				    var observable = qiniu.upload(file, "image/wx/"+param+"/"+fname+"_"+UUID.randomUUID()+postf, token,
 				    		putExtra, config); 
 					var subscription = observable.subscribe(next, error, complete);
 			    }
