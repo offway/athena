@@ -33,18 +33,7 @@ public class QiniuController {
 
 	@GetMapping("/token")
 	public String token(){
-		try {
-			Auth auth = Auth.create(qiniuProperties.getAccessKey(), qiniuProperties.getSecretKey());
-			StringMap putPolicy = new StringMap();
-			putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize),\"fname\":$(fname),\"param\":\"$(x:param)\"}");
-			String upToken = auth.uploadToken(qiniuProperties.getBucket(), null, qiniuProperties.getExpireSeconds(), putPolicy);
-			return upToken;
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("获取七牛上传文件token异常",e);
-			return "";
-		}
-		
+		return qiniuService.token();
 	}
 	
 	@PostMapping("/delete")

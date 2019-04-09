@@ -18,7 +18,7 @@ import cn.offway.athena.domain.PhGoodsImage;
  */
 public interface PhGoodsImageRepository extends JpaRepository<PhGoodsImage,Long>,JpaSpecificationExecutor<PhGoodsImage> {
 
-	@Query(nativeQuery=true,value="select * from ph_goods_image where goods_id=?1 order by image_url desc")
+	@Query(nativeQuery=true,value="select * from ph_goods_image where goods_id=?1 order by image_url")
 	List<PhGoodsImage> findByGoodsId(Long goodsId);
 	
 	@Transactional

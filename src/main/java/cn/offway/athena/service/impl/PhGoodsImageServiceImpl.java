@@ -42,6 +42,11 @@ public class PhGoodsImageServiceImpl implements PhGoodsImageService {
 	}
 	
 	@Override
+	public void delete(List<PhGoodsImage> phGoodsImages){
+		phGoodsImageRepository.delete(phGoodsImages);
+	}
+	
+	@Override
 	public int deleteByGoodsIds(List<Long> goodsIds){
 		return phGoodsImageRepository.deleteByGoodsIds(goodsIds);
 	}

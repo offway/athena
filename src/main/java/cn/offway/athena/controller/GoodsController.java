@@ -33,6 +33,7 @@ import cn.offway.athena.properties.QiniuProperties;
 import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhGoodsImageService;
 import cn.offway.athena.service.PhGoodsService;
+import cn.offway.athena.service.QiniuService;
 
 
 /**
@@ -57,6 +58,9 @@ public class GoodsController {
 	@Autowired
 	private PhBrandService phBrandService;
 	
+	@Autowired
+	private QiniuService qiniuService;
+	
 
 	/**
 	 * 商品
@@ -66,6 +70,7 @@ public class GoodsController {
 	@RequestMapping("/goods.html")
 	public String goods(ModelMap map,Authentication authentication){
 		map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+		map.addAttribute("token", qiniuService.token());
 		
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();

@@ -170,20 +170,20 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 		
 		List<String> banners = Arrays.asList(banner.split("#"));
 		List<String> details = Arrays.asList(detail.split("#"));
-//		List<PhGoodsImage> goodsImages = phGoodsImageService.findByGoodsId(productId);
-//		for (PhGoodsImage phGoodsImage : goodsImages) {
-//			String image = phGoodsImage.getImageUrl();
-//			if(phGoodsImage.getType().equals("0") && (!banners.contains(image))){
-//				//如果资源变动则删除七牛资源
-//				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
-//			}
-//			if(phGoodsImage.getType().equals("1") && (!details.contains(image))){
-//				//如果资源变动则删除七牛资源
-//				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
-//			}
-//		}
-//		
-//		phGoodsImageService.delete(goodsImages);
+		List<PhGoodsImage> goodsImages = phGoodsImageService.findByGoodsId(productId);
+		for (PhGoodsImage phGoodsImage : goodsImages) {
+			String image = phGoodsImage.getImageUrl();
+			if(phGoodsImage.getType().equals("0") && (!banners.contains(image))){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
+			}
+			if(phGoodsImage.getType().equals("1") && (!details.contains(image))){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
+			}
+		}
+		
+		phGoodsImageService.delete(goodsImages);
 		List<PhGoodsImage> images = new ArrayList<>();
 		Date now = new Date();
 		for (String b : banners) {

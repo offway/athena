@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.qiniu.util.StringMap;
 import com.qiniu.util.UrlSafeBase64;
 
 import cn.offway.athena.properties.QiniuProperties;
@@ -27,6 +28,21 @@ public class QiniuService {
 
 	@Autowired
 	private QiniuProperties qiniuProperties;
+	
+	public String token(){
+		try {
+			Auth auth = Auth.create(qiniuProperties.getAccessKey(), qiniuProperties.getSecretKey());
+			StringMap putPolicy = new StringMap();
+			putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize),\"fname\":$(fname),\"param\":\"$(x:param)\"}");
+			String upToken = auth.uploadToken(qiniuProperties.getBucket(), null, qiniuProperties.getExpireSeconds(), putPolicy);
+			return upToken;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取七牛上传文件token异常",e);
+			return "";
+		}
+		
+	}
 	
 	/**
 	 * 资源删除
