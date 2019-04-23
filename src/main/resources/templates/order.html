@@ -83,6 +83,7 @@
 									<option value="1">已发货</option>
 									<option value="2">已寄回</option>
 									<option value="3">已收货</option>
+									<option value="4">已取消</option>
 								</select>
 							</div>
 						</div>
@@ -267,6 +268,8 @@
                         	return "已寄回";
                         }else if("3"==data){
                         	return "已收货";
+                        }else if("4"==data){
+                        	return "已取消";
                         }
                     }
             	},

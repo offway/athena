@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.CriteriaBuilder.In;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,13 +18,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.offway.athena.domain.PhOrderExpressInfo;
+import cn.offway.athena.domain.PhOrderGoods;
 import cn.offway.athena.domain.PhOrderInfo;
-import cn.offway.athena.domain.VOrder;
 import cn.offway.athena.dto.sf.ReqAddOrder;
+import cn.offway.athena.repository.PhOrderGoodsRepository;
 import cn.offway.athena.repository.PhOrderInfoRepository;
 import cn.offway.athena.service.PhOrderExpressInfoService;
+import cn.offway.athena.service.PhOrderGoodsService;
 import cn.offway.athena.service.PhOrderInfoService;
 import cn.offway.athena.service.SfExpressService;
 import cn.offway.athena.utils.JsonResult;
@@ -49,6 +54,9 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 	
 	@Autowired
 	private PhOrderExpressInfoService phOrderExpressInfoService;
+	
+	@Autowired
+	private PhOrderGoodsRepository phOrderGoodsRepository;
 	
 	@Override
 	public PhOrderInfo save(PhOrderInfo phOrderInfo){
@@ -161,6 +169,19 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 		}
 		return result;
 		
+	}
+	
+	
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void cancel(String orderNo) throws Exception{
+		
+		PhOrderInfo phOrderInfo =  findByOrderNo(orderNo);
+		phOrderInfo.setStatus("4");
+		save(phOrderInfo);
+		
+		phOrderGoodsRepository.updateStock(orderNo);
+	
 	}
 	
 	

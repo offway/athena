@@ -88,6 +88,7 @@
 				</div>
 				<button class="btn btn-info addr">修改收货地址</button>
 				<button class="btn btn-info deliver">确认发货</button>
+				<button class="btn btn-info cancel">取消订单</button>
 			</div>
 			
 					
@@ -184,6 +185,50 @@
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
 				
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="modal-deliver">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<input type="hidden" id="orderid"/>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">温馨提示</h4>
+				</div>
+				
+				<div class="modal-body">
+					请确认要发货吗？
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info submit-deliver">确定</button>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="modal-cancel">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<input type="hidden" id="orderid"/>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">温馨提示</h4>
+				</div>
+				
+				<div class="modal-body">
+					请确认要取消该笔订单吗？
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info submit-cancel">确定</button>
+					
+				</div>
 			</div>
 		</div>
 	</div>
@@ -392,8 +437,18 @@
 			
 		});
 		
-		var sub = false;
 		$(".btn.btn-info.deliver").click(function(){
+			var activityPrizeId = $("input[name='authId']:checked");
+			if(activityPrizeId.length!=1){
+				toastr.error("请选择一条数据操作", "温馨提示");
+			}else{
+				 jQuery('#modal-deliver').modal('show', {backdrop: 'fade'});
+			}
+		});
+		
+		
+		var sub = false;
+		$(".btn.btn-info.submit-deliver").click(function(){
 			
 			if(!sub){
 				sub = true;
@@ -408,10 +463,51 @@
 					$.post("/deliver-save",{orderNo:activityPrizeId},function(data){
 						sub = false;
 						if(data.code=="200"){
+							jQuery('#modal-deliver').modal('hide');
 							toastr.success("操作已成功！", "温馨提示");
 							oTable.fnDraw();
 						}else{
 							toastr.error(data.msg, "温馨提示");
+						}
+					});
+				}
+				
+			}
+			
+		});
+		
+		
+		$(".btn.btn-info.cancel").click(function(){
+			var activityPrizeId = $("input[name='authId']:checked");
+			if(activityPrizeId.length!=1){
+				toastr.error("请选择一条数据操作", "温馨提示");
+			}else{
+				 jQuery('#modal-cancel').modal('show', {backdrop: 'fade'});
+			}
+			
+		});
+		
+		var issub = false;
+		$(".btn.btn-info.submit-cancel").click(function(){
+			
+			if(!issub){
+				issub = true;
+				var activityPrizeId = $("input[name='authId']:checked");
+				if(activityPrizeId.length!=1){
+					toastr.error("请选择一条数据操作", "温馨提示");
+					issub = false;
+				}else{
+					
+					activityPrizeId = activityPrizeId[0].value;
+					
+					$.post("/deliver-cancel",{orderNo:activityPrizeId},function(data){
+						issub = false;
+						if(data){
+							jQuery('#modal-cancel').modal('hide');
+							toastr.success("操作已成功！", "温馨提示");
+							oTable.fnDraw();
+						}else{
+							toastr.error("操作失败,请联系管理员", "温馨提示");
 						}
 					});
 				}

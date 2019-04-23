@@ -124,6 +124,18 @@ public class DeliverController {
 		return phOrderInfoService.saveOrder(orderNo);
 	}
 	
+	@ResponseBody
+	@RequestMapping("/deliver-cancel")
+	public boolean cancel(String orderNo){
+		try {
+			phOrderInfoService.cancel(orderNo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
 	
 	
 }
