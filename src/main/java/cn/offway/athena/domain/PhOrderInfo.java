@@ -61,6 +61,12 @@ public class PhOrderInfo implements Serializable {
     
     /** 备注 **/
     private String remark;
+    
+    /** 职位 **/
+    private String position;
+
+    /** 姓名 **/
+    private String realName;
 
 
     @Id
@@ -213,6 +219,24 @@ public class PhOrderInfo implements Serializable {
 	public void setReceiptTime(Date receiptTime) {
 		this.receiptTime = receiptTime;
 	}
+	
+	@Column(name = "position", length = 20)
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    @Column(name = "real_name", length = 50)
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
     
     
 

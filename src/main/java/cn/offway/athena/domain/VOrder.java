@@ -109,6 +109,12 @@ public class VOrder implements Serializable {
 
     /** 收件方姓名 **/
     private String toRealName;
+    
+    /** 职位 **/
+    private String position;
+
+    /** 姓名 **/
+    private String realName;
 
 
     @Id
@@ -405,6 +411,24 @@ public class VOrder implements Serializable {
 	public void setReceiptTime(Date receiptTime) {
 		this.receiptTime = receiptTime;
 	}
+	
+	@Column(name = "position", length = 20)
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    @Column(name = "real_name", length = 50)
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
     
     
 

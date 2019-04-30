@@ -83,7 +83,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 	}
 	
 	@Override
-	public Page<PhOrderInfo> findByPage(final String orderNo,final String unionid,final String status,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
+	public Page<PhOrderInfo> findByPage(final String realName,final String position,final String orderNo,final String unionid,final String status,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
 		return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
 			
 			@Override
@@ -92,6 +92,14 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 				
 				if(StringUtils.isNotBlank(orderNo)){
 					params.add(criteriaBuilder.equal(root.get("orderNo"), orderNo));
+				}
+				
+				if(StringUtils.isNotBlank(realName)){
+					params.add(criteriaBuilder.like(root.get("realName"), "%"+realName+"%"));
+				}
+				
+				if(StringUtils.isNotBlank(position)){
+					params.add(criteriaBuilder.like(root.get("position"), "%"+position+"%"));
 				}
 				
 				if(StringUtils.isNotBlank(unionid)){

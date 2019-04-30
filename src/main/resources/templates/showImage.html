@@ -127,6 +127,7 @@
 					<table class="table table-bordered table-striped">
 						<thead>
 							<tr>
+								<th>SKU编码</th>
 								<th>商品图片</th>
 								<th>商品名称</th>
 								<th>品牌LOGO</th>
@@ -464,7 +465,7 @@
 				var html = "";
 				$('#modal-goods tbody').html("");
 				 $.each(data,function(i,e){
-					 html+="<tr><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td><img width='100px' src=\""+e.brandLogo+"\" /></td><td>"+e.brandName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
+					 html+="<tr><td>"+e.sku+"</td><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td><img width='100px' src=\""+e.brandLogo+"\" /></td><td>"+e.brandName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
 				 });
 				 $('#modal-goods tbody').html(html);
 			 

@@ -26,8 +26,8 @@ public interface PhOrderInfoService{
 
 	PhOrderInfo findByOrderNo(String orderNo);
 
-	Page<PhOrderInfo> findByPage(String orderNo, String unionid, String status, Long brandId, String isOffway,
-			List<Long> brandIds, Pageable page);
-
 	void cancel(String orderNo) throws Exception;
+
+	Page<PhOrderInfo> findByPage(String realName, String position, String orderNo, String unionid, String status,
+			Long brandId, String isOffway, List<Long> brandIds, Pageable page);
 }

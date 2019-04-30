@@ -72,9 +72,19 @@
 						</div>
 						<div class="form-group ">
 							<div class="input-group">
-								<input type="text" name="unionid" class="form-control" style="height:35px" placeholder="用户ID"/>
+								<input type="text" name="realName" class="form-control" style="height:35px" placeholder="姓名"/>
 							</div>
 						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="position" class="form-control" style="height:35px" placeholder="职位"/>
+							</div>
+						</div>
+						<!-- <div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="unionid" class="form-control" style="height:35px" placeholder="用户ID"/>
+							</div>
+						</div> -->
 						<div class="form-group ">
 							<div class="input-group">
 								<select name="status" class="form-control" style="height:35px">
@@ -227,16 +237,21 @@
             	}, 
             	{
                		targets: 4,
-	                data: "unionid",
-	                title: "用户ID"
+	                data: "realName",
+	                title: "姓名"
             	},
             	{
                		targets: 5,
+	                data: "position",
+	                title: "职位"
+            	},
+            	{
+               		targets: 6,
 	                data: "users",
 	                title: "使用者"
             	},
             	{
-               		targets: 6,
+               		targets: 7,
 	                data: "brandLogo",
 	                title: "品牌LOGO",
                     render: function (data, type, row, meta) {
@@ -244,12 +259,12 @@
                     }
             	},
             	{
-               		targets: 7,
+               		targets: 8,
 	                data: "brandName",
 	                title: "品牌名称"
             	},
             	{
-               		targets: 8,
+               		targets: 9,
 	                data: "isOffway",
 	                title: "是否自营",
                     render: function (data, type, row, meta) {
@@ -257,7 +272,7 @@
                     }
             	},
             	{
-               		targets: 9,
+               		targets: 10,
 	                data: "status",
 	                title: "状态",
                     render: function (data, type, row, meta) {
@@ -276,7 +291,7 @@
             	},
             	
             	{
-               		targets: 10,
+               		targets: 11,
 	                data: "orderNo",
 	                title: "商品明细",
 	                render: function (data, type, row, meta) {
@@ -284,7 +299,7 @@
                     }
             	},
             	{
-               		targets: 11,
+               		targets: 12,
 	                data: "orderNo",
 	                title: "物流明细",
 	                render: function (data, type, row, meta) {
@@ -293,7 +308,7 @@
             	},
             	
                 {
-                    targets: 12,
+                    targets: 13,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -302,7 +317,7 @@
                 },
             	
                 {
-                    targets: 13,
+                    targets: 14,
                     data: "returnTime",
                     title: "归还时间",
                     render: function (data, type, row, meta) {
@@ -315,7 +330,7 @@
                 },
             	
                 {
-                    targets: 14,
+                    targets: 15,
                     data: "showTime",
                     title: "返图时间",
                     render: function (data, type, row, meta) {
