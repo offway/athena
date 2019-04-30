@@ -117,23 +117,23 @@
 							</div>	
 							
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" name="toCity" class="form-control" style="height:35px" placeholder="收件方城市"/>
-							</div>	
-							
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<input type="text" name="toCounty" class="form-control" style="height:35px" placeholder="收件方区/县"/>
-							</div>	
-							
-						</div>
 					</div> -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<input type="text" name="toRealName" class="form-control" style="height:35px" placeholder="收件方姓名"/>
+							</div>	
+							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<input type="text" name="toPhone" class="form-control" style="height:35px" placeholder="收件方手机"/>
+							</div>	
+							
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -387,9 +387,9 @@
 			var form = $("#authForm");
 			form.find("input[name='id']").val(activityPrizeId); 
 			$.get("/deliver-one",{orderNo:activityPrizeId},function(data){
-				/* form.find("input[name='toProvince']").val(data.toProvince); 
-				form.find("input[name='toCity']").val(data.toCity); 
-				form.find("input[name='toCounty']").val(data.toCounty);  */
+				/* form.find("input[name='toProvince']").val(data.toProvince);  */
+				form.find("input[name='toRealName']").val(data.toRealName); 
+				form.find("input[name='toPhone']").val(data.toPhone); 
 				form.find("input[name='toContent']").val(data.toContent); 
 				jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
 			});
@@ -403,7 +403,7 @@
 				var html = "";
 				$('#modal-goods tbody').html("");
 				 $.each(data,function(i,e){
-					 html+="<tr><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
+					 html+="<tr><td>"+e.sku+"</td><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
 				 });
 				 $('#modal-goods tbody').html(html);
 			 
@@ -416,14 +416,14 @@
 		$(".btn.btn-info.updateAddr").click(function(){
 			
 			var form = $("#authForm");
-			/* var toProvince = form.find("input[name='toProvince']").val(); 
-			var toCity = form.find("input[name='toCity']").val(); 
-			var toCounty = form.find("input[name='toCounty']").val();  */
+			/* var toProvince = form.find("input[name='toProvince']").val();*/ 
+			var toRealName = form.find("input[name='toRealName']").val(); 
+			var toPhone = form.find("input[name='toPhone']").val();  
 			var toContent = form.find("input[name='toContent']").val(); 
 
 			/* if(''==toProvince ||''==toCity||''==toCounty||''==toContent){ */
 				
-			if(''==toContent){
+			if(''==toRealName ||''==toPhone||''==toContent){
 				toastr.error("请填写完整信息", "温馨提示");
 				return false;
 			}

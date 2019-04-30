@@ -357,7 +357,7 @@
 				var html = "";
 				$('#modal-goods tbody').html("");
 				 $.each(data,function(i,e){
-					 html+="<tr><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
+					 html+="<tr><td>"+e.sku+"</td><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
 				 });
 				 $('#modal-goods tbody').html(html);
 			 

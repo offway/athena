@@ -102,12 +102,11 @@ public class DeliverController {
 	
 	@ResponseBody
 	@RequestMapping("/deliver-updateAddr")
-	public boolean updateAddr(String id,String toProvince,String toCity,String toCounty,String toContent){
+	public boolean updateAddr(String id,String toRealName,String toPhone,String toContent){
 		PhOrderExpressInfo phOrderExpressInfo =  phOrderExpressInfoService.findByOrderNoAndType(id, "0");
-//		phOrderExpressInfo.setToCity(toCity);
 		phOrderExpressInfo.setToContent(toContent);
-//		phOrderExpressInfo.setToCounty(toCounty);
-//		phOrderExpressInfo.setToProvince(toProvince);
+		phOrderExpressInfo.setToRealName(toRealName);
+		phOrderExpressInfo.setToPhone(toPhone);
 		phOrderExpressInfoService.save(phOrderExpressInfo);
 		return true;
 	}
