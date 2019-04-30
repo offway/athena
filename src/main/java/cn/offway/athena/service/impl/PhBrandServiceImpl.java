@@ -39,6 +39,10 @@ public class PhBrandServiceImpl implements PhBrandService {
 	
 	@Override
 	public PhBrand save(PhBrand phBrand){
+		
+		if(null != phBrand.getId()){
+			updateChildren(phBrand.getId(), phBrand.getLogo(), phBrand.getName());
+		}
 		return phBrandRepository.save(phBrand);
 	}
 	
@@ -55,6 +59,13 @@ public class PhBrandServiceImpl implements PhBrandService {
 	@Override
 	public List<PhBrand> findByIds(List<Long> ids){
 		return phBrandRepository.findByIds(ids);
+	}
+	
+	@Override
+	public void updateChildren(Long id,String logo,String name){
+		phBrandRepository.updateGoods(id, logo, name);
+		phBrandRepository.updateGoodsStock(id, logo, name);
+		phBrandRepository.updateOrderGoods(id, logo, name);
 	}
 	
 	@Override

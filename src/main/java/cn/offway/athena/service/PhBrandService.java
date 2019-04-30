@@ -26,4 +26,6 @@ public interface PhBrandService{
 	List<PhBrand> findByIds(List<Long> ids);
 
 	List<PhBrand> findByShowImgId(Long showImgId);
+
+	void updateChildren(Long id, String logo, String name);
 }

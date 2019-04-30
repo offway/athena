@@ -27,4 +27,14 @@ public interface PhGoodsRepository extends JpaRepository<PhGoods,Long>,JpaSpecif
 	
 	@Query(nativeQuery=true,value="select count(*) from ph_goods where id in(?1) and status='1'")
 	int countByGoodsIds(List<Long> goodsIds);
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery=true,value="update ph_goods_stock set goods_name=?2 where goods_id=?1")
+	int updateGoodsStock(Long id,String name);
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery=true,value="update ph_order_goods set goods_name=?2 where goods_id=?1")
+	int updateOrderGoods(Long id,String name);
 }

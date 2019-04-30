@@ -72,6 +72,9 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 	
 	@Override
 	public PhGoods save(PhGoods phGoods){
+		if(null != phGoods.getId()){
+			updateChildren(phGoods.getId(), phGoods.getName());
+		}
 		return phGoodsRepository.save(phGoods);
 	}
 	
@@ -88,6 +91,11 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 	@Override
 	public List<PhGoods> findAll(List<Long> ids){
 		return phGoodsRepository.findAll(ids);
+	}
+	
+	private void updateChildren(Long id,String name){
+		phGoodsRepository.updateGoodsStock(id, name);
+		phGoodsRepository.updateOrderGoods(id, name);
 	}
 	
 	@Override

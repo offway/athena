@@ -107,6 +107,10 @@ public class StockController {
 	public boolean save(PhGoodsStock phGoodsStock){
 		try {
 			
+			phGoodsStock.setColor(null==phGoodsStock.getColor()?null:phGoodsStock.getColor().trim());
+			phGoodsStock.setSize(null==phGoodsStock.getSize()?null:phGoodsStock.getSize().trim());
+			phGoodsStock.setSku(null==phGoodsStock.getSku()?null:phGoodsStock.getSku().trim());
+
 			Long goodsId = phGoodsStock.getGoodsId();
 
 			boolean check = true;
