@@ -320,7 +320,7 @@
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
+			oTable.fnDraw(oTable.fnSettings());  //or fnReloadAjax()  
 			return false;
 		});
 		
@@ -456,7 +456,7 @@
 										footer.find(".bg-lg").hide();
 										jQuery('#modal-6').modal('hide');
 										toastr.success("操作已成功！", "温馨提示");
-										oTable.fnDraw(); 
+										oTable.fnDraw(oTable.fnSettings());  
 									}else{
 										footer.find("button").show();
 										footer.find(".bg-lg").hide();

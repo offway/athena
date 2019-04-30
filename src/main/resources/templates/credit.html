@@ -231,7 +231,7 @@
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
+			oTable.fnDraw(oTable.fnSettings());  //or fnReloadAjax()  
 			return false;
 		});
 		
@@ -263,7 +263,7 @@
 					 if(data){
 						 	jQuery('#modal-add').modal('hide');
 							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw();
+							oTable.fnDraw(oTable.fnSettings()); 
 					 }else{
 						 toastr.error("操作失败,请检查订单号是否正确！", "温馨提示");
 					 }

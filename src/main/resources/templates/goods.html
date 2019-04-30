@@ -378,7 +378,7 @@
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
+			oTable.fnDraw(oTable.fnSettings());  //or fnReloadAjax()  
 			return false;
 		});
 		
@@ -512,7 +512,7 @@
 						footer.find(".bg-lg").hide();
 						jQuery('#modal-6').modal('hide');
 						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw(); 
+						oTable.fnDraw(oTable.fnSettings());  
 					}else{
 						footer.find("button").show();
 						footer.find(".bg-lg").hide();
@@ -624,7 +624,7 @@
 				$.post("/goods-update",{ids:ids,status:value},function(data){
 					if(data){
 						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
+					    oTable.fnDraw(oTable.fnSettings()); 
 					}
 				})
 			});
@@ -675,7 +675,7 @@
 					if(data=='0'){
 						jQuery('#modal-delete').modal('hide');
 						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
+						oTable.fnDraw(oTable.fnSettings()); 
 					}else if(data=='1'){
 						toastr.error("操作失败，存在上架的商品！", "温馨提示");
 					}else{

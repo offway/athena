@@ -363,7 +363,7 @@
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
+			oTable.fnDraw(oTable.fnSettings());  //or fnReloadAjax()  
 			return false;
 		});
 		
@@ -431,7 +431,7 @@
 				if(data){
 					jQuery('#modal-rule').modal('hide');
 					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
+					oTable.fnDraw(oTable.fnSettings()); 
 				}
 			})
 			
@@ -465,7 +465,7 @@
 						if(data.code=="200"){
 							jQuery('#modal-deliver').modal('hide');
 							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw();
+							oTable.fnDraw(oTable.fnSettings()); 
 						}else{
 							toastr.error(data.msg, "温馨提示");
 						}
@@ -505,7 +505,7 @@
 						if(data){
 							jQuery('#modal-cancel').modal('hide');
 							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw();
+							oTable.fnDraw(oTable.fnSettings()); 
 						}else{
 							toastr.error("操作失败,请联系管理员", "温馨提示");
 						}
