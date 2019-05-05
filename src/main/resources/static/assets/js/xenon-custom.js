@@ -1020,7 +1020,7 @@ var public_vars = public_vars || {};
 		
 		
 		// Dropzone is prezent
-		if(typeof Dropzone != 'undefined')
+		/*if(typeof Dropzone != 'undefined')
 		{
 			Dropzone.autoDiscover = false;
 			
@@ -1028,7 +1028,7 @@ var public_vars = public_vars || {};
 			{
 				$(el).dropzone();
 			});
-		}
+		}*/
 		
 		
 		

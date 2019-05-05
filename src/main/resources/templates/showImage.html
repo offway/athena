@@ -7,7 +7,8 @@
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<link rel="stylesheet" href="assets/css/pictureViewer.css"/>
+	<script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
+	<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css"/>
 	<style type="text/css">
 	.form-group img{
 		max-width:400px;
@@ -77,7 +78,12 @@
 						</div>
 						<div class="form-group ">
 							<div class="input-group">
-								<input type="text" name="unionid" class="form-control" style="height:35px" placeholder="用户ID"/>
+								<input type="text" name="realName" class="form-control" style="height:35px" placeholder="姓名"/>
+							</div>
+						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="position" class="form-control" style="height:35px" placeholder="职位"/>
 							</div>
 						</div>
 						<div class="form-group ">
@@ -104,6 +110,7 @@
 				</div>
 				<button class="btn btn-info add" >审核</button>
 				<button class="btn btn-info addImg" >图片分类</button>
+				<button class="btn btn-info offImg" >线下返图</button>
 				
 			</div>
 			<footer th:replace="footer"></footer>
@@ -276,6 +283,74 @@
 		</div>
 	</div>
 	
+	<div class="modal fade" id="modal-offImg">
+		<div class="modal-dialog" style="width:800px;margin: 30px auto;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">线下返图</h4>
+				</div>
+				
+				<div class="modal-body">
+					
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">订单号</label>
+								<input type="text" class="form-control" name="orderNo" placeholder="订单号"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">微博链接</label>
+								<input type="text" class="form-control" name="url" placeholder="微博链接"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">使用艺人</label>
+								<input type="text" class="form-control" name="starName" placeholder="使用艺人"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">描述</label>
+								<input type="text" class="form-control" name="content" placeholder="描述"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">图片</label>
+								
+									<div class="dropzone" id="myDropzone">
+									    <div class="am-text-success dz-message">
+									        将文件拖拽到此处<br/>或点此打开文件管理器选择文件
+									    </div>
+									</div>
+ 
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info saveOffImgBtn">确定</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
@@ -285,6 +360,9 @@
 	<script src="assets/js/pictureViewer.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/	
+	           
+	           			 Dropzone.autoDiscover = false;
+
 	jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -324,14 +402,18 @@
 	                data: "orderNo",
 	                title: "订单号"
             	},
-            	
             	{
                		targets: 3,
-	                data: "unionid",
-	                title: "用户ID"
+	                data: "realName",
+	                title: "姓名"
             	},
             	{
                		targets: 4,
+	                data: "position",
+	                title: "职位"
+            	},
+            	{
+               		targets: 5,
 	                data: "brandLogo",
 	                title: "品牌LOGO",
                     render: function (data, type, row, meta) {
@@ -339,12 +421,12 @@
                     }
             	},
             	{
-               		targets: 5,
+               		targets: 6,
 	                data: "brandName",
 	                title: "品牌名称"
             	},
             	{
-               		targets: 6,
+               		targets: 7,
 	                data: "isOffway",
 	                title: "是否自营",
                     render: function (data, type, row, meta) {
@@ -352,7 +434,7 @@
                     }
             	},
             	{
-               		targets: 7,
+               		targets: 8,
 	                data: "showImage",
 	                title: "图片",
                     render: function (data, type, row, meta) {
@@ -366,17 +448,17 @@
                     }
             	},
             	{
-               		targets: 8,
+               		targets: 9,
 	                data: "starName",
 	                title: "使用艺人"
             	},
             	{
-               		targets: 9,
+               		targets: 10,
 	                data: "content",
 	                title: "内容"
             	},
             	{
-               		targets: 10,
+               		targets: 11,
 	                data: "url",
 	                title: "链接",
                     render: function (data, type, row, meta) {
@@ -388,7 +470,7 @@
                     }
             	},
             	{
-               		targets: 11,
+               		targets: 12,
 	                data: "status",
 	                title: "状态",
                     render: function (data, type, row, meta) {
@@ -403,7 +485,7 @@
             	},
             	
             	{
-               		targets: 12,
+               		targets: 13,
 	                data: "orderNo",
 	                title: "商品明细",
 	                render: function (data, type, row, meta) {
@@ -411,7 +493,7 @@
                     }
             	},
                 {
-                    targets: 13,
+                    targets: 14,
                     data: "createTime",
                     title: "上传时间",
                     render: function (data, type, row, meta) {
@@ -419,13 +501,13 @@
                     }
                 },
             	{
-               		targets: 14,
+               		targets: 15,
 	                data: "checkName",
 	                title: "审核人"
             	},
                 
                 {
-                    targets: 15,
+                    targets: 16,
                     data: "checkTime",
                     title: "审核时间",
                     render: function (data, type, row, meta) {
@@ -437,7 +519,7 @@
                     }
                 },
                 {
-               		targets: 16,
+               		targets: 17,
 	                data: "checkContent",
 	                title: "拒绝原因"
             	}
@@ -570,6 +652,102 @@
 					 
 				});
 		});
+		 
+		 var qiniuUrl = [[${qiniuUrl}]];
+		 
+		 var token = [[${token}]];
+		 
+		 
+		 var myDropzone = new Dropzone("#myDropzone", {
+		        url: "http://upload.qiniup.com/",
+		        addRemoveLinks: true,
+		        method: 'post',
+		        sending: function(file, xhr, formData) {
+		            formData.append("token", token);
+		            var filename = file.name;
+				    var postf = filename.substring(filename.lastIndexOf("."));
+				    
+		            formData.append("key", "image/wx/"+UUID.randomUUID()+postf);
+		            formData.append("fname", file.name);
+		        },
+		        success: function (file, response, e) {
+		        	$(file.previewTemplate).children('.dz-remove').attr('key', qiniuUrl+"/"+response.key);
+		        },
+		        error: function (file, response, e) {
+	                $(file.previewTemplate).children('.dz-error-mark').css('opacity', '1')
+		        },
+		        
+		        removedfile: function (file, response, e) {
+	                var key = $(file.previewTemplate).children('.dz-remove').attr('key');
+	                if(key != '' && key != undefined){
+		                $.post("/qiniu/delete",{url:key},function(data){
+		                	 console.log("删除"+key+":"+data);
+		                });
+	                }
+	                $(file.previewTemplate).remove();
+		        }
+		        
+		    });
+		 
+		 
+		 $(".btn.btn-info.offImg").click(function(){
+			 
+			 var modal = $("#modal-offImg");
+			 orderNo = modal.find("input[name='orderNo']").val('');
+			 starName = modal.find("input[name='starName']").val('');
+			 url = modal.find("input[name='url']").val('');
+			 content = modal.find("input[name='content']").val('');
+			 myDropzone.removeAllFiles(true);
+			 
+			 jQuery('#modal-offImg').modal('show', {backdrop: 'fade'});
+		 });
+		 
+		 $(".btn.btn-info.saveOffImgBtn").click(function(){
+			 var footer = $(this).parent(".modal-footer")
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+				
+			var modal = $("#modal-offImg");
+			var orderNo = modal.find("input[name='orderNo']").val();
+			var starName = modal.find("input[name='starName']").val();
+			var url = modal.find("input[name='url']").val();
+			var content = modal.find("input[name='content']").val();
+			
+			var images ="";
+			$(".dz-remove").each(function(i,e){
+				images += e.getAttribute('key')+",";
+			});
+			
+			images = images.substring(0,images.lastIndexOf(","));
+			if(images == "" || orderNo ==""){
+				toastr.error("请填写完整信息后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				 return false;
+			}else{
+				$.post("/showImage-save",{
+					  orderNo:orderNo,
+					  url:url,
+					  content:content,
+					  starName:starName,
+					  images:images
+				  },function(data){
+					 if(data){
+						 	jQuery('#modal-offImg').modal('hide');
+							toastr.success("操作已成功！", "温馨提示");
+							oTable.fnDraw(oTable.fnSettings()); 
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+					 }else{
+						 toastr.error("操作失败", "温馨提示");
+						 footer.find("button").show();
+						 footer.find(".bg-lg").hide();
+					 }
+				 });
+			}
+			
+			 
+		 });
 		 
 		 $(".btn.btn-info.save").click(function(){
 			 var id = $("#orderid").val();

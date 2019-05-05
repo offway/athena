@@ -54,7 +54,7 @@ public class PhShowImageServiceImpl implements PhShowImageService {
 	}
 	
 	@Override
-	public Page<PhShowImage> findByPage(final String orderNo,final String unionid,final String status,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
+	public Page<PhShowImage> findByPage(final String realName,final String position,final String orderNo,final String unionid,final String status,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
 		return phShowImageRepository.findAll(new Specification<PhShowImage>() {
 			
 			@Override
@@ -64,6 +64,15 @@ public class PhShowImageServiceImpl implements PhShowImageService {
 				if(StringUtils.isNotBlank(orderNo)){
 					params.add(criteriaBuilder.equal(root.get("orderNo"), orderNo));
 				}
+				
+				if(StringUtils.isNotBlank(realName)){
+					params.add(criteriaBuilder.like(root.get("realName"), "%"+realName+"%"));
+				}
+				
+				if(StringUtils.isNotBlank(position)){
+					params.add(criteriaBuilder.like(root.get("position"), "%"+position+"%"));
+				}
+				
 				
 				if(StringUtils.isNotBlank(unionid)){
 					params.add(criteriaBuilder.equal(root.get("unionid"), unionid));

@@ -97,7 +97,7 @@ public class OrderController {
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
 		
-		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(realName.trim(),position.trim(), orderNo.trim(),unionid.trim(),status.trim(),brandId,isOffway,brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(realName.trim(),position.trim(), orderNo.trim(),null!=unionid?unionid.trim():unionid,status.trim(),brandId,isOffway,brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
