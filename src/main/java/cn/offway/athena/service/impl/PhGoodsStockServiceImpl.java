@@ -1,6 +1,7 @@
 package cn.offway.athena.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -98,6 +99,7 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 		if(i==orderGoods.size()){
 			PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
 			phOrderInfo.setStatus("3");
+			phOrderInfo.setReceiptTime(new Date());
 			phOrderInfoService.save(phOrderInfo);
 			return true;
 		}
