@@ -179,8 +179,10 @@
 						<thead>
 							<tr>
 								<th>SKU编码</th>
-								<th>商品图片</th>
+								<th style="width:120px">商品图片</th>
 								<th>商品名称</th>
+								<!-- <th>品牌LOGO</th> -->
+								<th>品牌名称</th>
 								<th>尺码</th>
 								<th>颜色</th>
 							</tr>
@@ -419,7 +421,7 @@
 				var html = "";
 				$('#modal-goods tbody').html("");
 				 $.each(data,function(i,e){
-					 html+="<tr><td>"+e.sku+"</td><td><img width='100px' src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
+					 html+="<tr><td>"+e.sku+"</td><td><img src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.brandName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
 				 });
 				 $('#modal-goods tbody').html(html);
 			 
