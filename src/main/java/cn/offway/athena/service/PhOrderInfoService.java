@@ -28,6 +28,6 @@ public interface PhOrderInfoService{
 
 	void cancel(String orderNo) throws Exception;
 
-	Page<PhOrderInfo> findByPage(String realName, String position, String orderNo, String unionid, String status,
-			Long brandId, String isOffway, List<Long> brandIds, Pageable page);
+	Page<PhOrderInfo> findByPage(String isUpload, String realName, String position, String orderNo, String unionid,
+			String status, Long brandId, String isOffway, List<Long> brandIds, Pageable page);
 }

@@ -98,6 +98,16 @@
 							</div>
 						</div>
 						
+						<div class="form-group ">
+							<div class="input-group">
+								<select name="isUpload" class="form-control" style="height:35px">
+									<option value="">是否返图</option>
+									<option value="0">未返图</option>
+									<option value="1">已返图</option>
+								</select>
+							</div>
+						</div>
+						
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
@@ -120,7 +130,7 @@
 	
 	
 	
-	<div class="modal fade in" id="modal-goods">
+	<div class="modal fade in" data-backdrop="static" id="modal-goods">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 600px;">
 				
@@ -155,7 +165,7 @@
 		</div>
 	</div>
 	
-	<div class="modal fade in" id="modal-ex">
+	<div class="modal fade in" data-backdrop="static" id="modal-ex">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 600px;">
 				
@@ -289,9 +299,21 @@
                         }
                     }
             	},
-            	
             	{
                		targets: 11,
+	                data: "isUpload",
+	                title: "是否返图",
+                    render: function (data, type, row, meta) {
+                        if("0"==data){
+                        	return "<font color='red'>未返图</font>";
+                        }else if("1"==data){
+                        	return "已返图";
+                        }
+                    }
+            	},
+            	
+            	{
+               		targets: 12,
 	                data: "orderNo",
 	                title: "商品明细",
 	                render: function (data, type, row, meta) {
@@ -299,7 +321,7 @@
                     }
             	},
             	{
-               		targets: 12,
+               		targets: 13,
 	                data: "orderNo",
 	                title: "物流明细",
 	                render: function (data, type, row, meta) {
@@ -308,7 +330,7 @@
             	},
             	
                 {
-                    targets: 13,
+                    targets: 14,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -317,7 +339,7 @@
                 },
             	
                 {
-                    targets: 14,
+                    targets: 15,
                     data: "returnTime",
                     title: "归还时间",
                     render: function (data, type, row, meta) {
@@ -330,7 +352,7 @@
                 },
             	
                 {
-                    targets: 15,
+                    targets: 16,
                     data: "showTime",
                     title: "返图时间",
                     render: function (data, type, row, meta) {

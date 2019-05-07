@@ -90,7 +90,7 @@
 							<div class="input-group">
 								<select name="status" class="form-control" style="height:35px" placeholder="状态">
 									<option value="">状态</option>
-									<option value="0">提交</option>
+									<option value="0">待审核</option>
 									<option value="1">通过</option>
 									<option value="2">拒绝</option>
 									<option value="3">已分类</option>
@@ -121,7 +121,7 @@
 	
 	
 	
-	<div class="modal fade in" id="modal-goods">
+	<div class="modal fade in" data-backdrop="static" id="modal-goods">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 600px;">
 				
@@ -158,7 +158,7 @@
 		</div>
 	</div>
 	
-	<div class="modal fade in" id="modal-ex">
+	<div class="modal fade in" data-backdrop="static" id="modal-ex">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 600px;">
 				
@@ -475,7 +475,7 @@
 	                title: "状态",
                     render: function (data, type, row, meta) {
                         if("0"==data){
-                        	return "提交";
+                        	return "<font color='red'>待审核</font>";
                         }else if("1"==data){
                         	return "通过";
                         }else if("2"==data){
