@@ -1,11 +1,13 @@
 package cn.offway.athena.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +130,23 @@ public class OrderController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("order-check异常orderNo:{}",orderNo,e);
+			return false;
+		}
+		
+	}
+	
+	@ResponseBody
+	@RequestMapping("/order-update")
+	public boolean orderUpdate(String orderNo,String status,Authentication auth){
+		try {
+			PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
+			phOrderInfo.setStatus(status);
+			phOrderInfo.setRemark("修改订单状态为："+status+",修改时间："+DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss")+",修改人："+auth.getName());
+			phOrderInfoService.save(phOrderInfo);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("order-update异常orderNo:{},status:{}",orderNo,status,e);
 			return false;
 		}
 		
