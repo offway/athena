@@ -137,6 +137,16 @@
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4 class="modal-title">商品明细</h4>
+					<p class="text-center a" style="padding: 19px;font-size: 16px">
+						<span class="text-primary col-xs-4" ></span>
+						<span class="text-primary col-xs-4" ></span>
+						<span class="text-primary col-xs-4" ></span>
+					</p>
+					<p class="text-center b" style="padding: 19px;font-size: 16px">
+						<span class="text-primary col-xs-4" ></span>
+						<span class="text-primary col-xs-4" ></span>
+						<span class="text-primary col-xs-4" ></span>
+					</p>
 				</div>
 				
 				<div class="modal-body">
@@ -385,6 +395,14 @@
 		 
 		 $("body").on("click","a.showGoods",function(){
 			 var orderNo = $(this).attr("orderNo");
+			 var tr = $(this).parents("tr")
+			 $('#modal-goods .a .col-xs-4:nth-child(1)').text("序号："+tr.find("td:nth-child(2)").text());
+			 $('#modal-goods .a .col-xs-4:nth-child(2)').text("订单号："+tr.find("td:nth-child(3)").text());
+			 $('#modal-goods .a .col-xs-4:nth-child(3)').text("使用日期："+tr.find("td:nth-child(4)").text());
+			 $('#modal-goods .b .col-xs-4:nth-child(1)').text("姓名："+tr.find("td:nth-child(5)").text());
+			 $('#modal-goods .b .col-xs-4:nth-child(2)').text("职位："+tr.find("td:nth-child(6)").text());
+			 $('#modal-goods .b .col-xs-4:nth-child(3)').text("使用者："+tr.find("td:nth-child(7)").text());
+			 
 			 $.get("/deliver-goods",{orderNo:orderNo},function(data){
 				var html = "";
 				$('#modal-goods tbody').html("");
