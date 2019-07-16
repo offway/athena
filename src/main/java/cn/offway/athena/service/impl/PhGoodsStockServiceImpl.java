@@ -121,7 +121,7 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 				}
 				
 				if(StringUtils.isNotBlank(sku)){
-					params.add(criteriaBuilder.equal(root.get("sku"), sku));
+					params.add(criteriaBuilder.like(root.get("sku"), "%"+sku+"%"));
 				}
 				
 				if(CollectionUtils.isNotEmpty(brandIds)){

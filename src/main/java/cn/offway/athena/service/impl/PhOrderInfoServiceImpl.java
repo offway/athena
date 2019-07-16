@@ -3,12 +3,10 @@ package cn.offway.athena.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.*;
 import javax.persistence.criteria.CriteriaBuilder.In;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
+import cn.offway.athena.domain.PhBrand;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -83,7 +81,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 	}
 	
 	@Override
-	public Page<PhOrderInfo> findByPage(final String isUpload,final String realName,final String position,final String orderNo,final String unionid,final String status,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
+	public Page<PhOrderInfo> findByPage(final String sku, final String isUpload, final String realName, final String position, final String orderNo, final String unionid, final String status, final Long brandId, final String isOffway, final List<Long> brandIds, Pageable page){
 		return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
 			
 			@Override
@@ -120,6 +118,17 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 				
 				if(StringUtils.isNotBlank(isOffway)){
 					params.add(criteriaBuilder.equal(root.get("isOffway"), isOffway));
+				}
+
+				if(StringUtils.isNotBlank(sku)){
+					Subquery<PhOrderGoods> subquery = criteriaQuery.subquery(PhOrderGoods.class);
+					Root<PhOrderGoods> subRoot = subquery.from(PhOrderGoods.class);
+					subquery.select(subRoot);
+					subquery.where(
+							criteriaBuilder.equal(root.get("orderNo"), subRoot.get("orderNo")),
+							criteriaBuilder.like(subRoot.get("sku"), "%"+sku+"%")
+					);
+					params.add(criteriaBuilder.exists(subquery));
 				}
 				
 				if(CollectionUtils.isNotEmpty(brandIds)){

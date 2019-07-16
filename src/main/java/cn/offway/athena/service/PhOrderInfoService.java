@@ -22,12 +22,12 @@ public interface PhOrderInfoService{
 
 	String generateOrderNo(String prefix);
 
-	JsonResult saveOrder(String orderNo);
+    Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String status, Long brandId, String isOffway, List<Long> brandIds, Pageable page);
+
+    JsonResult saveOrder(String orderNo);
 
 	PhOrderInfo findByOrderNo(String orderNo);
 
 	void cancel(String orderNo) throws Exception;
 
-	Page<PhOrderInfo> findByPage(String isUpload, String realName, String position, String orderNo, String unionid,
-			String status, Long brandId, String isOffway, List<Long> brandIds, Pageable page);
 }
