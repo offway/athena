@@ -112,9 +112,9 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 					params.add(criteriaBuilder.equal(root.get("status"), status));
 				}
 				
-				if(null != brandId){
-					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
-				}
+//				if(null != brandId){
+//					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
+//				}
 				
 				if(StringUtils.isNotBlank(isOffway)){
 					params.add(criteriaBuilder.equal(root.get("isOffway"), isOffway));
@@ -131,12 +131,30 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 					params.add(criteriaBuilder.exists(subquery));
 				}
 				
-				if(CollectionUtils.isNotEmpty(brandIds)){
-					In<Object> in = criteriaBuilder.in(root.get("brandId"));
+				if(null == brandId && CollectionUtils.isNotEmpty(brandIds)){
+					Subquery<PhOrderGoods> subquery = criteriaQuery.subquery(PhOrderGoods.class);
+					Root<PhOrderGoods> subRoot = subquery.from(PhOrderGoods.class);
+					subquery.select(subRoot);
+					In<Object> in = criteriaBuilder.in(subRoot.get("brandId"));
 					for (Object brandId : brandIds) {
 						in.value(brandId);
 					}
-					params.add(in);
+					subquery.where(
+							in,
+							criteriaBuilder.equal(subRoot.get("orderNo"), root.get("orderNo"))
+					);
+					params.add(criteriaBuilder.exists(subquery));
+				}
+
+				if(null != brandId){
+					Subquery<PhOrderGoods> subquery = criteriaQuery.subquery(PhOrderGoods.class);
+					Root<PhOrderGoods> subRoot = subquery.from(PhOrderGoods.class);
+					subquery.select(subRoot);
+					subquery.where(
+							criteriaBuilder.equal(subRoot.get("brandId"), brandId),
+							criteriaBuilder.equal(subRoot.get("orderNo"), root.get("orderNo"))
+					);
+					params.add(criteriaBuilder.exists(subquery));
 				}
 				
 				
