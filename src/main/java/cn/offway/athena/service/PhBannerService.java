@@ -1,6 +1,8 @@
 package cn.offway.athena.service;
 
 import cn.offway.athena.domain.PhBanner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Banner管理Service接口
@@ -8,9 +10,18 @@ import cn.offway.athena.domain.PhBanner;
  * @author wn
  * @version $v: 1.0.0, $time:2018-02-12 11:26:00 Exp $
  */
-public interface PhBannerService{
+public interface PhBannerService {
+    PhBanner save(PhBanner phBanner);
 
-	PhBanner save(PhBanner phBanner);
-	
-	PhBanner findOne(Long id);
+    PhBanner findOne(Long id);
+
+    Page<PhBanner> findAll(Pageable pageable);
+
+    void delete(Long id);
+
+    void resort(Long sort);
+
+    Long getMaxSort();
+
+    Page<PhBanner> findAll(String id, String remark, Pageable pageable);
 }

@@ -1,5 +1,7 @@
 package cn.offway.athena.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -20,13 +22,21 @@ public class PhBanner implements Serializable {
     /** banner **/
     private String banner;
 
+    /** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
+    private String type;
+
+    /** 跳转对应ID **/
+    private Long redirectId;
+
     /** 跳转链接 **/
     private String url;
 
     /** 开始时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
 
     /** 截止时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 状态[0-未上架,1-已上架] **/
@@ -40,7 +50,6 @@ public class PhBanner implements Serializable {
 
     /** 备注 **/
     private String remark;
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +69,25 @@ public class PhBanner implements Serializable {
 
     public void setBanner(String banner) {
         this.banner = banner;
+    }
+
+    @Column(name = "type", length = 2)
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Column(name = "redirect_id", length = 11)
+
+    public Long getRedirectId() {
+        return redirectId;
+    }
+
+    public void setRedirectId(Long redirectId) {
+        this.redirectId = redirectId;
     }
 
     @Column(name = "url", length = 50)
@@ -127,5 +155,4 @@ public class PhBanner implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
 }
