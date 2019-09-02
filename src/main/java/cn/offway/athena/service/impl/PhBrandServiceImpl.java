@@ -69,19 +69,19 @@ public class PhBrandServiceImpl implements PhBrandService {
 	}
 	
 	@Override
-	public Page<PhBrand> findByPage(final Long brandId,final String brandName,Pageable page){
+	public Page<PhBrand> findByPage(final Long id,final String name,Pageable page){
 		return phBrandRepository.findAll(new Specification<PhBrand>() {
 			
 			@Override
 			public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> params = new ArrayList<Predicate>();
 				
-				if(StringUtils.isNotBlank(brandName)){
-					params.add(criteriaBuilder.like(root.get("brandName"), "%"+brandName+"%"));
+				if(StringUtils.isNotBlank(name)){
+					params.add(criteriaBuilder.like(root.get("name"), "%"+name+"%"));
 				}
 				
-				if(null != brandId){
-					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
+				if(null != id){
+					params.add(criteriaBuilder.equal(root.get("id"), id));
 				}
 				
                 Predicate[] predicates = new Predicate[params.size()];
