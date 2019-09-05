@@ -1,8 +1,10 @@
 package cn.offway.athena.service;
 
-import java.util.List;
-
 import cn.offway.athena.domain.PhOrderGoods;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 /**
  * 订单商品Service接口
@@ -17,4 +19,6 @@ public interface PhOrderGoodsService{
 	PhOrderGoods findOne(Long id);
 
 	List<PhOrderGoods> findByOrderNo(String orderNo);
+
+	Page<PhOrderGoods> findByBrandId(Long brandId, Pageable page);
 }

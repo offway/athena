@@ -244,7 +244,10 @@
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
-	/*<![CDATA[*/	
+	/*<![CDATA[*/
+
+	var brandId = [[${brandId}]];
+
 	jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -514,8 +517,11 @@
 				 }
 			 });
 		 });
-		 
-		
+		if (brandId!=null){
+			$("select[name='brandId']").val(brandId);
+			oTable.fnDraw();  //or fnReloadAjax()
+			return false;
+		}
 		
 	});
 	/*]]>*/
