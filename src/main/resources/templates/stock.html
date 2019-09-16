@@ -47,7 +47,7 @@
 					<form role="form" class="form-inline">
 						<div class="form-group ">
 							<div class="input-group">
-								<select name="brandId" class="form-control" style="height:35px" placeholder="品牌">
+								<select id="brandId" name="brandId" class="form-control" style="height:35px" placeholder="品牌">
 									<option value="">品牌</option>
 									<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
 								</select>
@@ -149,7 +149,7 @@
 							<div class="form-group">
 								<label for="field-4" class="control-label">品牌</label>
 								
-								<select id="brandId" name="brandId" class="form-control" style="height:35px" placeholder="品牌">
+								<select name="brandId" class="form-control" style="height:35px" placeholder="品牌">
 									<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
 								</select>
 							</div>	
