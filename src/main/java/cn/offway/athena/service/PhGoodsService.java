@@ -13,23 +13,23 @@ import cn.offway.athena.domain.PhGoods;
  * @author wn
  * @version $v: 1.0.0, $time:2018-02-12 11:26:00 Exp $
  */
-public interface PhGoodsService{
+public interface PhGoodsService {
 
-	PhGoods save(PhGoods phGoods);
-	
-	PhGoods findOne(Long id);
+    PhGoods save(PhGoods phGoods);
 
-	void save(PhGoods phGoods, String banner, String detail);
+    PhGoods findOne(Long id);
 
-	List<PhGoods> findAll(List<Long> ids);
+    void save(PhGoods phGoods, String banner, String detail);
 
-	List<PhGoods> save(List<PhGoods> phGoods);
+    List<PhGoods> findAll(List<Long> ids);
 
-	boolean imagesDelete(Long goodsImageId);
+    List<PhGoods> save(List<PhGoods> phGoods);
 
-	List<PhGoods> findByBrandId(Long brandId);
+    boolean imagesDelete(Long goodsImageId);
 
-	Page<PhGoods> findByPage(String name, Long brandId, String isOffway, List<Long> brandIds, Pageable page);
+    List<PhGoods> findByBrandId(Long brandId);
 
-	String delete(List<Long> goodsIds);
+    Page<PhGoods> findByPage(String name, Long brandId, String isOffway, List<Long> brandIds, String status, String type, String category, Pageable page);
+
+    String delete(List<Long> goodsIds);
 }
