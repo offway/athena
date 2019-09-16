@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/js/jquery-editable-select-master/jquery-editable-select.css"/>
 	<script src="js/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -148,7 +149,7 @@
 							<div class="form-group">
 								<label for="field-4" class="control-label">品牌</label>
 								
-								<select name="brandId" class="form-control" style="height:35px" placeholder="品牌">
+								<select id="brandId" name="brandId" class="form-control" style="height:35px" placeholder="品牌">
 									<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
 								</select>
 							</div>	
@@ -282,6 +283,7 @@
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/	
@@ -289,6 +291,7 @@
 	           
 	jQuery(document).ready(function($)
 	{
+		$("#brandId").editableSelect();
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
@@ -302,6 +305,12 @@
             sAjaxSource : "/stock-data",//通过ajax实现分页的url路径。
             fnServerParams : function(aData){
                 var searchArray = $(".form-inline").serializeArray();
+				var brandId = $("#brandId").parent().find("li.es-visible").val();
+				if (brandId != "0"){
+					searchArray.push({"name": "brandId", "value": brandId});
+				}else {
+					searchArray.push({"name": "brandId", "value": ""});
+				}
                 $.merge(aData, searchArray);
             },
             order: [[ 0, "desc" ]],columnDefs: [

@@ -1,12 +1,10 @@
 package cn.offway.athena.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import cn.offway.athena.domain.PhAdmin;
+import cn.offway.athena.domain.PhOrderExpressInfo;
+import cn.offway.athena.domain.PhOrderGoods;
+import cn.offway.athena.domain.PhOrderInfo;
+import cn.offway.athena.service.*;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +18,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.offway.athena.domain.PhAdmin;
-import cn.offway.athena.domain.PhOrderExpressInfo;
-import cn.offway.athena.domain.PhOrderGoods;
-import cn.offway.athena.domain.PhOrderInfo;
-import cn.offway.athena.domain.VOrder;
-import cn.offway.athena.service.PhBrandService;
-import cn.offway.athena.service.PhGoodsStockService;
-import cn.offway.athena.service.PhOrderExpressInfoService;
-import cn.offway.athena.service.PhOrderGoodsService;
-import cn.offway.athena.service.PhOrderInfoService;
-import cn.offway.athena.utils.JsonResult;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 订单查询
@@ -59,12 +51,13 @@ public class OrderController {
 	
 	
 	@RequestMapping("/order.html")
-	public String order(ModelMap map,Authentication authentication){
+	public String order(ModelMap map,Authentication authentication,String brandId){
 		
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
 		
 		map.addAttribute("brands", phBrandService.findByIds(brandIds));
+		map.addAttribute("brandId",brandId);
 		return "order";
 	}
 	

@@ -1,15 +1,22 @@
 package cn.offway.athena.service.impl;
 
-import java.util.List;
-
+import cn.offway.athena.domain.PhOrderGoods;
+import cn.offway.athena.repository.PhOrderGoodsRepository;
+import cn.offway.athena.service.PhOrderGoodsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import cn.offway.athena.service.PhOrderGoodsService;
 
-import cn.offway.athena.domain.PhOrderGoods;
-import cn.offway.athena.repository.PhOrderGoodsRepository;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -39,5 +46,25 @@ public class PhOrderGoodsServiceImpl implements PhOrderGoodsService {
 	@Override
 	public List<PhOrderGoods> findByOrderNo(String orderNo){
 		return phOrderGoodsRepository.findByOrderNo(orderNo);
+	}
+
+	@Override
+	public Page<PhOrderGoods> findByBrandId(final Long brandId, Pageable page){
+		return phOrderGoodsRepository.findAll(new Specification<PhOrderGoods>() {
+
+			@Override
+			public Predicate toPredicate(Root<PhOrderGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> params = new ArrayList<Predicate>();
+
+				if(!"".equals(brandId)){
+					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
+				}
+
+				Predicate[] predicates = new Predicate[params.size()];
+				criteriaQuery.where(params.toArray(predicates));
+
+				return null;
+			}
+		}, page);
 	}
 }

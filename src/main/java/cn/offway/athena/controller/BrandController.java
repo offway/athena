@@ -62,7 +62,7 @@ public class BrandController {
 	 */
 	@ResponseBody
 	@RequestMapping("/brand-data")
-	public Map<String, Object> stockData(HttpServletRequest request,Long brandId,String brandName){
+	public Map<String, Object> stockData(HttpServletRequest request,Long id,String name){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -70,7 +70,7 @@ public class BrandController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhBrand> pages = phBrandService.findByPage(brandId,null!=brandName?brandName.trim():brandName, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhBrand> pages = phBrandService.findByPage(id,null!=name?name.trim():name, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

@@ -29,7 +29,6 @@ public class BannerController {
     @RequestMapping("/banner.html")
     public String index(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
-        map.addAttribute("position", 0);
         return "banner_index";
     }
 
@@ -53,9 +52,6 @@ public class BannerController {
     @RequestMapping("/banner_save")
     @ResponseBody
     public boolean save(PhBanner banner) {
-        if ("".equals(banner.getUrl())) {
-            banner.setUrl(null);
-        }
         if (banner.getId() == null) {
             banner.setStatus("0");
             banner.setSort(null);
