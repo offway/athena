@@ -48,28 +48,28 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 
 	@Autowired
 	private PhGoodsRepository phGoodsRepository;
-	
+
 	@Autowired
 	private QiniuService qiniuService;
-	
+
 	@Autowired
 	private QiniuProperties qiniuProperties;
-	
+
 	@Autowired
 	private PhGoodsImageService phGoodsImageService;
-	
+
 	@Autowired
 	private PhBrandService phBrandService;
-	
+
 	@Autowired
 	private PhGoodsStockService phGoodsStockService;
-	
+
 	@Autowired
 	private PhWardrobeRepository phWardrobeRepository;
 
 	@Autowired
 	private PhOrderGoodsRepository phOrderGoodsRepository;
-	
+
 	@Override
 	public PhGoods save(PhGoods phGoods){
 		if(null != phGoods.getId()){
@@ -77,30 +77,30 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 		}
 		return phGoodsRepository.save(phGoods);
 	}
-	
+
 	@Override
 	public List<PhGoods> save(List<PhGoods> phGoods){
 		return phGoodsRepository.save(phGoods);
 	}
-	
+
 	@Override
 	public PhGoods findOne(Long id){
 		return phGoodsRepository.findOne(id);
 	}
-	
+
 	@Override
 	public List<PhGoods> findAll(List<Long> ids){
 		return phGoodsRepository.findAll(ids);
 	}
-	
+
 	private void updateChildren(Long id,String name){
 		phGoodsRepository.updateGoodsStock(id, name);
 		phGoodsRepository.updateOrderGoods(id, name);
 	}
-	
+
 	@Override
 	public String delete(List<Long> goodsIds){
-		
+
 		int c =  phGoodsRepository.countByGoodsIds(goodsIds);
 		if(c>0){
 			return "1";
@@ -113,35 +113,47 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 		phGoodsImageService.deleteByGoodsIds(goodsIds);
 		phGoodsStockService.deleteByGoodsIds(goodsIds);
 		phGoodsRepository.deleteByGoodsIds(goodsIds);
-		
+
 		return "0";
 	}
-	
+
 	@Override
 	public List<PhGoods> findByBrandId(Long brandId){
 		return phGoodsRepository.findByBrandId(brandId);
 	}
-	
+
 	@Override
-	public Page<PhGoods> findByPage(final String name,final Long brandId,final String isOffway,final List<Long> brandIds,Pageable page){
+    public Page<PhGoods> findByPage(final String name, final Long brandId, final String isOffway, final List<Long> brandIds, String status, String type, String category, Pageable page) {
 		return phGoodsRepository.findAll(new Specification<PhGoods>() {
-			
+
 			@Override
 			public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> params = new ArrayList<Predicate>();
-				
+
 				if(StringUtils.isNotBlank(name)){
 					params.add(criteriaBuilder.like(root.get("name"), "%"+name+"%"));
 				}
-				
+
 				if(null != brandId){
 					params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
 				}
-				
+
 				if(StringUtils.isNotBlank(isOffway)){
 					params.add(criteriaBuilder.equal(root.get("isOffway"), isOffway));
 				}
-				
+
+                if (StringUtils.isNotBlank(status)) {
+                    params.add(criteriaBuilder.equal(root.get("status"), status));
+                }
+
+                if (StringUtils.isNotBlank(type)) {
+                    params.add(criteriaBuilder.equal(root.get("type"), type));
+                }
+
+                if (StringUtils.isNotBlank(category)) {
+                    params.add(criteriaBuilder.equal(root.get("category"), category));
+                }
+
 				if(CollectionUtils.isNotEmpty(brandIds)){
 					In<Object> in = criteriaBuilder.in(root.get("brandId"));
 					for (Object brandId : brandIds) {
@@ -149,14 +161,14 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 					}
 					params.add(in);
 				}
-				
+
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
 				return null;
 			}
 		}, page);
 	}
-	
+
 	@Override
 	public void save(PhGoods phGoods,String banner,String detail){
 		phGoods.setCreateTime(new Date());
@@ -175,7 +187,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 		phGoods.setBrandLogo(phBrand.getLogo());
 		phGoods.setBrandName(phBrand.getName());
 		phGoods = save(phGoods);
-		
+
 		List<String> banners = Arrays.asList(banner.split("#"));
 		List<String> details = Arrays.asList(detail.split("#"));
 		List<PhGoodsImage> goodsImages = phGoodsImageService.findByGoodsId(productId);
@@ -190,7 +202,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 		}
-		
+
 		phGoodsImageService.delete(goodsImages);
 		List<PhGoodsImage> images = new ArrayList<>();
 		Date now = new Date();
@@ -206,7 +218,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 				images.add(goodsImage);
 			}
 		}
-		
+
 		for (String b : details) {
 			if(StringUtils.isNotBlank(b)){
 				PhGoodsImage goodsImage = new PhGoodsImage();
@@ -220,10 +232,10 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 			}
 		}
 		phGoodsImageService.save(images);
-		
-		
+
+
 	}
-	
+
 	@Override
 	public boolean imagesDelete(Long goodsImageId){
 		PhGoodsImage goodsImage = phGoodsImageService.findOne(goodsImageId);
