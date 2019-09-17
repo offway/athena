@@ -78,7 +78,7 @@
 						</div>
 						<div class="form-group ">
 							<div class="input-group">
-								<select name="type" id="type" class="form-control" style="height:35px" onchange="renderCategory(this)">
+								<select name="type" id="type" class="form-control" style="height:35px" onchange="renderCategory(this,0)">
 									<option value="">全部类别</option>
 								</select>
 							</div>
@@ -112,8 +112,6 @@
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
-	
-	<div th:replace="body-under"></div>
 	
 	<div class="modal fade in" data-backdrop="static" id="modal-6">
 		<div class="modal-dialog">
@@ -179,39 +177,18 @@
 					
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">类别</label>
-								
-								<select name="type" class="form-control" style="height:35px">
-									<option value="男装">男装</option>
-									<option value="女装">女装</option>
-									<option value="男女同款">男女同款</option>
+								<label class="control-label">类别</label>
+								<select name="type" id="typeAlt" class="form-control" style="height:35px" onchange="renderCategory(this,1)">
 								</select>
 							</div>	
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">类目</label>
-								
-								<select name="category" class="form-control" style="height:35px">
-									<option value="T恤">T恤</option>
-									<option value="衬衫">衬衫</option>
-									<option value="卫衣">卫衣</option>
-<!-- 									<option value="夹克">夹克</option>
- -->									<option value="外套">外套</option>
-									<option value="针织衫">针织衫</option>
-									<option value="短裤">短裤</option>
-									<option value="长裤">长裤</option>
-									<option value="裙子">裙子</option>
-									<option value="鞋">鞋</option>
-									<option value="配饰">配饰</option>
-									<option value="首饰">首饰</option>
-									<option value="箱包">箱包</option>
-									<option value="其他">其他</option>
+								<label class="control-label">类目</label>
+								<select name="category" id="categoryAlt" class="form-control" style="height:35px">
 								</select>
 							</div>	
 						</div>
@@ -293,30 +270,46 @@
 	<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
-	function bindTypeSelector(data) {
+	function bindTypeSelector(data, isEdit) {
 		var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		if (isEdit == 1) {
+			typeStr = "";
+		}
 		for (var type in data) {
 			type = data[type];
 			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
 		}
-		$("#type").html(typeStr);
-		bindCategorySelector(data[0]["sub"]);
+		if (isEdit == 1) {
+			$("#typeAlt").html(typeStr);
+		} else {
+			$("#type").html(typeStr);
+		}
+		bindCategorySelector(data[0]["sub"], isEdit);
 	}
-	function bindCategorySelector(data) {
+
+	function bindCategorySelector(data, isEdit) {
 		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		if (isEdit == 1) {
+			categoryStr = "";
+		}
 		for (var category in data) {
 			category = data[category];
 			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
 		}
-		$("#category").html(categoryStr);
+		if (isEdit == 1) {
+			$("#categoryAlt").html(categoryStr);
+		} else {
+			$("#category").html(categoryStr);
+		}
 	}
-	function renderCategory(self) {
+
+	function renderCategory(self, isEdit) {
 		var jsonStr = $("#type_and_category_list").val();
 		var list = JSON.parse(jsonStr);
 		var selectedId = $(self).val();
 		for (var type in list) {
 			if (selectedId == list[type]["name"]) {
-				bindCategorySelector(list[type]["sub"]);
+				bindCategorySelector(list[type]["sub"], isEdit);
 				break;
 			}
 		}
@@ -351,7 +344,8 @@
 	{
 		$.getJSON("/type_and_category_list", {}, function (data) {
 			$("#type_and_category_list").val(JSON.stringify(data));
-			bindTypeSelector(data);
+			bindTypeSelector(data, 0);
+			bindTypeSelector(data, 1);
 		});
 		$("#brandId").editableSelect();
 		var oTable = $("#example-1").dataTable({
