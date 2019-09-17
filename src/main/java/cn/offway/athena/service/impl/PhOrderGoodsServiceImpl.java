@@ -45,7 +45,7 @@ public class PhOrderGoodsServiceImpl implements PhOrderGoodsService {
 	
 	@Override
 	public List<PhOrderGoods> findByOrderNo(String orderNo){
-		return phOrderGoodsRepository.findByOrderNo(orderNo);
+		return phOrderGoodsRepository.findByOrderNoOrderByBrandId(orderNo);
 	}
 
 	@Override

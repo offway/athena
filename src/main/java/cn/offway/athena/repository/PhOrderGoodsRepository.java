@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface PhOrderGoodsRepository extends JpaRepository<PhOrderGoods, Long>, JpaSpecificationExecutor<PhOrderGoods> {
 
-    List<PhOrderGoods> findByOrderNo(String orderNo);
+    List<PhOrderGoods> findByOrderNoOrderByBrandId(String orderNo);
 
     @Query(nativeQuery = true, value = "select count(*) from ph_order_goods where goods_id in(?1)")
     int countByGoodsIds(List<Long> goodsIds);
