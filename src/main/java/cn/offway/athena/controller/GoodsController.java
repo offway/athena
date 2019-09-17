@@ -1,14 +1,14 @@
 package cn.offway.athena.controller;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cn.offway.athena.domain.*;
+import cn.offway.athena.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.offway.athena.domain.PhAdmin;
-import cn.offway.athena.domain.PhGoods;
-import cn.offway.athena.domain.PhGoodsImage;
 import cn.offway.athena.properties.QiniuProperties;
-import cn.offway.athena.service.PhBrandService;
-import cn.offway.athena.service.PhGoodsImageService;
-import cn.offway.athena.service.PhGoodsService;
-import cn.offway.athena.service.QiniuService;
 
 
 /**
@@ -60,6 +53,12 @@ public class GoodsController {
 	
 	@Autowired
 	private QiniuService qiniuService;
+
+	@Autowired
+	private PhGoodsTypeService goodsTypeService;
+
+	@Autowired
+	private PhGoodsCategoryService goodsCategoryService;
 	
 
 	/**
@@ -180,6 +179,19 @@ public class GoodsController {
 	public String goodsDelete(@RequestParam("ids[]") Long[] ids){
 		return phGoodsService.delete(Arrays.asList(ids));
 	}
-	
-	
+
+	@ResponseBody
+	@RequestMapping("/type_and_category_list")
+	public List<Object> getTypeAndCategory() {
+		List<Object> ret = new ArrayList<>();
+		ObjectMapper objectMapper = new ObjectMapper();
+		List<PhGoodsType> typeList = goodsTypeService.findAll();
+		for (PhGoodsType type : typeList) {
+			Map container = objectMapper.convertValue(type, Map.class);
+			List<PhGoodsCategory> categoryList = goodsCategoryService.findByPid(type.getId());
+			container.put("sub", categoryList);
+			ret.add(container);
+		}
+		return ret;
+	}
 }
