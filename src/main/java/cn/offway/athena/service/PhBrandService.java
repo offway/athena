@@ -16,7 +16,9 @@ import cn.offway.athena.domain.PhBrand;
 public interface PhBrandService{
 
 	PhBrand save(PhBrand phBrand);
-	
+
+	List<PhBrand> save(List<PhBrand> phBrands);
+
 	PhBrand findOne(Long id);
 
 	List<PhBrand> findAll();

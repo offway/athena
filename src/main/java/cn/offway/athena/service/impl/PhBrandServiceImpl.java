@@ -45,7 +45,12 @@ public class PhBrandServiceImpl implements PhBrandService {
 		}
 		return phBrandRepository.save(phBrand);
 	}
-	
+
+	@Override
+	public List<PhBrand> save(List<PhBrand> phBrands){
+		return phBrandRepository.save(phBrands);
+	}
+
 	@Override
 	public PhBrand findOne(Long id){
 		return phBrandRepository.findOne(id);

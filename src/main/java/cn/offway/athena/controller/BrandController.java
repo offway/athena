@@ -1,12 +1,12 @@
 package cn.offway.athena.controller;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.netty.util.internal.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSON;
 
@@ -86,6 +83,7 @@ public class BrandController {
 	public boolean save(PhBrand phBrand){
 		try {
 			phBrand.setCreateTime(new Date());
+			phBrand.setStatus("1");
 			phBrandService.save(phBrand);
 			return true;
 		} catch (Exception e) {
@@ -107,6 +105,19 @@ public class BrandController {
 	@GetMapping("/brand-showImgId")
 	public List<PhBrand> findByShowImgId(Long showImgId){
 		return phBrandService.findByShowImgId(showImgId);
+	}
+
+	@ResponseBody
+	@PostMapping("/brand-update")
+	public boolean update(@RequestParam("ids[]")Long[] ids, String status){
+		List<PhBrand> brands = phBrandService.findByIds(Arrays.asList(ids));
+		for (PhBrand brand : brands) {
+			if (StringUtils.isNotBlank(status)){
+				brand.setStatus(status);
+			}
+		}
+		phBrandService.save(brands);
+		return true;
 	}
 	
 	
