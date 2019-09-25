@@ -1,15 +1,16 @@
 package cn.offway.athena.service.impl;
 
-import java.util.List;
-
+import cn.offway.athena.domain.PhFeedback;
+import cn.offway.athena.repository.PhFeedbackRepository;
+import cn.offway.athena.service.PhFeedbackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import cn.offway.athena.service.PhFeedbackService;
 
-import cn.offway.athena.domain.PhFeedback;
-import cn.offway.athena.repository.PhFeedbackRepository;
+import java.util.List;
 
 
 /**
@@ -21,28 +22,33 @@ import cn.offway.athena.repository.PhFeedbackRepository;
 @Service
 public class PhFeedbackServiceImpl implements PhFeedbackService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhFeedbackRepository phFeedbackRepository;
-	
-	@Override
-	public PhFeedback save(PhFeedback phFeedback){
-		return phFeedbackRepository.save(phFeedback);
-	}
-	
-	@Override
-	public PhFeedback findOne(Long id){
-		return phFeedbackRepository.findOne(id);
-	}
+    @Autowired
+    private PhFeedbackRepository phFeedbackRepository;
 
-	@Override
-	public void delete(Long id){
-		phFeedbackRepository.delete(id);
-	}
+    @Override
+    public PhFeedback save(PhFeedback phFeedback) {
+        return phFeedbackRepository.save(phFeedback);
+    }
 
-	@Override
-	public List<PhFeedback> save(List<PhFeedback> entities){
-		return phFeedbackRepository.save(entities);
-	}
+    @Override
+    public PhFeedback findOne(Long id) {
+        return phFeedbackRepository.findOne(id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        phFeedbackRepository.delete(id);
+    }
+
+    @Override
+    public Page<PhFeedback> findAll(Pageable pageable) {
+        return phFeedbackRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<PhFeedback> save(List<PhFeedback> entities) {
+        return phFeedbackRepository.save(entities);
+    }
 }

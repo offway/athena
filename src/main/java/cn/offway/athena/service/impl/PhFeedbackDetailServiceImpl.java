@@ -1,15 +1,22 @@
 package cn.offway.athena.service.impl;
 
-import java.util.List;
-
+import cn.offway.athena.domain.PhFeedbackDetail;
+import cn.offway.athena.repository.PhFeedbackDetailRepository;
+import cn.offway.athena.service.PhFeedbackDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import cn.offway.athena.service.PhFeedbackDetailService;
 
-import cn.offway.athena.domain.PhFeedbackDetail;
-import cn.offway.athena.repository.PhFeedbackDetailRepository;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -21,28 +28,47 @@ import cn.offway.athena.repository.PhFeedbackDetailRepository;
 @Service
 public class PhFeedbackDetailServiceImpl implements PhFeedbackDetailService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhFeedbackDetailRepository phFeedbackDetailRepository;
-	
-	@Override
-	public PhFeedbackDetail save(PhFeedbackDetail phFeedbackDetail){
-		return phFeedbackDetailRepository.save(phFeedbackDetail);
-	}
-	
-	@Override
-	public PhFeedbackDetail findOne(Long id){
-		return phFeedbackDetailRepository.findOne(id);
-	}
+    @Autowired
+    private PhFeedbackDetailRepository phFeedbackDetailRepository;
 
-	@Override
-	public void delete(Long id){
-		phFeedbackDetailRepository.delete(id);
-	}
+    @Override
+    public PhFeedbackDetail save(PhFeedbackDetail phFeedbackDetail) {
+        return phFeedbackDetailRepository.save(phFeedbackDetail);
+    }
 
-	@Override
-	public List<PhFeedbackDetail> save(List<PhFeedbackDetail> entities){
-		return phFeedbackDetailRepository.save(entities);
-	}
+    @Override
+    public PhFeedbackDetail findOne(Long id) {
+        return phFeedbackDetailRepository.findOne(id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        phFeedbackDetailRepository.delete(id);
+    }
+
+    @Override
+    public Page<PhFeedbackDetail> findByPid(Long pid, Pageable pageable) {
+        return phFeedbackDetailRepository.findAll(new Specification<PhFeedbackDetail>() {
+            @Override
+            public Predicate toPredicate(Root<PhFeedbackDetail> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(cb.equal(root.get("pid"), pid));
+                Predicate[] predicates = new Predicate[params.size()];
+                query.where(params.toArray(predicates));
+                return null;
+            }
+        }, pageable);
+    }
+
+    @Override
+    public void delByPid(Long pid) {
+        phFeedbackDetailRepository.deleteByPid(pid);
+    }
+
+    @Override
+    public List<PhFeedbackDetail> save(List<PhFeedbackDetail> entities) {
+        return phFeedbackDetailRepository.save(entities);
+    }
 }
