@@ -76,6 +76,20 @@ public class FeedbackController {
         return map;
     }
 
+    @RequestMapping("/feedback_modify.html")
+    public String modify(ModelMap map, String id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        return "feedback_compose";
+    }
+
+    @RequestMapping("/feedback_insert.html")
+    public String insert(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", "XYZ");
+        return "feedback_compose";
+    }
+
     @ResponseBody
     @RequestMapping("/feedback_detail_save")
     public boolean save(PhFeedbackDetail detail) {
