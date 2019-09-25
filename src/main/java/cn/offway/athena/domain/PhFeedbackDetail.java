@@ -42,7 +42,7 @@ public class PhFeedbackDetail implements Serializable {
     private Date backTime;
 
     /**  **/
-    private ${s.propertyType.javaType} imgUrl;
+    private String imgUrl;
 
 
     @Id
@@ -129,11 +129,12 @@ public class PhFeedbackDetail implements Serializable {
         this.backTime = backTime;
     }
 
-    public ${s.propertyType.javaType} getImgUrl() {
+    @Column(name = "img_url", length = 1000)
+    public String getImgUrl() {
         return imgUrl;
     }
 
-    public void setImgUrl(${s.propertyType.javaType} imgUrl) {
+    public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
 
