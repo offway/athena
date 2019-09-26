@@ -19,6 +19,8 @@ public interface PhFeedbackService {
 
     PhFeedback findOne(Long id);
 
+    PhFeedback findByBrandId(Long id);
+
     void delete(Long id);
 
     List<PhFeedback> save(List<PhFeedback> entities);

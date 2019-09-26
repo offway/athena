@@ -35,129 +35,46 @@
 		</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h4 class="modal-title">限时商品</h4>
+				<h4 class="modal-title">返图明细</h4>
 			</div>
 			<div class="panel-body">
 				<form role="form" id="saveForm">
 					<input type="hidden" name="id"/>
-					<!--						<input type="hidden" name="goodsId"/>-->
 					<input type="hidden" name="action"/>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label class="control-label">名称</label>
-								<input type="text" class="form-control" name="name" placeholder="名称"/>
+								<label class="control-label">返图品牌</label>
+								<select class="form-control" name="brandId" id="brandId">
+								</select>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label class="control-label">封面图片</label>
-								<input type="file" class="form-control" name="imageFile" placeholder="封面图片" onchange="uploadFile(this)"/>
-								<input type="hidden" class="form-control" name="image" />
-								<img src="" name="imageImg" />
+								<label class="control-label">使用艺人</label>
+								<input type="text" class="form-control" name="starName" placeholder="使用艺人"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label class="control-label">是否上架</label>
-								<label><input name="status" class="notMe" type="radio" value="0"/>否 </label>
-								<label><input name="status" class="notMe" type="radio" checked="checked" value="1"/>是</label>
+								<label class="control-label">微博链接</label>
+								<input type="text" class="form-control" name="weibo" placeholder="微博链接"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label class="control-label">用户类型</label>
-								<label><input name="userType" class="notMe" type="radio" value="0"/>新用户 </label>
-								<label><input name="userType" class="notMe" type="radio" checked="checked" value="1"/>新老用户</label>
+								<label class="control-label">上传图片(多选)</label>
+								<input type="file" class="form-control" name="imageFile" placeholder="上传图片" onchange="uploadFile(this)" multiple="multiple"/>
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label">开始时间</label>
-								<input type="text" class="form-control" name="beginTime" id="beginTime" placeholder="开始时间" />
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label">截止时间</label>
-								<input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">市场价</label>
-								<input type="number" class="form-control" name="originalPrice" placeholder="市场价"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">限定价</label>
-								<input type="text" class="form-control" name="price" placeholder="限定价"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">数量</label>
-								<input type="text" class="form-control" name="saleCount" placeholder="数量"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">目标助力次数</label>
-								<input type="text" class="form-control" name="boostCount" placeholder="目标助力次数"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">发售详情</label>
-								<textarea id="editor_id" name="info" style="width:700px;height:300px;" placeholder="发售详情">
-									</textarea>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">关联商品ID</label>
-								<input type="number" class="form-control" name="goodsId" placeholder="关联商品ID"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">单用户可购买数量上限</label>
-								<input type="number" class="form-control" name="buyLimit" placeholder="单用户可购买数量上限"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label"><font color="red">*</font>渠道</label>
-								<label><input name="tags" class="notMe" type="checkbox" value="0"/>H5</label>
-								<label><input name="tags" class="notMe" type="checkbox" value="1" />小程序</label>
-								<label><input name="tags" class="notMe" type="checkbox" value="2"/>APP</label>
-							</div>
-						</div>
+					<div class="row" id="imgPool">
 					</div>
 				</form>
 			</div>
@@ -175,25 +92,64 @@
 	function uploadFile(self) {
 		var that = $(self);
 		if (self.files.length > 0) {
-			var file = self.files[0];
 			getQNToken(function (token) {
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					that.parent().find("[name=image]").val(url);
-					that.parent().find("[name=imageImg]").attr("src", url);
-					that.parent().find("[name=imageImg]").attr("width", "100px");
-					that.parent().find("[name=imageImg]").attr("height", "100px");
-					that.parent().find("[name=imageImg]").show();
+				var imgList = [];
+				async.eachSeries(self.files, function (file, cb) {
+					this.upload("", token, file, function () {
+						//
+					}, function (err) {
+						console.log("error");
+						console.log(err);
+					}, function (res) {
+						//上传成功
+						if (res != '') {
+							var url = qiniuUrl + "/" + res.key;
+							imgList.push(url);
+						}
+						cb();
+					});
+				}, function () {
+					var divList = $("#imgPool").children("div.col-md-2").toArray();
+					for (var i in imgList) {
+						if (divList[i] == null) {
+							addIntroFileUploaded("#imgPool", imgList[i]);
+						} else {
+							var a = $(divList[i]).find("input[name='image']")[0];
+							var b = $(divList[i]).find("img[name='imageImg']")[0];
+							if (a == null) {
+								addIntroFileUploaded("#imgPool", imgList[i]);
+							} else {
+								$(a).val(imgList[i]);
+								$(b).attr("src", imgList[i]);
+								$(b).attr("width", "100px");
+								$(b).attr("height", "100px");
+								$(b).show();
+							}
+						}
+					}
 				});
 			});
 		} else {
 			confirm("未选择任何文件!");
 		}
+	}
+
+	function addIntroFileUploaded(self, url) {
+		var that = $(self);
+		that.append("\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">图片</label>\n" +
+				// "\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"图片\" multiple=\"multiple\" accept=\"image/*\" onchange=\"uploadIntroFile(this)\"/>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control btn btn-danger\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"image\" value='VV' />\n".replace("VV", url) +
+				"\t\t\t\t\t\t\t\t<img alt=\"\" src=\"SS\" name=\"imageImg\" style=\"display:block;\" width='100px' height='100px' />\n".replace("SS", url) +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>");
+	}
+
+	function delIntroFile(self) {
+		var that = $(self);
+		that.parent().parent().remove();
 	}
 
 	function getQNToken(cb) {
@@ -234,7 +190,7 @@
 					form.find("img[name='" + i + "Img']").attr("length", 200);
 					form.find("img[name='" + i + "Img']").show();
 				}
-				editor.html(data["info"]);
+				// editor.html(data["info"]);
 				//渠道标签
 				if (data.hasOwnProperty("channel") && data["channel"] != null) {
 					var tag = parseInt(data["channel"]);
@@ -252,7 +208,6 @@
 	}
 
 	function forAdd() {
-		editor.html("");
 		var form = $("#saveForm");
 		form.find("input:not(.notMe)").val("");
 		form.find("img").attr("src", "");
@@ -265,6 +220,16 @@
 	var theId = [[${theId}]];
 	jQuery(document).ready(function($)
 	{
+		$.post("/feedback_brand_list", {}, function (data) {
+			if (data) {
+				let str = "";
+				for (let obj of data) {
+					str += '<option value="VV">SS</option>'.replace("VV", obj["id"]).replace("SS", obj["name"]);
+				}
+				$("#brandId").html(str);
+			}
+		});
+
 		if (isNaN(theId)) {
 			setTimeout(function () {
 				forAdd();
@@ -281,95 +246,32 @@
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
-			var goodsId = form.find("input[name='goodsId']").val();
-			var action = form.find("input[name='action']").val();
-			var beginTime = form.find("input[name='beginTime']").val();
-			var endTime = form.find("input[name='endTime']").val();
-			var name = form.find("input[name='name']").val();
-			var image = form.find("input[name='image']").val();
-			var status = form.find("input[name='status']:checked").val();
-			var boostCount = form.find("input[name='boostCount']:checked").val();
-			var userType = form.find("input[name='userType']:checked").val();
-			var buyLimit = form.find("input[name='buyLimit']").val();
-			var tags = form.find("input[name='tags']:checked");
-			var info = editor.html();
+			var brandId = form.find("select[name='brandId']").val();
+			var starName = form.find("input[name='starName']").val();
+			var weibo = form.find("input[name='weibo']").val();
+			var images = form.find("input[name='image']");
 
-			if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '' || userType == '' || buyLimit == '') {
+			if (brandId == '' || starName == '' || weibo == '' || images.length == 0) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
 				return;
 			}
 
-			var tag = 0;
-			tags.each(function (a, b) {
-				tag = tag | 1 << parseInt(b.value);
-			});
-
-			//获取token
-			$.get("/qiniu/token", {}, function (token) {
-				if (token != '') {
-					var args = "";
-					async.series({
-						one: function (callback) {
-							callback();
-						},
-						two: function (callback) {
-							callback();
-						},
-						three: function (callback) {
-							// var map = $("#saveForm").serializeArray();
-							// var newMap = {};
-							// for (var i in map) {
-							// 	if (map[i]["name"] == 'info') {
-							// 		newMap["info"] = $.base64.btoa(info);
-							// 	} else {
-							// 		newMap[map[i]["name"]] = map[i]["value"];
-							// 	}
-							// }
-							// args = $.base64.btoa(JSON.stringify(newMap));
-							// args = args.replace(/\+/g, "_");
-							callback();
-						}
-					}, function (err, results) {
-						//提交保存
-						var map = $("#saveForm").serializeArray();
-						var newMap = {};
-						for (var i in map) {
-							if (map[i]["name"] == 'info') {
-								newMap["info"] = info;
-							} else {
-								newMap[map[i]["name"]] = map[i]["value"];
-							}
-						}
-						newMap["channel"] = tag;
-						$.post("/limit_sale_add", newMap, function (data) {
-							if (data) {
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-								toastr.success("操作已成功！", "温馨提示");
-								setTimeout(function () {
-									window.location.href = '/limit_sale.html';
-								}, 1000);
-							} else {
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-								toastr.error("操作失败", "温馨提示");
-							}
-						});
-						// var url = $("#url");
-						// if (action == 'edit') {
-						// 	url.attr("href", '/limit_sale_edit.html?args=' + args);
-						// 	url[0].click();
-						// } else {
-						// 	url.attr("href", '/limit_sale_add.html?args=' + args);
-						// 	url[0].click();
-						// }
-					});
+			//提交保存
+			var map = form.serializeArray();
+			$.post("/feedback_detail_save", map, function (data) {
+				if (data) {
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.success("操作已成功！", "温馨提示");
+					setTimeout(function () {
+						// window.location.href = '/limit_sale.html';
+					}, 1000);
 				} else {
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					toastr.error("错误，请联系管理员", "温馨提示");
+					toastr.error("操作失败", "温馨提示");
 				}
 			});
 		});

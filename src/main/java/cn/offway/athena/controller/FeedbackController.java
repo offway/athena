@@ -1,8 +1,10 @@
 package cn.offway.athena.controller;
 
+import cn.offway.athena.domain.PhBrand;
 import cn.offway.athena.domain.PhFeedback;
 import cn.offway.athena.domain.PhFeedbackDetail;
 import cn.offway.athena.properties.QiniuProperties;
+import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhFeedbackDetailService;
 import cn.offway.athena.service.PhFeedbackService;
 import org.slf4j.Logger;
@@ -12,12 +14,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -30,6 +35,8 @@ public class FeedbackController {
     private PhFeedbackService feedbackService;
     @Autowired
     private PhFeedbackDetailService feedbackDetailService;
+    @Autowired
+    private PhBrandService brandService;
 
     @RequestMapping("/feedback.html")
     public String index(ModelMap map) {
@@ -92,7 +99,38 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_detail_save")
-    public boolean save(PhFeedbackDetail detail) {
+    @Transactional
+    public boolean save(PhFeedbackDetail detail, @RequestParam("image") String[] images, String action) {
+        if ("add".equals(action)) {
+            PhBrand brand = brandService.findOne(detail.getBrandId());
+            if (brand != null) {
+                detail.setBrandLogo(brand.getLogo());
+                detail.setBrandName(brand.getName());
+                detail.setBackTime(new Date());
+                detail.setImgNum((long) images.length);
+                detail.setImgUrl(String.join(",", images));
+                PhFeedback feedback = feedbackService.findByBrandId(brand.getId());
+                if (feedback != null) {
+                    feedback.setImgNum(feedback.getImgNum() + images.length);
+                    long num = feedbackDetailService.checkStarName(feedback.getId(), detail.getStarName());
+                    if (num == 0) {
+                        feedback.setStarNum(feedback.getStarNum() + 1);
+                    }
+                } else {
+                    feedback = new PhFeedback();
+                    feedback.setImgNum((long) images.length);
+                    feedback.setBrandId(brand.getId());
+                    feedback.setBrandLogo(brand.getLogo());
+                    feedback.setBrandName(brand.getName());
+                    feedback.setStarNum(1L);
+                }
+                PhFeedback feedbackSaved = feedbackService.save(feedback);
+                detail.setPid(feedbackSaved.getId());
+                feedbackDetailService.save(detail);
+            }
+        } else {
+
+        }
         feedbackDetailService.save(detail);
         return true;
     }
@@ -120,5 +158,11 @@ public class FeedbackController {
             feedbackDetailService.delete(id);
         }
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/feedback_brand_list")
+    public List<PhBrand> getBrandList() {
+        return brandService.findAll();
     }
 }

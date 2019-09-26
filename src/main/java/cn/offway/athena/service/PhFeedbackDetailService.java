@@ -19,6 +19,8 @@ public interface PhFeedbackDetailService {
 
     PhFeedbackDetail findOne(Long id);
 
+    Long checkStarName(Long pid, String starName);
+
     void delete(Long id);
 
     List<PhFeedbackDetail> save(List<PhFeedbackDetail> entities);

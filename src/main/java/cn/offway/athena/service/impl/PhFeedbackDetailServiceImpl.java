@@ -63,6 +63,21 @@ public class PhFeedbackDetailServiceImpl implements PhFeedbackDetailService {
     }
 
     @Override
+    public Long checkStarName(Long pid, String starName) {
+        return phFeedbackDetailRepository.count(new Specification<PhFeedbackDetail>() {
+            @Override
+            public Predicate toPredicate(Root<PhFeedbackDetail> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(cb.equal(root.get("pid"), pid));
+                params.add(cb.equal(root.get("starName"), starName));
+                Predicate[] predicates = new Predicate[params.size()];
+                query.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public void delByPid(Long pid) {
         phFeedbackDetailRepository.deleteByPid(pid);
     }
