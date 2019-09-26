@@ -130,7 +130,7 @@ public class FeedbackController {
             }
         } else {
             PhFeedbackDetail feedbackDetailFull = feedbackDetailService.findOne(detail.getId());
-            PhFeedback feedback = feedbackService.findOne(detail.getPid());
+            PhFeedback feedback = feedbackService.findOne(feedbackDetailFull.getPid());
             feedback.setImgNum(feedback.getImgNum() - feedbackDetailFull.getImgNum() + images.length);
             if (!detail.getStarName().equals(feedbackDetailFull.getStarName())) {
                 long oldNum = feedbackDetailService.checkStarName(feedbackDetailFull.getPid(), feedbackDetailFull.getStarName());

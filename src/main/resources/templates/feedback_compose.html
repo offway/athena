@@ -167,7 +167,7 @@
 	}
 
 	function forEdit(id) {
-		$.post("/limit_sale_get", {"id": id}, function (data) {
+		$.post("/feedback_detail_get", {"id": id}, function (data) {
 			if (data) {
 				var form = $("#saveForm");
 				//商家
@@ -185,21 +185,10 @@
 								ele.val(data[i]);
 							}
 					}
-					form.find("img[name='" + i + "Img']").attr("src", data[i]);
-					form.find("img[name='" + i + "Img']").attr("width", 200);
-					form.find("img[name='" + i + "Img']").attr("length", 200);
-					form.find("img[name='" + i + "Img']").show();
 				}
-				// editor.html(data["info"]);
-				//渠道标签
-				if (data.hasOwnProperty("channel") && data["channel"] != null) {
-					var tag = parseInt(data["channel"]);
-					var tagEle = form.find("input[name='tags']");
-					for (var i = 0; i < 3; i++) {
-						if ((tag & 1 << i) != 0) {
-							$(tagEle[i]).prop("checked", "checked");
-						}
-					}
+				var imgs = data["imgUrl"].split(",");
+				for (let url of imgs) {
+					addIntroFileUploaded("#imgPool", url);
 				}
 				form.find(".btn.image").show();
 				form.find("input[name='action']").val("edit");
