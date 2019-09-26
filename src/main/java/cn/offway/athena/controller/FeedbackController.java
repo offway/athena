@@ -129,9 +129,26 @@ public class FeedbackController {
                 feedbackDetailService.save(detail);
             }
         } else {
-
+            PhFeedbackDetail feedbackDetailFull = feedbackDetailService.findOne(detail.getId());
+            PhFeedback feedback = feedbackService.findOne(detail.getPid());
+            feedback.setImgNum(feedback.getImgNum() - feedbackDetailFull.getImgNum() + images.length);
+            if (!detail.getStarName().equals(feedbackDetailFull.getStarName())) {
+                long oldNum = feedbackDetailService.checkStarName(feedbackDetailFull.getPid(), feedbackDetailFull.getStarName());
+                long newNum = feedbackDetailService.checkStarName(feedbackDetailFull.getPid(), detail.getStarName());
+                if (oldNum == 1) {
+                    feedback.setStarNum(feedback.getStarNum() - 1);
+                }
+                if (newNum == 0) {
+                    feedback.setStarNum(feedback.getStarNum() + 1);
+                }
+            }
+            feedbackDetailFull.setStarName(detail.getStarName());
+            feedbackDetailFull.setWeibo(detail.getWeibo());
+            feedbackDetailFull.setImgNum((long) images.length);
+            feedbackDetailFull.setImgUrl(String.join(",", images));
+            feedbackDetailService.save(feedbackDetailFull);
+            feedbackService.save(feedback);
         }
-        feedbackDetailService.save(detail);
         return true;
     }
 
@@ -153,8 +170,17 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_detail_del")
+    @Transactional
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
+            PhFeedbackDetail detail = feedbackDetailService.findOne(id);
+            PhFeedback feedback = feedbackService.findOne(detail.getPid());
+            feedback.setImgNum(feedback.getImgNum() - detail.getImgNum());
+            long unique = feedbackDetailService.checkStarName(detail.getPid(), detail.getStarName());
+            if (unique == 1) {
+                feedback.setStarNum(feedback.getStarNum() - 1);
+            }
+            feedbackService.save(feedback);
             feedbackDetailService.delete(id);
         }
         return true;
