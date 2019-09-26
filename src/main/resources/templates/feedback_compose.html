@@ -193,7 +193,9 @@
 				form.find(".btn.image").show();
 				form.find("input[name='action']").val("edit");
 				//编辑时不允许变更所属品牌
-				$("#brandId").attr("readonly", "readonly");
+				// $("#brandId").attr("readonly", "readonly");
+				$("#brandId").css('pointer-events', 'none');
+				// $("#brandId:not(:selected)").attr('disabled',true);
 			}
 		});
 	}
