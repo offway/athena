@@ -57,26 +57,26 @@ public class RankingController {
 	/**
 	 * 查询数据
 	 * @param request
-	 * @param code
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/ranking-data")
-	public Map<String, Object> stockData(HttpServletRequest request){
+	public Map<String, Object> stockData(HttpServletRequest request, String brandId) {
 		String sortCol = request.getParameter("iSortCol_0");
-		String sortName = request.getParameter("mDataProp_"+sortCol);
+		String sortName = request.getParameter("mDataProp_" + sortCol);
 		String sortDir = request.getParameter("sSortDir_0");
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<VRanking> pages = vRankingService.findAll( new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
-		 // 为操作次数加1，必须这样做
-        int initEcho = sEcho + 1;  
-        Map<String, Object> map = new HashMap<>();
-		map.put("sEcho", initEcho);  
-        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
-        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+		int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+		PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
+		Page<VRanking> pages = vRankingService.findAll(pr, brandId);
+		// 为操作次数加1，必须这样做
+		int initEcho = sEcho + 1;
+		Map<String, Object> map = new HashMap<>();
+		map.put("sEcho", initEcho);
+		map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+		map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+		map.put("aData", pages.getContent());//数据集合
 		return map;
 	}
 

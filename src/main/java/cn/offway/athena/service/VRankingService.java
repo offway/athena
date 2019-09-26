@@ -13,15 +13,15 @@ import java.util.List;
  * @author wn
  * @version $v: 1.0.0, $time:2019-09-05 12:57:03 Exp $
  */
-public interface VRankingService{
+public interface VRankingService {
 
     VRanking save(VRanking vRanking);
-	
+
     VRanking findOne(Long id);
 
     void delete(Long id);
 
     List<VRanking> save(List<VRanking> entities);
 
-    Page<VRanking> findAll(Pageable pageable);
+    Page<VRanking> findAll(Pageable pageable, String brandId);
 }
