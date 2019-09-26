@@ -50,7 +50,7 @@
 <!--							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>-->
 <!--						</div>-->
 						<div class="form-group" style="margin-left: 0;display: block;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="history.go(-1)">返回一级分类</button>
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="history.go(-1)">返回</button>
 						</div>
 					</form>
 				</div>
@@ -69,15 +69,23 @@
 		</div>
 	</div>
 
-    <div id="preview" style="display: none;
-    position: fixed;
-    top: 190px;
-    left: 650px;
-    background: white;
-    overflow: scroll;
-    border: solid; width: 700px; height: 600px;
-    z-index: 9999;" onclick="closeIt(this)">
-    </div>
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+		<div class="modal-dialog" style=" width: 800px;">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">查看详情</h4>
+				</div>
+
+				<div class="modal-body" id="preview_body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<script src="https://admin.offway.cn/js/common.js"></script>
 	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
@@ -97,29 +105,16 @@
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
     }
 
-    function checkIt(id) {
-		$.post("/goodsCategory_get", {"id": id}, function (data) {
-			if (data) {
-				var preview = $("#preview");
-				var contentStr = "";
-				var category = data;
-				contentStr += "商品类别ID:" + category["goodsType"] + "<br/>";
-				contentStr += "商品类别名称:" + category["goodsTypeName"] + "<br/>";
-				contentStr += "创建时间:" + formatTime(category["createTime"]) + "<br/>";
-				contentStr += "图片:" + buildImg(category["image"]) + "<br/>";
-				contentStr += "名称:" + category["name"] + "<br/>";
-				contentStr += "编号:" + category["id"] + "<br/>";
-				contentStr += "备注:" + category["remark"] + "<br/>";
-				contentStr += "排序:" + category["sort"] + "<br/>";
-				contentStr += "*************<br/>";
-				preview.html(contentStr);
-				preview.show();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-    }
+	function checkIt(imgUrl) {
+		var preview = $("#preview_body");
+		var contentStr = "";
+		var imgs = imgUrl.split(",");
+		for (let url of imgs) {
+			contentStr += "图片:" + buildImg(url) + "<br/>";
+		}
+		preview.html(contentStr);
+		jQuery('#preview').modal('show', {backdrop: 'fade'});
+	}
 
 	var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -184,15 +179,15 @@
 						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 					}
 				},
-                {
-                    targets: 7,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看图片"/>';
-                    }
-                }
+				{
+					targets: 7,
+					data: "imgUrl",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="checkIt(\'' + data + '\')" value="查看图片"/>';
+					}
+				}
                ]
 		});
 
