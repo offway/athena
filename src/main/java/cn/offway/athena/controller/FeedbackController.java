@@ -9,6 +9,7 @@ import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhFeedbackDetailService;
 import cn.offway.athena.service.PhFeedbackService;
 import cn.offway.athena.service.PhGoodsService;
+import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -101,36 +99,63 @@ public class FeedbackController {
         return "feedback_compose";
     }
 
+    @Transactional
+    public void saveObj(PhFeedbackDetail detail, String[] images, String[] goodsIDs) {
+        PhBrand brand = brandService.findOne(detail.getBrandId());
+        if (brand != null) {
+            detail.setBrandLogo(brand.getLogo());
+            detail.setBrandName(brand.getName());
+            detail.setBackTime(new Date());
+            detail.setImgNum((long) images.length);
+            detail.setImgUrl(String.join(",", images));
+            detail.setGoodsId(String.join(",", goodsIDs));
+            PhFeedback feedback = feedbackService.findByBrandId(brand.getId());
+            if (feedback != null) {
+                feedback.setImgNum(feedback.getImgNum() + images.length);
+                long num = feedbackDetailService.checkStarName(feedback.getId(), detail.getStarName());
+                if (num == 0) {
+                    feedback.setStarNum(feedback.getStarNum() + 1);
+                }
+            } else {
+                feedback = new PhFeedback();
+                feedback.setImgNum((long) images.length);
+                feedback.setBrandId(brand.getId());
+                feedback.setBrandLogo(brand.getLogo());
+                feedback.setBrandName(brand.getName());
+                feedback.setStarNum(1L);
+            }
+            PhFeedback feedbackSaved = feedbackService.save(feedback);
+            detail.setPid(feedbackSaved.getId());
+            feedbackDetailService.save(detail);
+        }
+    }
+
     @ResponseBody
     @RequestMapping("/feedback_detail_save")
     @Transactional
-    public boolean save(PhFeedbackDetail detail, @RequestParam("image") String[] images, String action) {
+    public boolean save(PhFeedbackDetail detail, @RequestParam("image") String[] images, String action, @RequestParam("goodsID") String[] goodsIDs) {
         if ("add".equals(action)) {
-            PhBrand brand = brandService.findOne(detail.getBrandId());
-            if (brand != null) {
-                detail.setBrandLogo(brand.getLogo());
-                detail.setBrandName(brand.getName());
-                detail.setBackTime(new Date());
-                detail.setImgNum((long) images.length);
-                detail.setImgUrl(String.join(",", images));
-                PhFeedback feedback = feedbackService.findByBrandId(brand.getId());
-                if (feedback != null) {
-                    feedback.setImgNum(feedback.getImgNum() + images.length);
-                    long num = feedbackDetailService.checkStarName(feedback.getId(), detail.getStarName());
-                    if (num == 0) {
-                        feedback.setStarNum(feedback.getStarNum() + 1);
+            HashMap<Long, List<String>> map = new HashMap<>();
+            //将商品ID按所属品牌分类
+            for (String goodsId : goodsIDs) {
+                PhGoods goods = goodsService.findOne(Long.valueOf(goodsId));
+                if (goods != null) {
+                    if (map.containsKey(goods.getBrandId())) {
+                        List<String> list = map.get(goods.getBrandId());
+                        list.add(goodsId);
+                        map.put(goods.getBrandId(), list);
+                    } else {
+                        List<String> list = new ArrayList<>();
+                        list.add(goodsId);
+                        map.put(goods.getBrandId(), list);
                     }
-                } else {
-                    feedback = new PhFeedback();
-                    feedback.setImgNum((long) images.length);
-                    feedback.setBrandId(brand.getId());
-                    feedback.setBrandLogo(brand.getLogo());
-                    feedback.setBrandName(brand.getName());
-                    feedback.setStarNum(1L);
                 }
-                PhFeedback feedbackSaved = feedbackService.save(feedback);
-                detail.setPid(feedbackSaved.getId());
-                feedbackDetailService.save(detail);
+            }
+            //按品牌ID依次添加
+            for (long bid : map.keySet()) {
+                PhFeedbackDetail obj = SerializationUtils.clone(detail);
+                obj.setBrandId(bid);
+                saveObj(obj, images, map.get(bid).toArray(new String[0]));
             }
         } else {
             PhFeedbackDetail feedbackDetailFull = feedbackDetailService.findOne(detail.getId());
@@ -150,6 +175,7 @@ public class FeedbackController {
             feedbackDetailFull.setWeibo(detail.getWeibo());
             feedbackDetailFull.setImgNum((long) images.length);
             feedbackDetailFull.setImgUrl(String.join(",", images));
+            feedbackDetailFull.setGoodsId(String.join(",", goodsIDs));
             feedbackDetailService.save(feedbackDetailFull);
             feedbackService.save(feedback);
         }
