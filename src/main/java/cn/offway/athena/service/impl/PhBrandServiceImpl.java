@@ -1,14 +1,11 @@
 package cn.offway.athena.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
+import cn.offway.athena.config.AsciiPredicate;
+import cn.offway.athena.domain.PhBrand;
+import cn.offway.athena.repository.PhBrandRepository;
+import cn.offway.athena.service.PhBrandService;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.jpa.criteria.CriteriaBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import cn.offway.athena.service.PhBrandService;
 
-import cn.offway.athena.domain.PhBrand;
-import cn.offway.athena.domain.PhGoodsStock;
-import cn.offway.athena.repository.PhBrandRepository;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -32,73 +28,96 @@ import cn.offway.athena.repository.PhBrandRepository;
 @Service
 public class PhBrandServiceImpl implements PhBrandService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhBrandRepository phBrandRepository;
-	
-	@Override
-	public PhBrand save(PhBrand phBrand){
-		
-		if(null != phBrand.getId()){
-			updateChildren(phBrand.getId(), phBrand.getLogo(), phBrand.getName());
-		}
-		return phBrandRepository.save(phBrand);
-	}
+    @Autowired
+    private PhBrandRepository phBrandRepository;
 
-	@Override
-	public List<PhBrand> save(List<PhBrand> phBrands){
-		return phBrandRepository.save(phBrands);
-	}
+    @Override
+    public PhBrand save(PhBrand phBrand) {
 
-	@Override
-	public PhBrand findOne(Long id){
-		return phBrandRepository.findOne(id);
-	}
-	
-	@Override
-	public List<PhBrand> findAll(){
-		return phBrandRepository.findAll();
-	}
-	
-	@Override
-	public List<PhBrand> findByIds(List<Long> ids){
-		return phBrandRepository.findByIds(ids);
-	}
-	
-	@Override
-	public void updateChildren(Long id,String logo,String name){
-		phBrandRepository.updateGoods(id, logo, name);
-		phBrandRepository.updateGoodsStock(id, logo, name);
-		phBrandRepository.updateOrderGoods(id, logo, name);
-	}
-	
-	@Override
-	public Page<PhBrand> findByPage(final Long id,final String name,Pageable page){
-		return phBrandRepository.findAll(new Specification<PhBrand>() {
-			
-			@Override
-			public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-				List<Predicate> params = new ArrayList<Predicate>();
-				
-				if(StringUtils.isNotBlank(name)){
-					params.add(criteriaBuilder.like(root.get("name"), "%"+name+"%"));
-				}
-				
-				if(null != id){
-					params.add(criteriaBuilder.equal(root.get("id"), id));
-				}
-				
+        if (null != phBrand.getId()) {
+            updateChildren(phBrand.getId(), phBrand.getLogo(), phBrand.getName());
+        }
+        return phBrandRepository.save(phBrand);
+    }
+
+    @Override
+    public List<PhBrand> save(List<PhBrand> phBrands) {
+        return phBrandRepository.save(phBrands);
+    }
+
+    @Override
+    public PhBrand findOne(Long id) {
+        return phBrandRepository.findOne(id);
+    }
+
+    @Override
+    public List<PhBrand> findAll() {
+        return phBrandRepository.findAll();
+    }
+
+    @Override
+    public List<PhBrand> findByIds(List<Long> ids) {
+        return phBrandRepository.findByIds(ids);
+    }
+
+    @Override
+    public void updateChildren(Long id, String logo, String name) {
+        phBrandRepository.updateGoods(id, logo, name);
+        phBrandRepository.updateGoodsStock(id, logo, name);
+        phBrandRepository.updateOrderGoods(id, logo, name);
+    }
+
+    @Override
+    public Page<PhBrand> findByPage(final Long id, final String name, Pageable page) {
+        return phBrandRepository.findAll(new Specification<PhBrand>() {
+
+            @Override
+            public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+
+                if (StringUtils.isNotBlank(name)) {
+                    params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
+                }
+
+                if (null != id) {
+                    params.add(criteriaBuilder.equal(root.get("id"), id));
+                }
+
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
-				return null;
-			}
-		}, page);
-	}
-	
-	@Override
-	public List<PhBrand> findByShowImgId(Long showImgId){
-		return phBrandRepository.findByShowImgId(showImgId);
-	}
-	
+                return null;
+            }
+        }, page);
+    }
+
+    private <Y extends Comparable<? super Y>> Predicate ascii(CriteriaBuilderImpl criteriaBuilder,
+                                                              Expression<? extends Y> expression) {
+        return new AsciiPredicate<>(criteriaBuilder, expression, null);
+    }
+
+    @Override
+    public List<PhBrand> findAll(String prefix) {
+        return phBrandRepository.findAll(new Specification<PhBrand>() {
+            @Override
+            public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if ("#".equals(prefix)) {
+                    params.add(ascii((CriteriaBuilderImpl) cb, root.get("name")));
+                } else {
+                    params.add(cb.like(root.get("name"), prefix + "%"));
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                query.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public List<PhBrand> findByShowImgId(Long showImgId) {
+        return phBrandRepository.findByShowImgId(showImgId);
+    }
+
 }

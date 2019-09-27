@@ -44,6 +44,9 @@ public class PhFeedbackDetail implements Serializable {
     /**  **/
     private String imgUrl;
 
+    /**  **/
+    private String goodsId;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -138,4 +141,12 @@ public class PhFeedbackDetail implements Serializable {
         this.imgUrl = imgUrl;
     }
 
+    @Column(name = "goods_id", length = 1000)
+    public String getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(String goodsId) {
+        this.goodsId = goodsId;
+    }
 }

@@ -3,10 +3,12 @@ package cn.offway.athena.controller;
 import cn.offway.athena.domain.PhBrand;
 import cn.offway.athena.domain.PhFeedback;
 import cn.offway.athena.domain.PhFeedbackDetail;
+import cn.offway.athena.domain.PhGoods;
 import cn.offway.athena.properties.QiniuProperties;
 import cn.offway.athena.service.PhBrandService;
 import cn.offway.athena.service.PhFeedbackDetailService;
 import cn.offway.athena.service.PhFeedbackService;
+import cn.offway.athena.service.PhGoodsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,8 @@ public class FeedbackController {
     private PhFeedbackDetailService feedbackDetailService;
     @Autowired
     private PhBrandService brandService;
+    @Autowired
+    private PhGoodsService goodsService;
 
     @RequestMapping("/feedback.html")
     public String index(ModelMap map) {
@@ -190,5 +194,28 @@ public class FeedbackController {
     @RequestMapping("/feedback_brand_list")
     public List<PhBrand> getBrandList() {
         return brandService.findAll();
+    }
+
+    @RequestMapping("/feedback_getBrand")
+    @ResponseBody
+    public List<PhBrand> getBrandList(String prefix) {
+        return brandService.findAll(prefix);
+    }
+
+    @RequestMapping("/feedback_getGoods")
+    @ResponseBody
+    public List<PhGoods> getGoodsList(int type, String value, String brandId) {
+        switch (type) {
+            case 0:
+                return goodsService.findAll("brandId", value, brandId);
+            case 1:
+                return goodsService.findAll("type", value, brandId);
+            case 2:
+                return goodsService.findAll("category", value, brandId);
+            case 3:
+                return goodsService.findAll("keyword", value, brandId);
+            default:
+                return null;
+        }
     }
 }

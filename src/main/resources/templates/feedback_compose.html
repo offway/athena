@@ -4,11 +4,15 @@
 	<head th:replace="head"></head>
 	<meta name="referrer" content="no-referrer"/>
 	<title>返图明细编辑</title>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery-ui.min.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery-ui.structure.min.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery-ui.theme.min.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/dd.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 		.form-group img{
-			max-width:400px;
-			max-height:300px;
+			max-width:40px;
+			max-height:30px;
 		}
 	</style>
 </head>
@@ -41,12 +45,13 @@
 				<form role="form" id="saveForm">
 					<input type="hidden" name="id"/>
 					<input type="hidden" name="action"/>
+					<input type="hidden" name="brandId"/>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label class="control-label">返图品牌</label>
-								<select class="form-control" name="brandId" id="brandId">
-								</select>
+<!--								<label class="control-label">返图品牌</label>-->
+<!--								<select class="form-control" name="brandId" id="brandId">-->
+<!--								</select>-->
 							</div>
 						</div>
 					</div>
@@ -76,6 +81,79 @@
 					</div>
 					<div class="row" id="imgPool">
 					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">活动商品</label>
+								<div id="goodsPool"></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">查询商品</label>
+								<select class="form-control" id="goodsSelect"></select>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label"></label>
+								<input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label"></label>
+								<input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">选择方式</label>
+								<label><input name="method" id="method_brand" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
+								<label><input name="method" class="notMe" type="radio" value="1"/>按分类索引</label>
+								<label><input name="method" class="notMe" type="radio" value="2"/>按关键字索引</label>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="azBarDiv">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">品牌首字母索引</label>
+								<select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
+								<div id="azBar"></div>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="typeAndCategoryDiv" style="display: none">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">一级分类</label>
+								<select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">二级分类</label>
+								<select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="searchDiv" style="display: none">
+						<div class="col-md-8">
+							<div class="form-group">
+								<input type="text" class="form-control" name="keyword" placeholder="商品名关键字"/>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<input type="button" onclick="renderKeywordGoodsSelect()" class="notMe form-control" value="查询" />
+							</div>
+						</div>
+					</div>
 				</form>
 			</div>
 			<button type="button" class="btn btn-info save">保存</button>
@@ -84,8 +162,12 @@
 	</div>
 </div>
 
+<input type="hidden" id="IMGHOLDER"/>
+<input type="hidden" id="type_and_category_list"/>
 <script src="https://admin.offway.cn/js/common.js"></script>
 <script src="https://admin.offway.cn/assets/js/async.min.js"></script>
+<script src="https://admin.offway.cn/assets/js/jquery-ui/jquery-ui.js"></script>
+<script src="https://admin.offway.cn/assets/js/jquery.dd.js"></script>
 <script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -166,11 +248,170 @@
 		return "<img width='100px' height='100px' src='#' />".replace("#", url);
 	}
 
+	function addTheGoods(all) {
+		var ele = $("#goodsSelect");
+		var imgList = JSON.parse($("#IMGHOLDER").val());
+		if (all) {
+			ele.children().each(function () {
+				var id = $(this).val();
+				var text = $(this).text();
+				addMoreGoodsDisplay(id, text, imgList[id]);
+			});
+		} else {
+			var id = ele.val();
+			var text = $("#goodsSelect option:selected").text();
+			addMoreGoodsDisplay(id, text, imgList[id]);
+		}
+	}
+
+	function delNode(id) {
+		var that = $("#" + id);
+		that.remove();
+	}
+
+	var PICKED_LIST = [];
+
+	function addMoreGoodsDisplay(id, text, src) {
+		if (PICKED_LIST.indexOf(id) >= 0) {
+			console.log("重复商品id:" + id);
+			return;
+		}
+		PICKED_LIST.push(id);
+		var uuid = UUID.randomUUID();
+		var that = $("#goodsPool");
+		var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
+		str += '<img style="display:inline-block;width: 60px; height: 60px" class="form-control" src="SRC" />'.replace("SRC", src);
+		str += '<input style="display:inline-block;width: 600px;" type="text" class="form-control" value="VALUE" readonly="readonly" />'.replace("VALUE", text);
+		str += '<input type="hidden" value="VALUE" name="goodsID" />'.replace("VALUE", id);
+		str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
+		str += '</div>';
+		that.append(str);
+	}
+
+	function getHiddenBrandId() {
+		return $("input[name='brandId']").val();
+	}
+
+	function renderGoodsSelect(self, id) {
+		var theId;
+		if (self == null) {
+			theId = id;
+		} else {
+			var that = $(self);
+			theId = that.val();
+		}
+		$.post("/feedback_getGoods", {"value": theId, "type": 0, "brandId": getHiddenBrandId()}, function (data) {
+			bindGoods(data);
+		});
+	}
+
+	function renderGoods(self) {
+		//update goods list
+		var selectedId = $(self).val();
+		$.post("/feedback_getGoods", {"value": selectedId, "type": 2, "brandId": getHiddenBrandId()}, function (data) {
+			bindGoods(data);
+		});
+	}
+
+	function renderCategory(self) {
+		var jsonStr = $("#type_and_category_list").val();
+		var list = JSON.parse(jsonStr);
+		var selectedId = $(self).val();
+		for (var type in list) {
+			if (selectedId == list[type]["name"]) {
+				bindCategorySelector(list[type]["sub"]);
+				break;
+			}
+		}
+		//update goods list
+		$.post("/feedback_getGoods", {"value": selectedId, "type": 1, "brandId": getHiddenBrandId()}, function (data) {
+			bindGoods(data);
+		});
+	}
+
+	function bindCategorySelector(data) {
+		var categoryStr = "<option value=\"\" selected=\"selected\">请选择</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+		}
+		$("#categorySelect").html(categoryStr);
+	}
+
+	var msDropDownEle = null;
+
+	function bindGoods(data) {
+		var str = "";
+		var imgList = {};
+		for (var i in data) {
+			var brand = data[i];
+			str += '<option value="VALUE" data-image="ICON" data-goodsNo="CODE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["id"] + " " + brand["name"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]);
+			imgList[brand["id"]] = brand["image"];
+		}
+		var ele = $("#goodsSelect");
+		ele.html(str);
+		$("#IMGHOLDER").val(JSON.stringify(imgList));
+		if (msDropDownEle) {
+			msDropDownEle.data("dd").destroy();
+		}
+		msDropDownEle = ele.msDropDown();
+	}
+
+	function bindTypeSelector(data) {
+		var typeStr = "<option value=\"\" selected=\"selected\">请选择</option>";
+		for (var type in data) {
+			type = data[type];
+			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+		}
+		$("#typeSelect").html(typeStr);
+		// bindCategorySelector(data[0]["sub"]);
+	}
+
+	function renderBrandSelect(key) {
+		$("#goodsSelect").html("");
+		$.post("/feedback_getBrand", {"prefix": key}, function (data) {
+			var str = "";
+			for (var i in data) {
+				var brand = data[i];
+				if (i == 0) {
+					renderGoodsSelect(null, brand["id"]);
+				}
+				str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+			$("#brandSelect").html(str);
+		});
+	}
+
+	function renderKeywordGoodsSelect() {
+		var that = $("input[name='keyword']");
+		var value = that.val();
+		$.post("/feedback_getGoods", {"value": value, "type": 3, "brandId": getHiddenBrandId()}, function (data) {
+			bindGoods(data);
+		});
+	}
+
+	function buildAZBar() {
+		var str = "";
+		var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
+		for (var i in AZ.split("")) {
+			var char = AZ[i];
+			str += "<a href='#' onclick='renderBrandSelect(\"VAL\")'>CHAR</a>&nbsp;".replace("CHAR", char).replace("VAL", char);
+		}
+		$("#azBar").html(str);
+		$("#brandSelect").html("");
+		$("#goodsSelect").html("");
+		$("#goodsPool").html("");
+		$("img[name='imageUrlImg']").hide();
+		$("img[name='shareImgImg']").hide();
+	}
+
 	function forEdit(id) {
+		$("#method_brand").attr("disabled", "disabled");
+		$("#azBarDiv").hide();
+		$("#typeAndCategoryDiv").show();
 		$.post("/feedback_detail_get", {"id": id}, function (data) {
 			if (data) {
 				var form = $("#saveForm");
-				//商家
 				for (var i in data) {
 					var ele = form.find("input[name='" + i + "']");
 					switch (ele.attr("type")) {
@@ -186,27 +427,41 @@
 							}
 					}
 				}
-				var imgs = data["imgUrl"].split(",");
-				for (let url of imgs) {
-					addIntroFileUploaded("#imgPool", url);
+				if (data["imgUrl"] != null) {
+					var imgs = data["imgUrl"].split(",");
+					for (let url of imgs) {
+						addIntroFileUploaded("#imgPool", url);
+					}
+				}
+				if (data["goodsId"] != null) {
+					var gids = data["goodsId"].split(",");
+					for (let gid of gids) {
+						$.post("/goods-one", {"id": gid}, function (data) {
+							addMoreGoodsDisplay(data["id"], data["name"], data["image"]);
+						});
+					}
 				}
 				form.find(".btn.image").show();
 				form.find("input[name='action']").val("edit");
 				//编辑时不允许变更所属品牌
 				// $("#brandId").attr("readonly", "readonly");
-				$("#brandId").css('pointer-events', 'none');
+				// $("#brandId").css('pointer-events', 'none');
 				// $("#brandId:not(:selected)").attr('disabled',true);
 			}
 		});
 	}
 
 	function forAdd() {
+		PICKED_LIST = [];
+		buildAZBar();
 		var form = $("#saveForm");
 		form.find("input:not(.notMe)").val("");
 		form.find("img").attr("src", "");
 		form.find("img").hide();
 		form.find("input[type='file']").show();
 		form.find("input[name='action']").val("add");
+		form.find("input[name='brandId']").val("");
+		$(".modal-backdrop").css("z-index", 999);
 	}
 
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -223,6 +478,11 @@
 			}
 		});
 
+		$.getJSON("/type_and_category_list", {}, function (data) {
+			$("#type_and_category_list").val(JSON.stringify(data));
+			bindTypeSelector(data);
+		});
+
 		if (isNaN(theId)) {
 			setTimeout(function () {
 				forAdd();
@@ -232,6 +492,30 @@
 				forEdit(theId);
 			}, 500);
 		}
+
+		$('[name="method"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			var azBarDiv = $("#azBarDiv");
+			var typeAndCategoryDiv = $("#typeAndCategoryDiv");
+			var searchDiv = $("#searchDiv");
+			switch (parseInt(value)) {
+				case 0:
+					azBarDiv.show();
+					typeAndCategoryDiv.hide();
+					searchDiv.hide();
+					break;
+				case 1:
+					azBarDiv.hide();
+					typeAndCategoryDiv.show();
+					searchDiv.hide();
+					break;
+				default:
+					azBarDiv.hide();
+					typeAndCategoryDiv.hide();
+					searchDiv.show();
+					break;
+			}
+		});
 
 		//保存
 		$(".btn.btn-info.save").click(function () {
