@@ -493,8 +493,6 @@
 			sAjaxSource : "/offlineOrdersGoods-data?ordersNo="+ordersNo,//通过ajax实现分页的url路径。
 			destroy:true,
 			fnServerParams : function(aData){
-				var searchArray = $(".form-inline").serializeArray();
-				$.merge(aData, searchArray);
 			},
 			columnDefs: [
 				{
@@ -600,7 +598,7 @@
 				    className: 'select-checkbox',
 				    title: '<input type="checkbox" id="checkbox-all"/>',
 				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="authId" value="'+data+'" />';  
+				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';
 				    }
 				},
                 {
@@ -663,36 +661,39 @@
 					data: "ordersNo",
 					title: "商品明细",
 					render: function (data, type, row, meta) {
-						return '<input type="button" name="checkIt" onclick="topIt('+data+')" value="查看详情"/>';
+						var ordersNo = data;
+						return '<input type="button" name="checkIt" onclick="topIt(\'' + data + '\')" value="查看详情"/>';
 					}
 				},
-            	{
-               		targets: 11,
-	                data: "state",
-	                title: "状态",
-                    render: function (data, type, row, meta) {
+				{
+					targets: 11,
+					data: "state",
+					title: "状态",
+					render: function (data, type, row, meta) {
 						/** 状态:[0-未寄出,1-已寄出,2-已寄出/未收回,3-已寄出/已收回] **/
-                        if("0"==data){
-                        	return "未寄出";
-                        }else if("1"==data){
-                        	return "已寄出";
-                        }else if("2"==data){
-                        	return "已寄出/未收回";
-                        }else if("3"==data){
-                        	return "已寄出/已收回";
-                        }
-                    }
+						if ("0" == data) {
+							return "未寄出";
+						} else if ("1" == data) {
+							return "已寄出";
+						} else if ("2" == data) {
+							return "已寄出/未收回";
+						} else if ("3" == data) {
+							return "已寄出/已收回";
+						}
+					}
             	},
 				{
 					targets: 12,
 					data: "id",
 					title: "操作",
 					render: function (data, type, row, meta) {
-						var status = row["status"];
+						var status = row["state"];
 						if("0"==status){
 							return '<input type="button" name="checkIt" onclick="confirm(' + data + ',0)" value="确认发货"/>';
 						}else if("1"==status){
 							return '<input type="button" name="checkIt" onclick="confirm(' + data + ',1)" value="确认收货"/>';
+						}else {
+							return '';
 						}
 					}
 				}
@@ -813,7 +814,8 @@
 			 var data = $("#saveForm").serializeArray();
 			 $.post("/offline-save",data,function(data){
 				 if(data){
-					 	jQuery('#example-1').modal('hide');
+
+					 	jQuery('#modal-6').modal('hide');
 						toastr.success("操作已成功！", "温馨提示");
 						oTable.fnDraw(oTable.fnSettings());
 				 }else{
@@ -823,7 +825,48 @@
 		 });
 
 		$(".btn.btn-info.add").click(function(){
+			var form = $("#modal-6");
+			form.find("input:not(.notMe)").val("");
+			form.find("img").attr("src", "");
+			form.find("img").hide();
+			form.find("input[type='file']").show();
+			$(".imageShow").remove();
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+		});
+
+		$(".btn.btn-info.edit").click(function(){
+			// var form = $("#modal-6");
+			// var activityId = $("input[name='activityId']:checked");
+			// if (activityId.length != 1) {
+			// 	toastr.error("请选择一条数据操作", "温馨提示");
+			// 	return;
+			// }
+			//
+			// $.post("/goodsType_get", {id: activityId.val()}, function (data) {
+			// 	var form = $("#saveForm");
+			// 	//商家
+			// 	for (var i in data) {
+			// 		var ele = form.find("input[name='" + i + "']");
+			// 		switch (ele.attr("type")) {
+			// 			case "radio":
+			// 				ele.val([data[i]]);
+			// 				break;
+			// 			default:
+			// 				if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
+			// 					ele.val(formatTime(data[i]));
+			// 					$("#" + i).val(formatTime(data[i]));
+			// 				} else {
+			// 					ele.val(data[i]);
+			// 				}
+			// 		}
+			// 		form.find("img[name='" + i + "Img']").attr("src", data[i]);
+			// 		form.find("img[name='" + i + "Img']").attr("width", 200);
+			// 		form.find("img[name='" + i + "Img']").attr("length", 200);
+			// 		form.find("img[name='" + i + "Img']").show();
+			// 	}
+			// 	form.find(".btn.image").show();
+			// 	jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			// });
 		});
 	});
 	/*]]>*/
