@@ -39,6 +39,9 @@ public class PhFeedbackDetail implements Serializable {
     private String weibo;
 
     /**  **/
+    private String remark;
+
+    /**  **/
     private Date backTime;
 
     /**  **/
@@ -148,5 +151,14 @@ public class PhFeedbackDetail implements Serializable {
 
     public void setGoodsId(String goodsId) {
         this.goodsId = goodsId;
+    }
+
+    @Column(name = "remark", length = 200)
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

@@ -173,6 +173,7 @@ public class FeedbackController {
             }
             feedbackDetailFull.setStarName(detail.getStarName());
             feedbackDetailFull.setWeibo(detail.getWeibo());
+            feedbackDetailFull.setRemark(detail.getRemark());
             feedbackDetailFull.setImgNum((long) images.length);
             feedbackDetailFull.setImgUrl(String.join(",", images));
             feedbackDetailFull.setGoodsId(String.join(",", goodsIDs));
