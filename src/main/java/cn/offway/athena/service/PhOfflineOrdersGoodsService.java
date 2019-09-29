@@ -24,4 +24,8 @@ public interface PhOfflineOrdersGoodsService{
     List<PhOfflineOrdersGoods> save(List<PhOfflineOrdersGoods> entities);
 
     Page<PhOfflineOrdersGoods> findByPage(String ordersNo, Pageable page);
+
+    List<PhOfflineOrdersGoods> findByordersNo(String ordersNo);
+
+    void delbyOrdersNo(String ordersNo);
 }

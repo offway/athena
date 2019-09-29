@@ -72,4 +72,14 @@ public class PhOfflineOrdersGoodsServiceImpl implements PhOfflineOrdersGoodsServ
 			}
 		},page);
 	}
+
+	@Override
+	public List<PhOfflineOrdersGoods> findByordersNo(String ordersNo){
+		return phOfflineOrdersGoodsRepository.findByOrdersNo(ordersNo);
+	}
+
+	@Override
+	public void delbyOrdersNo(String ordersNo){
+		phOfflineOrdersGoodsRepository.deleteByOrdersNo(ordersNo);
+	}
 }

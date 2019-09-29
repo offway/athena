@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import cn.offway.athena.domain.PhOfflineOrdersGoods;
 
+import java.util.List;
+
 /**
  * Repository接口
  *
@@ -14,4 +16,7 @@ import cn.offway.athena.domain.PhOfflineOrdersGoods;
 public interface PhOfflineOrdersGoodsRepository extends JpaRepository<PhOfflineOrdersGoods,Long>,JpaSpecificationExecutor<PhOfflineOrdersGoods> {
 
 	/** 此处写一些自定义的方法 **/
+	List<PhOfflineOrdersGoods> findByOrdersNo(String ordersNo);
+
+	void deleteByOrdersNo(String ordersNo);
 }

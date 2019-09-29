@@ -106,14 +106,21 @@ public class OfflineController {
 		if (size.length != color.length && color.length != goodsID.length){
 			return false;
 		}
-		String orderNo = orderInfoService.generateOrderNo("PH")+"XX";
-		offlineOrders.setCreateTime(new Date());
-		offlineOrders.setOrdersNo("");
-		offlineOrders.setState("1");
-		offlineOrders.setOrdersNo(orderNo);
-		offlineOrders.setGoodsCount(Long.valueOf(goodsID.length));
-		PhOfflineOrders newofflineOrders =  offlineOrdersService.save(offlineOrders);
+		String orderNo = "";
 		List<PhOfflineOrdersGoods> offlineOrdersGoodsList = new ArrayList<>();
+		if (""!=offlineOrders.getOrdersNo()){
+			orderNo = orderInfoService.generateOrderNo("PH")+"XX";
+			offlineOrders.setCreateTime(new Date());
+			offlineOrders.setState("1");
+			offlineOrders.setOrdersNo(orderNo);
+			offlineOrders.setGoodsCount(Long.valueOf(goodsID.length));
+			PhOfflineOrders newofflineOrders =  offlineOrdersService.save(offlineOrders);
+
+		}else {
+			offlineOrders.setGoodsCount(Long.valueOf(goodsID.length));
+			offlineOrdersService.save(offlineOrders);
+			offlineOrdersGoodsService.delbyOrdersNo(offlineOrders.getOrdersNo());
+		}
 		for (int i=0;i<goodsID.length;i++){
 			PhGoods goods = goodsService.findOne(Long.valueOf(goodsID[i]));
 			PhGoodsStock goodsStock = goodsStockService.findOne(Long.valueOf(goodsID[i]));
@@ -126,7 +133,9 @@ public class OfflineController {
 			offlineOrdersGoods.setGoodsId(goods.getId());
 			offlineOrdersGoods.setGoodsImage(goods.getImage());
 			offlineOrdersGoods.setGoodsName(goods.getName());
-			offlineOrdersGoods.setOrdersNo(orderNo);
+			if (""!= orderNo){
+				offlineOrdersGoods.setOrdersNo(orderNo);
+			}
 			offlineOrdersGoods.setSize(size[i]);
 			if (null != goodsStock){
 				offlineOrdersGoods.setSku(goodsStock.getSku());
@@ -134,6 +143,7 @@ public class OfflineController {
 			offlineOrdersGoodsList.add(offlineOrdersGoods);
 		}
 		offlineOrdersGoodsService.save(offlineOrdersGoodsList);
+
 		return true;
 	}
 
@@ -155,6 +165,17 @@ public class OfflineController {
 		map.put("iTotalRecords", pages.getTotalElements());//数据总条数
 		map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
 		map.put("aData", pages.getContent());//数据集合
+		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping("/offline-edit")
+	public Map<String,Object> edit(Long id){
+		Map<String,Object> map = new HashMap<>();
+		PhOfflineOrders offlineOrders = offlineOrdersService.findOne(id);
+		List<PhOfflineOrdersGoods> list = offlineOrdersGoodsService.findByordersNo(offlineOrders.getOrdersNo());
+		map.put("offlineOrders",offlineOrders);
+		map.put("offlineOrdersGoods",list);
 		return map;
 	}
 
