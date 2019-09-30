@@ -18,4 +18,9 @@ public interface PhGoodsCategoryRepository extends JpaRepository<PhGoodsCategory
     @Modifying
     @Query(nativeQuery = true, value = "DELETE FROM `ph_goods_category` WHERE (`goods_type` = ?1)")
     void deleteByPid(Long pid);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "update `ph_goods_category` set `sort` = `sort` + 1 where `sort` >= ?1")
+    void resort(Long sort);
 }

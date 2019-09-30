@@ -179,6 +179,22 @@
 		});
     }
 
+	function topIt(id) {
+		var num = prompt("输入排序位置,从0开始,0为第一位", "0");
+		if (isNaN(num) || num == null) {
+			alert("请输入数字！");
+		} else {
+			$.post("/goodsCategory_top", {"id": id, "sort": num}, function (data) {
+				if (data) {
+					table_global.fnDraw();
+					toastr.success("操作已成功！", "温馨提示");
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		}
+	}
+
 	function checkImg(list) {
 		var returnList = {};
 		for (var i in list) {
@@ -268,15 +284,29 @@
 					data: "remark",
 					title: "备注"
 				},
+				{
+					targets: 8,
+					data: "sort",
+					title: "排序"
+				},
                 {
-                    targets: 8,
+                    targets: 9,
                     data: "id",
                     orderable: false,
                     title: "操作",
                     render: function (data, type, full, meta) {
                         return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
                     }
-                }
+                },
+				{
+					targets: 10,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
+					}
+				}
                ]
 		});
 

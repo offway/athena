@@ -90,4 +90,9 @@ public class PhGoodsCategoryServiceImpl implements PhGoodsCategoryService {
     public PhGoodsCategory findOne(Long id) {
         return phGoodsCategoryRepository.findOne(id);
     }
+
+    @Override
+    public void resort(Long sort){
+        phGoodsCategoryRepository.resort(sort);
+    }
 }
