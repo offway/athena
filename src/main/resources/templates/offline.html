@@ -217,6 +217,14 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
+									<label class="control-label">备注</label>
+									<input type="text" class="form-control" name="remark" placeholder="备注"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
 									<label class="control-label">借出商品</label>
 									<div id="goodsPool"></div>
 								</div>
@@ -498,9 +506,6 @@
 			language: {
 				url: "../assets/Chinese.txt"
 			},
-			aLengthbrand: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
 			sAjaxDataProp : "aData",//是服务器分页的标志，必须有
@@ -592,9 +597,6 @@
 			language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
@@ -698,6 +700,11 @@
             	},
 				{
 					targets: 12,
+					data: "remark",
+					title: "备注"
+				},
+				{
+					targets: 13,
 					data: "id",
 					title: "操作",
 					render: function (data, type, row, meta) {
@@ -870,6 +877,7 @@
 				form.find("input[name = startTime]").val(startTime);
 				form.find("input[name = returnTime]").val(returnTime);
 				form.find("input[name = way]").val(data["offlineOrders"]["way"]);
+				form.find("input[name = remark]").val(data["offlineOrders"]["remark"]);
 				for (var i in data["offlineOrdersGoods"]){
 					var uuid = UUID.randomUUID();
 					var that = $("#goodsPool");

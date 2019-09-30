@@ -68,6 +68,8 @@ public class PhOrderInfo implements Serializable {
     /** 姓名 **/
     private String realName;
 
+    /** 备注 **/
+    private String extra;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -237,7 +239,13 @@ public class PhOrderInfo implements Serializable {
     public void setRealName(String realName) {
         this.realName = realName;
     }
-    
-    
 
+    @Column(name = "extra", length = 200)
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
+    }
 }

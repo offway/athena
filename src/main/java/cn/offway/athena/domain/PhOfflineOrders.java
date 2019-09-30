@@ -54,6 +54,8 @@ public class PhOfflineOrders implements Serializable {
     /** 寄出方式:[0-平台,1-商家] **/
     private String way;
 
+    /** 备注 **/
+    private String remark;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -167,4 +169,12 @@ public class PhOfflineOrders implements Serializable {
         this.way = way;
     }
 
+    @Column(name = "remark", length = 200)
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

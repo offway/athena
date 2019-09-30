@@ -108,16 +108,15 @@ public class OfflineController {
 		}
 		String orderNo = "";
 		List<PhOfflineOrdersGoods> offlineOrdersGoodsList = new ArrayList<>();
-		if (""!=offlineOrders.getOrdersNo()){
-			orderNo = orderInfoService.generateOrderNo("PH")+"XX";
+		if (!"".equals(offlineOrders.getOrdersNo())) {
+			orderNo = orderInfoService.generateOrderNo("PH") + "XX";
 			offlineOrders.setCreateTime(new Date());
 			offlineOrders.setState("1");
 			offlineOrders.setOrdersNo(orderNo);
-			offlineOrders.setGoodsCount(Long.valueOf(goodsID.length));
-			PhOfflineOrders newofflineOrders =  offlineOrdersService.save(offlineOrders);
-
-		}else {
-			offlineOrders.setGoodsCount(Long.valueOf(goodsID.length));
+			offlineOrders.setGoodsCount((long) goodsID.length);
+			offlineOrdersService.save(offlineOrders);
+		} else {
+			offlineOrders.setGoodsCount((long) goodsID.length);
 			offlineOrdersService.save(offlineOrders);
 			offlineOrdersGoodsService.delbyOrdersNo(offlineOrders.getOrdersNo());
 		}
