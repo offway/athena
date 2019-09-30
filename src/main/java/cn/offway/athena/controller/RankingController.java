@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -56,19 +57,12 @@ public class RankingController {
 	
 	/**
 	 * 查询数据
-	 * @param request
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/ranking-data")
-	public Map<String, Object> stockData(HttpServletRequest request, String brandId) {
-		String sortCol = request.getParameter("iSortCol_0");
-		String sortName = request.getParameter("mDataProp_" + sortCol);
-		String sortDir = request.getParameter("sSortDir_0");
-		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
-		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-		int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-		PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
+	public Map<String, Object> stockData(HttpServletRequest request, String brandId, int sEcho, int iDisplayStart, int iDisplayLength) {
+		Sort sort = new Sort(new Sort.Order(Direction.DESC, "sumgoods"));
+		PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
 		Page<VRanking> pages = vRankingService.findAll(pr, brandId);
 		// 为操作次数加1，必须这样做
 		int initEcho = sEcho + 1;
