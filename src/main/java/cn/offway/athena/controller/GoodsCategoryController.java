@@ -1,5 +1,6 @@
 package cn.offway.athena.controller;
 
+import cn.offway.athena.domain.PhBanner;
 import cn.offway.athena.domain.PhGoodsCategory;
 import cn.offway.athena.domain.PhGoodsType;
 import cn.offway.athena.properties.QiniuProperties;
@@ -87,5 +88,17 @@ public class GoodsCategoryController {
     @RequestMapping("/goodsCategory_get")
     public PhGoodsCategory get(Long id) {
         return goodsCategoryService.findOne(id);
+    }
+
+    @ResponseBody
+    @RequestMapping("/goodsCategory_top")
+    public boolean top(Long id, Long sort,Long theId) {
+        PhGoodsCategory phGoodsCategory = goodsCategoryService.findOne(id);
+        if (phGoodsCategory != null){
+            goodsCategoryService.resort(sort,theId);
+            phGoodsCategory.setSort(sort);
+            goodsCategoryService.save(phGoodsCategory);
+        }
+        return true;
     }
 }

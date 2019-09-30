@@ -29,4 +29,6 @@ public interface PhGoodsCategoryService {
     Page<PhGoodsCategory> findByPid(Long pid, Pageable pageable);
 
     void delByPid(Long pid);
+
+    void resort(Long sort,Long theId);
 }
