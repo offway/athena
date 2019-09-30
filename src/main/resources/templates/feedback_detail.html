@@ -4,6 +4,7 @@
 	<head th:replace="head"></head>
 	<title>返图明细管理</title>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<link rel="stylesheet" href="assets/js/viewer.css"/>
 	<style type="text/css">
 	.form-group img{
 		max-width:400px;
@@ -78,7 +79,17 @@
 					<h4 class="modal-title">查看详情</h4>
 				</div>
 
-				<div class="modal-body" id="preview_body"></div>
+				<div class="modal-body" id="preview_body">
+					<!-- a block container is required -->
+					<div>
+						<img id="image" src="" alt="" />
+					</div>
+
+					<div>
+						<ul id="images">
+						</ul>
+					</div>
+				</div>
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
@@ -89,6 +100,8 @@
 
 	<script src="https://admin.offway.cn/js/common.js"></script>
 	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
+	<script src="assets/js/viewer.js"></script>
+	<script src="assets/js/jquery-viewer.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -113,6 +126,36 @@
 			contentStr += "图片:" + buildImg(url) + "<br/>";
 		}
 		preview.html(contentStr);
+		jQuery('#preview').modal('show', {backdrop: 'fade'});
+	}
+
+	var viewPort = null;
+
+	function imgViewer(imgUrl) {
+		var $image = $('#image');
+		var preview = $("#images");
+		var contentStr = "";
+		var imgs = imgUrl.split(",");
+		for (let url of imgs) {
+			contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
+		}
+		preview.html(contentStr);
+		if (viewPort) {
+			// viewPort.destroy();
+			// viewPort.update();
+		}
+		$image.viewer("destroy");
+		$image.viewer({
+			inline: false,
+			viewed: function () {
+				$image.viewer('zoomTo', 1);
+			}
+		});
+		// Get the Viewer.js instance after initialized
+		viewPort = $image.data('viewer');
+		// View a list of images
+		preview.viewer("destroy");
+		preview.viewer();
 		jQuery('#preview').modal('show', {backdrop: 'fade'});
 	}
 
@@ -185,7 +228,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(\'' + data + '\')" value="查看图片"/>';
+						return '<input type="button" name="checkIt" onclick="imgViewer(\'' + data + '\')" value="查看图片"/>';
 					}
 				}
                ]
