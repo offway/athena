@@ -578,28 +578,17 @@
 					scrollSwitch: true //是否使用鼠标滚轮切换图片，默认false
 				});
 		 });
-		 
-		 
-		 $(".btn.btn-info.add").click(function(){
-			
+
+
+		$(".btn.btn-info.add").click(function () {
 			var stockId = $("input[name='authId']:checked");
-			if(stockId.length!=1){
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return ;
-			}
-			
-			stockId = stockId[0].value;
-			$("#orderid").val(stockId);
-			
-			$.post("/showImage-info",{id:stockId},function(data){
-				if(data.status !='0'){
-					toastr.error("不能重复审核", "温馨提示");
-				}else{
-					jQuery('#modal-add').modal('show', {backdrop: 'fade'});
-				}
+			var ids = [];
+			stockId.each(function (i, e) {
+				ids.push(e.value);
 			});
-				
-		 });
+			$("#orderid").val(ids.join(","));
+			jQuery('#modal-add').modal('show', {backdrop: 'fade'});
+		});
 		 
 		 $(".btn.btn-info.addImg").click(function(){
 				
@@ -757,26 +746,26 @@
 			
 			 
 		 });
-		 
-		 $(".btn.btn-info.save").click(function(){
-			 var id = $("#orderid").val();
-			 var status = $("#status").val();
-			 var content = $("#content").val();
-			 if(content=='' && status=='2'){
-				 toastr.error("请填写失败原因！", "温馨提示");
-				 return false;
-			 }else{
-				 $.post("/showImage-check",{id:id,status:status,checkContent:content},function(data){
-					 if(data){
-						 	jQuery('#modal-add').modal('hide');
-							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw(oTable.fnSettings()); 
-					 }else{
-						 toastr.error("操作失败", "温馨提示");
-					 }
-				 });
-			 }
-		 });
+
+		$(".btn.btn-info.save").click(function () {
+			var id = $("#orderid").val();
+			var status = $("#status").val();
+			var content = $("#content").val();
+			if (content == '' && status == '2') {
+				toastr.error("请填写失败原因！", "温馨提示");
+				return false;
+			} else {
+				$.post("/showImage-check", {id: id, status: status, checkContent: content}, function (data) {
+					if (data) {
+						jQuery('#modal-add').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw(oTable.fnSettings());
+					} else {
+						toastr.error("操作失败", "温馨提示");
+					}
+				});
+			}
+		});
 		 
 		 $(".btn.btn-info.saveImg").click(function(){
 			 var image = $('#s2example-3').val();

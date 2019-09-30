@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -114,16 +115,19 @@ public class ShowImageController {
         map.put("aData", pages.getContent());//数据集合 
 		return map;
 	}
-	
+
 	@ResponseBody
 	@RequestMapping("/showImage-check")
-	public boolean showImageCheck(Long id,String status,String checkContent,Authentication authentication){
-		PhShowImage phShowImage = phShowImageService.findOne(id);
-		phShowImage.setStatus(status);
-		phShowImage.setCheckContent(checkContent);
-		phShowImage.setCheckName(authentication.getName());
-		phShowImage.setCheckTime(new Date());
-		phShowImageService.save(phShowImage);
+	@Transactional
+	public boolean showImageCheck(String id, String status, String checkContent, Authentication authentication) {
+		for (String i : id.split(",")) {
+			PhShowImage phShowImage = phShowImageService.findOne(Long.valueOf(i));
+			phShowImage.setStatus(status);
+			phShowImage.setCheckContent(checkContent);
+			phShowImage.setCheckName(authentication.getName());
+			phShowImage.setCheckTime(new Date());
+			phShowImageService.save(phShowImage);
+		}
 		return true;
 	}
 	
