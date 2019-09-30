@@ -92,10 +92,10 @@ public class GoodsCategoryController {
 
     @ResponseBody
     @RequestMapping("/goodsCategory_top")
-    public boolean top(Long id, Long sort) {
+    public boolean top(Long id, Long sort,Long theId) {
         PhGoodsCategory phGoodsCategory = goodsCategoryService.findOne(id);
         if (phGoodsCategory != null){
-            goodsCategoryService.resort(sort);
+            goodsCategoryService.resort(sort,theId);
             phGoodsCategory.setSort(sort);
             goodsCategoryService.save(phGoodsCategory);
         }

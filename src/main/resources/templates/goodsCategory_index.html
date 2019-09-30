@@ -184,7 +184,7 @@
 		if (isNaN(num) || num == null) {
 			alert("请输入数字！");
 		} else {
-			$.post("/goodsCategory_top", {"id": id, "sort": num}, function (data) {
+			$.post("/goodsCategory_top", {"id": id, "sort": num, "theId":theId}, function (data) {
 				if (data) {
 					table_global.fnDraw();
 					toastr.success("操作已成功！", "温馨提示");

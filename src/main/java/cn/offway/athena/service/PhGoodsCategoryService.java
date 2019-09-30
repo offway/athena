@@ -30,5 +30,5 @@ public interface PhGoodsCategoryService {
 
     void delByPid(Long pid);
 
-    void resort(Long sort);
+    void resort(Long sort,Long theId);
 }

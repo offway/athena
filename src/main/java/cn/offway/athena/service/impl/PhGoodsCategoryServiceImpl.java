@@ -92,7 +92,7 @@ public class PhGoodsCategoryServiceImpl implements PhGoodsCategoryService {
     }
 
     @Override
-    public void resort(Long sort){
-        phGoodsCategoryRepository.resort(sort);
+    public void resort(Long sort,Long theId){
+        phGoodsCategoryRepository.resort(sort,theId);
     }
 }

@@ -21,6 +21,6 @@ public interface PhGoodsCategoryRepository extends JpaRepository<PhGoodsCategory
 
     @Transactional
     @Modifying
-    @Query(nativeQuery = true, value = "update `ph_goods_category` set `sort` = `sort` + 1 where `sort` >= ?1")
-    void resort(Long sort);
+    @Query(nativeQuery = true, value = "update `ph_goods_category` set `sort` = `sort` + 1 where `sort` >= ?1 and `goods_type` = ?2")
+    void resort(Long sort,Long theId);
 }
