@@ -50,6 +50,15 @@ public class PhOfflineOrdersGoods implements Serializable {
     /** 创建时间 **/
     private Date createTime;
 
+    /** 物流单号 **/
+    private String expressOrderNo;
+
+    /** 寄出方式:[0-平台,1-商家] **/
+    private String way;
+
+    /** 备注 **/
+    private String remark;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -160,6 +169,33 @@ public class PhOfflineOrdersGoods implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    @Column(name = "express_order_no", length = 50)
+    public String getExpressOrderNo() {
+        return expressOrderNo;
+    }
+
+    public void setExpressOrderNo(String expressOrderNo) {
+        this.expressOrderNo = expressOrderNo;
+    }
+
+    @Column(name = "way", length = 2)
+    public String getWay() {
+        return way;
+    }
+
+    public void setWay(String way) {
+        this.way = way;
+    }
+
+    @Column(name = "remark", length = 200)
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
 }

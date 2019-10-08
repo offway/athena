@@ -48,12 +48,6 @@ public class PhOfflineOrders implements Serializable {
     /** 状态:[0-未寄出,1-已寄出,2-已寄出/未收回,3-已寄出/已收回] **/
     private String state;
 
-    /** 物流单号 **/
-    private String expressOrderNo;
-
-    /** 寄出方式:[0-平台,1-商家] **/
-    private String way;
-
     /** 备注 **/
     private String remark;
 
@@ -150,23 +144,6 @@ public class PhOfflineOrders implements Serializable {
 
     public void setState(String state) {
         this.state = state;
-    }
-    @Column(name = "express_order_no", length = 50)
-    public String getExpressOrderNo() {
-        return expressOrderNo;
-    }
-
-    public void setExpressOrderNo(String expressOrderNo) {
-        this.expressOrderNo = expressOrderNo;
-    }
-
-    @Column(name = "way", length = 2)
-    public String getWay() {
-        return way;
-    }
-
-    public void setWay(String way) {
-        this.way = way;
     }
 
     @Column(name = "remark", length = 200)

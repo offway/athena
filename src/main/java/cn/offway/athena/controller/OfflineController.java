@@ -102,13 +102,13 @@ public class OfflineController {
 
 	@ResponseBody
 	@RequestMapping("/offline-save")
-	public boolean save(PhOfflineOrders offlineOrders,@RequestParam("goodsID")String[] goodsID,@RequestParam("size") String[] size,@RequestParam("color") String[] color){
+	public boolean save(PhOfflineOrders offlineOrders,@RequestParam("goodsID")String[] goodsID,@RequestParam("size") String[] size,@RequestParam("color") String[] color,@RequestParam("expressOrderNo")String[] expressOrderNo,@RequestParam("way") String[] way){
 		if (size.length != color.length && color.length != goodsID.length){
 			return false;
 		}
 		String orderNo = "";
 		List<PhOfflineOrdersGoods> offlineOrdersGoodsList = new ArrayList<>();
-		if (!"".equals(offlineOrders.getOrdersNo())) {
+		if ("".equals(offlineOrders.getOrdersNo())) {
 			orderNo = orderInfoService.generateOrderNo("PH") + "XX";
 			offlineOrders.setCreateTime(new Date());
 			offlineOrders.setState("1");
@@ -116,6 +116,7 @@ public class OfflineController {
 			offlineOrders.setGoodsCount((long) goodsID.length);
 			offlineOrdersService.save(offlineOrders);
 		} else {
+			orderNo = offlineOrders.getOrdersNo();
 			offlineOrders.setGoodsCount((long) goodsID.length);
 			offlineOrdersService.save(offlineOrders);
 			offlineOrdersGoodsService.delbyOrdersNo(offlineOrders.getOrdersNo());
@@ -128,12 +129,20 @@ public class OfflineController {
 			offlineOrdersGoods.setBrandLogo(goods.getBrandLogo());
 			offlineOrdersGoods.setBrandName(goods.getBrandName());
 			offlineOrdersGoods.setColor(color[i]);
+			if ("" != way[i]){
+				offlineOrdersGoods.setWay(way[i]);
+			}
+			if ("" != expressOrderNo[i]){
+				offlineOrdersGoods.setExpressOrderNo(expressOrderNo[i]);
+			}
 			offlineOrdersGoods.setCreateTime(new Date());
 			offlineOrdersGoods.setGoodsId(goods.getId());
 			offlineOrdersGoods.setGoodsImage(goods.getImage());
 			offlineOrdersGoods.setGoodsName(goods.getName());
 			if (""!= orderNo){
 				offlineOrdersGoods.setOrdersNo(orderNo);
+			}else {
+				offlineOrdersGoods.setOrdersNo("无");
 			}
 			offlineOrdersGoods.setSize(size[i]);
 			if (null != goodsStock){
