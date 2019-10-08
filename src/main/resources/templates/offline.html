@@ -572,6 +572,23 @@
 					targets: 6,
 					data: "color",
 					title: "颜色"
+				},
+				{
+					targets: 7,
+					data: "expressOrderNo",
+					title: "物流单号"
+				},
+				{
+					targets: 8,
+					data: "way",
+					title: "寄出方式",
+					render: function (data, type, row, meta) {
+						if (data == 0){
+							return "平台";
+						} else {
+							return "商家";
+						}
+					}
 				}
 			]
 		});

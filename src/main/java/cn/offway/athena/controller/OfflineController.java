@@ -92,7 +92,7 @@ public class OfflineController {
 		PhOfflineOrders offlineOrders = offlineOrdersService.findOne(id);
 		/*0-确认发货,1-确认收货*/
 		/*0-未寄出,1-已寄出,2-已寄出/未收回,3-已寄出/已收回*/
-		if ("0"== state){
+		if ("0".equals(state)){
 			offlineOrders.setState("1");
 		}else {
 			offlineOrders.setState("3");
@@ -112,15 +112,16 @@ public class OfflineController {
 		if ("".equals(offlineOrders.getOrdersNo())) {
 			orderNo = orderInfoService.generateOrderNo("PH") + "XX";
 			offlineOrders.setCreateTime(new Date());
-			offlineOrders.setState("1");
+			offlineOrders.setState("0");
 			offlineOrders.setOrdersNo(orderNo);
 			offlineOrders.setGoodsCount((long) goodsID.length);
 			offlineOrdersService.save(offlineOrders);
 		} else {
 			orderNo = offlineOrders.getOrdersNo();
 			offlineOrders.setGoodsCount((long) goodsID.length);
+			offlineOrders.setState("0");
 			offlineOrdersService.save(offlineOrders);
-			offlineOrdersGoodsService.delbyOrdersNo(offlineOrders.getOrdersNo());
+			offlineOrdersGoodsService.delbyOrdersNo(orderNo);
 		}
 		for (int i=0;i<goodsID.length;i++){
 			PhGoods goods = goodsService.findOne(Long.valueOf(goodsID[i]));
