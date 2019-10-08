@@ -1,9 +1,6 @@
 package cn.offway.athena.controller;
 
-import cn.offway.athena.domain.PhAdmin;
-import cn.offway.athena.domain.PhOrderExpressInfo;
-import cn.offway.athena.domain.PhOrderGoods;
-import cn.offway.athena.domain.PhOrderInfo;
+import cn.offway.athena.domain.*;
 import cn.offway.athena.service.*;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
@@ -48,6 +45,9 @@ public class OrderController {
 	
 	@Autowired
 	private PhBrandService phBrandService;
+
+	@Autowired
+	private PhOrderRemarkService phOrderRemarkService;
 	
 	
 	@RequestMapping("/order.html")
@@ -144,9 +144,46 @@ public class OrderController {
 		}
 		
 	}
+
+	@ResponseBody
+	@RequestMapping("order-addremark")
+	public boolean addremark(String id,String content){
+		try {
+			PhOrderRemark orderRemark = new PhOrderRemark();
+			PhOrderInfo orderInfo = phOrderInfoService.findOne(Long.valueOf(id));
+			orderRemark.setContent(content);
+  			orderRemark.setCreateTime(new Date());
+			orderRemark.setOrdersNo(orderInfo.getOrderNo());
+			orderRemark.setOrdersId(id);
+			phOrderRemarkService.save(orderRemark);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("order-addremark异常id:{},content:{}",id,content,e);
+			return false;
+		}
+	}
 	
-	
-	
+	@ResponseBody
+	@RequestMapping("order-remarkbyid")
+	public Map<String,Object> remarkbyid(HttpServletRequest request,String id){
+		String sortCol = request.getParameter("iSortCol_0");
+		String sortName = request.getParameter("mDataProp_"+sortCol);
+		String sortDir = request.getParameter("sSortDir_0");
+		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
+
+		Page<PhOrderRemark> pages = phOrderRemarkService.findAllByPage(id,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		// 为操作次数加1，必须这样做
+		int initEcho = sEcho + 1;
+		Map<String, Object> map = new HashMap<>();
+		map.put("sEcho", initEcho);
+		map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+		map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+		map.put("aData", pages.getContent());//数据集合
+		return map;
+	}
 	
 	
 }
