@@ -131,32 +131,36 @@
 
 	var viewPort = null;
 
-	function imgViewer(imgUrl) {
+	function imgViewer(imgUrl,activityId) {
 		var $image = $('#image');
 		var preview = $("#images");
 		var contentStr = "";
 		var imgs = imgUrl.split(",");
-		for (let url of imgs) {
-			contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
-		}
-		preview.html(contentStr);
-		if (viewPort) {
-			// viewPort.destroy();
-			// viewPort.update();
-		}
-		$image.viewer("destroy");
-		$image.viewer({
-			inline: false,
-			viewed: function () {
-				$image.viewer('zoomTo', 1);
+		$.post("/feedback_goods",{id:activityId},function (data) {
+			contentStr += '<img style="display:inline-block;width: 40px; height: 30px" class="form-control" src="SRC" />'.replace("SRC", data["image"]);
+			contentStr += "<input style=\"display:inline-block;width: 600px;\" type=\"text\" class=\"form-control\" value=\"VALUE\" readonly=\"readonly\" />'".replace("VALUE", data["name"]);
+			for (let url of imgs) {
+				contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
 			}
+			preview.html(contentStr);
+			if (viewPort) {
+				// viewPort.destroy();
+				// viewPort.update();
+			}
+			$image.viewer("destroy");
+			$image.viewer({
+				inline: false,
+				viewed: function () {
+					$image.viewer('zoomTo', 1);
+				}
+			});
+			// Get the Viewer.js instance after initialized
+			viewPort = $image.data('viewer');
+			// View a list of images
+			preview.viewer("destroy");
+			preview.viewer();
+			jQuery('#preview').modal('show', {backdrop: 'fade'});
 		});
-		// Get the Viewer.js instance after initialized
-		viewPort = $image.data('viewer');
-		// View a list of images
-		preview.viewer("destroy");
-		preview.viewer();
-		jQuery('#preview').modal('show', {backdrop: 'fade'});
 	}
 
 	var table_global;
@@ -228,7 +232,8 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="imgViewer(\'' + data + '\')" value="查看图片"/>';
+						var activityId = full["id"];
+						return '<input type="button" name="checkIt" onclick="imgViewer(\'' + data + '\',\''+activityId+'\')" value="查看图片"/>';
 					}
 				}
                ]

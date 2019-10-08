@@ -245,4 +245,10 @@ public class FeedbackController {
                 return null;
         }
     }
+
+    @ResponseBody
+    @RequestMapping("/feedback_goods")
+    public PhGoods goods(Long id){
+        return goodsService.findOne(id);
+    }
 }
