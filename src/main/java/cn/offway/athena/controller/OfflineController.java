@@ -54,6 +54,7 @@ public class OfflineController {
 	@RequestMapping("/offline.html")
 	public String order(ModelMap map){
 		map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", "XYZ");
 		return "offline";
 	}
 	

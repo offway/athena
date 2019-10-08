@@ -477,6 +477,19 @@
 		$("img[name='shareImgImg']").hide();
 	}
 
+	function forAdd() {
+		PICKED_LIST = [];
+		buildAZBar();
+		var form = $("#saveForm");
+		form.find("input:not(.notMe)").val("");
+		form.find("img").attr("src", "");
+		form.find("img").hide();
+		form.find("input[type='file']").show();
+		form.find("input[name='action']").val("add");
+		form.find("input[name='brandId']").val("");
+		$(".modal-backdrop").css("z-index", 999);
+	}
+
 	function confirm(id,state){
 		$.post("/offline-confirm",{id:id,state:state},function (data) {
 			if (data){
@@ -566,6 +579,7 @@
 	}
 
 
+	var theId = [[${theId}]];
 
 	jQuery(document).ready(function($)
 	{
@@ -590,6 +604,16 @@
 					"defaultTime": "00:00:00"
 				}
 		);
+
+		if (isNaN(theId)) {
+			setTimeout(function () {
+				forAdd();
+			}, 500);
+		} else {
+			setTimeout(function () {
+				forEdit(theId);
+			}, 500);
+		}
 
 		$.getJSON("/type_and_category_list", {}, function (data) {
 			$("#type_and_category_list").val(JSON.stringify(data));
