@@ -25,5 +25,5 @@ public interface PhFeedbackService {
 
     List<PhFeedback> save(List<PhFeedback> entities);
 
-    Page<PhFeedback> findAll(Pageable pageable, String brandId);
+    Page<PhFeedback> findAll(Pageable pageable, String brandId, List<Long> brandIds);
 }
