@@ -48,9 +48,9 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength,String brandId) {
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId) {
         Sort sort = new Sort("id");
-        Page<PhFeedback> pages = feedbackService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort),brandId);
+        Page<PhFeedback> pages = feedbackService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort), brandId);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -248,7 +248,11 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_goods")
-    public PhGoods goods(Long id){
-        return goodsService.findOne(id);
+    public List<PhGoods> goods(String ids) {
+        List<PhGoods> list = new ArrayList<>();
+        for (String id : ids.split(",")) {
+            list.add(goodsService.findOne(Long.valueOf(id)));
+        }
+        return list;
     }
 }
