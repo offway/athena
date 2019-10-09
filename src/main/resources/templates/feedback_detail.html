@@ -80,9 +80,10 @@
 				</div>
 
 				<div class="modal-body" id="preview_body">
+					<div id="goodsPlace"></div>
 					<!-- a block container is required -->
 					<div>
-						<img id="image" src="" alt="" />
+						<img id="image" src="" alt=""/>
 					</div>
 
 					<div>
@@ -104,6 +105,18 @@
 	<script src="assets/js/jquery-viewer.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
+
+
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
 
     function closeIt(self) {
         var that = $(self);
@@ -131,14 +144,20 @@
 
 	var viewPort = null;
 
-	function imgViewer(imgUrl,activityId) {
+	function imgViewer(imgUrl, goodsId) {
 		var $image = $('#image');
 		var preview = $("#images");
+		var goodsPlace = $("#goodsPlace");
 		var contentStr = "";
 		var imgs = imgUrl.split(",");
-		$.post("/feedback_goods",{id:activityId},function (data) {
-			// contentStr += '<img style="display:inline-block;width: 40px; height: 30px" class="form-control" src="SRC" />'.replace("SRC", data["image"]);
-			// contentStr += "<input style=\"display:inline-block;width: 600px;\" type=\"text\" class=\"form-control\" value=\"VALUE\" readonly=\"readonly\" />'".replace("VALUE", data["name"]);
+		$.post("/feedback_goods", {"ids": goodsId}, function (data) {
+			if (data) {
+				var str = "";
+				for (var obj of data) {
+					str += appendToPreview(obj["name"], buildImg(obj["image"]));
+				}
+				goodsPlace.html(str);
+			}
 			for (let url of imgs) {
 				contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
 			}
@@ -232,8 +251,8 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						var activityId = full["id"];
-						return '<input type="button" name="checkIt" onclick="imgViewer(\'' + data + '\',\''+activityId+'\')" value="查看图片"/>';
+						var goodsId = full["goodsId"];
+						return '<input type="button" name="checkIt" onclick="imgViewer(\'' + data + '\',\'' + goodsId + '\')" value="查看图片"/>';
 					}
 				}
                ]
