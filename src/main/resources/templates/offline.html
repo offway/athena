@@ -576,7 +576,14 @@
 				{
 					targets: 7,
 					data: "expressOrderNo",
-					title: "物流单号"
+					title: "物流单号",
+                    render: function (data, type, row, meta) {
+                        if (data.length <= 0){
+                            return "无";
+                        }else {
+                        	return data;
+						}
+                    }
 				},
 				{
 					targets: 8,
@@ -586,7 +593,7 @@
 						if (data == 0){
 							return "平台";
 						} else {
-							return "商家";
+							return "品牌";
 						}
 					}
 				}
@@ -763,7 +770,7 @@
 				}
                ]
 		});
-		
+
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw();  //or fnReloadAjax()  

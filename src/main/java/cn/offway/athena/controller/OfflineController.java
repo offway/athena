@@ -136,6 +136,8 @@ public class OfflineController {
 			}
 			if ("" != expressOrderNo[i]){
 				offlineOrdersGoods.setExpressOrderNo(expressOrderNo[i]);
+			}else {
+				offlineOrdersGoods.setExpressOrderNo("无");
 			}
 			offlineOrdersGoods.setCreateTime(new Date());
 			offlineOrdersGoods.setGoodsId(goods.getId());

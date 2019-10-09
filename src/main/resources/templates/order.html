@@ -267,10 +267,20 @@
 	/*<![CDATA[*/
 
 	var brandId = [[${brandId}]];
+	var oTable0;
+
+	function delremark(id) {
+		$.post("/order-delremark", {"id": id}, function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+                oTable0.fnDraw();
+			}
+		});
+	}
 
 	function addremark(id){
 		$("input[name='remarkid']").val(id);
-		$("#example-2").dataTable({
+        oTable0 = $("#example-2").dataTable({
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -309,6 +319,14 @@
 					title: "创建时间",
 					render: function (data, type, row, meta) {
 						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 4,
+					data: "id",
+					title: "操作",
+					render: function (data, type, row, meta) {
+						return '<input type="button" name="remark" id="remark" onclick="delremark('+data+')" value="删除"/>';
 					}
 				}
 			]
@@ -494,7 +512,13 @@
 					data: "id",
 					title: "备注",
 					render: function (data, type, row, meta) {
-						return '<input type="button" name="remark" id="remark" onclick="addremark('+data+')" value="添加备注"/>';
+						var isnull = row["extra"];
+						if(isnull == 1){
+							return '<input type="button" style="background-color: #21b3e6;color: #ebf7fd" name="remark" id="remark" onclick="addremark('+data+')" value="修改备注"/>';
+						}else {
+							return '<input type="button" name="remark" id="remark" onclick="addremark('+data+')" value="添加备注"/>';
+						}
+
 					}
 				}
                ]
@@ -615,6 +639,26 @@
 					}
 				});
 			}
+		});
+
+		$(".btn.btn-info.del").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+
+			$.post("/order-delremark", {"ids": ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
 		});
 
 		if (brandId!=null){

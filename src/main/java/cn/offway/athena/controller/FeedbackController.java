@@ -48,9 +48,9 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength) {
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength,String brandId) {
         Sort sort = new Sort("id");
-        Page<PhFeedback> pages = feedbackService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhFeedback> pages = feedbackService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort),brandId);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

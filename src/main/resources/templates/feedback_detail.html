@@ -137,8 +137,8 @@
 		var contentStr = "";
 		var imgs = imgUrl.split(",");
 		$.post("/feedback_goods",{id:activityId},function (data) {
-			contentStr += '<img style="display:inline-block;width: 40px; height: 30px" class="form-control" src="SRC" />'.replace("SRC", data["image"]);
-			contentStr += "<input style=\"display:inline-block;width: 600px;\" type=\"text\" class=\"form-control\" value=\"VALUE\" readonly=\"readonly\" />'".replace("VALUE", data["name"]);
+			// contentStr += '<img style="display:inline-block;width: 40px; height: 30px" class="form-control" src="SRC" />'.replace("SRC", data["image"]);
+			// contentStr += "<input style=\"display:inline-block;width: 600px;\" type=\"text\" class=\"form-control\" value=\"VALUE\" readonly=\"readonly\" />'".replace("VALUE", data["name"]);
 			for (let url of imgs) {
 				contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
 			}

@@ -156,6 +156,8 @@ public class OrderController {
 			orderRemark.setOrdersNo(orderInfo.getOrderNo());
 			orderRemark.setOrdersId(id);
 			phOrderRemarkService.save(orderRemark);
+			orderInfo.setExtra("1");
+			phOrderInfoService.save(orderInfo);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -183,6 +185,13 @@ public class OrderController {
 		map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
 		map.put("aData", pages.getContent());//数据集合
 		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping("order-delremark")
+	public boolean delremark(Long id){
+		phOrderRemarkService.delete(id);
+		return true;
 	}
 	
 	
