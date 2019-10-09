@@ -107,16 +107,18 @@
 	/*<![CDATA[*/
 
 
-	function appendToPreview(key, value) {
-		return '<div class="row">' +
-				'<div class="col-md-2">' +
-				key +
-				'</div>' +
-				'<div class="col-md-10">' +
-				value +
-				'</div>' +
-				'</div>';
-	}
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-6" style="height: 100px;\n' +
+            'display: flex;\n' +
+            'align-items: center;">' +
+            key +
+            '</div>' +
+            '<div class="col-md-6">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
 
     function closeIt(self) {
         var that = $(self);
