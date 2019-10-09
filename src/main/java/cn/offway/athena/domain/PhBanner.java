@@ -26,7 +26,7 @@ public class PhBanner implements Serializable {
     private String type;
 
     /** 跳转对应ID **/
-    private Long redirectId;
+    private String redirectId;
 
     /** 开始时间 **/
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -68,12 +68,12 @@ public class PhBanner implements Serializable {
         this.banner = banner;
     }
 
-    @Column(name = "redirect_id", length = 11)
-    public Long getRedirectId() {
+    @Column(name = "redirect_id", length = 5)
+    public String getRedirectId() {
         return redirectId;
     }
 
-    public void setRedirectId(Long redirectId) {
+    public void setRedirectId(String redirectId) {
         this.redirectId = redirectId;
     }
 

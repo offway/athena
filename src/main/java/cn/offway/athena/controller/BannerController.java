@@ -55,6 +55,9 @@ public class BannerController {
         if (banner.getId() == null) {
             banner.setStatus("0");
             banner.setSort(null);
+            if (null == banner.getRedirectId()){
+                banner.setRedirectId("");
+            }
             banner.setCreateTime(new Date());
         } else {
             PhBanner bannernew = bannerService.findOne(banner.getId());
