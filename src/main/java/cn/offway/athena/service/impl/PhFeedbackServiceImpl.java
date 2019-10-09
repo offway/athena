@@ -50,7 +50,7 @@ public class PhFeedbackServiceImpl implements PhFeedbackService {
     }
 
     @Override
-    public Page<PhFeedback> findAll(Pageable pageable, String brandId) {
+    public Page<PhFeedback> findAll(Pageable pageable, String brandId, List<Long> brandIds) {
         return phFeedbackRepository.findAll(new Specification<PhFeedback>() {
             @Override
             public Predicate toPredicate(Root<PhFeedback> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -58,11 +58,18 @@ public class PhFeedbackServiceImpl implements PhFeedbackService {
                 if (StringUtils.isNotBlank(brandId)) {
                     params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
                 }
+                if (brandIds != null) {
+                    CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("brandId"));
+                    for (Object brandId : brandIds) {
+                        in.value(brandId);
+                    }
+                    params.add(in);
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
-        },pageable);
+        }, pageable);
     }
 
     @Override

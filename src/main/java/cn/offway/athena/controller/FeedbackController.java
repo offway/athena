@@ -1,14 +1,8 @@
 package cn.offway.athena.controller;
 
-import cn.offway.athena.domain.PhBrand;
-import cn.offway.athena.domain.PhFeedback;
-import cn.offway.athena.domain.PhFeedbackDetail;
-import cn.offway.athena.domain.PhGoods;
+import cn.offway.athena.domain.*;
 import cn.offway.athena.properties.QiniuProperties;
-import cn.offway.athena.service.PhBrandService;
-import cn.offway.athena.service.PhFeedbackDetailService;
-import cn.offway.athena.service.PhFeedbackService;
-import cn.offway.athena.service.PhGoodsService;
+import cn.offway.athena.service.*;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -23,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigInteger;
 import java.util.*;
 
 @Controller
@@ -39,6 +35,10 @@ public class FeedbackController {
     private PhBrandService brandService;
     @Autowired
     private PhGoodsService goodsService;
+    @Autowired
+    private PhRoleadminService roleadminService;
+    @Autowired
+    private PhBrandadminService brandadminService;
 
     @RequestMapping("/feedback.html")
     public String index(ModelMap map) {
@@ -48,9 +48,15 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId) {
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, @AuthenticationPrincipal PhAdmin admin) {
         Sort sort = new Sort("id");
-        Page<PhFeedback> pages = feedbackService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort), brandId);
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        List<Long> brandIds = null;
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            brandIds = brandadminService.findBrandIdByAdminId(admin.getId());
+        }
+        Page<PhFeedback> pages = feedbackService.findAll(pr, brandId, brandIds);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -219,8 +225,14 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_brand_list")
-    public List<PhBrand> getBrandList() {
-        return brandService.findAll();
+    public List<PhBrand> getBrandList(@AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            List<Long> brandIds = brandadminService.findBrandIdByAdminId(admin.getId());
+            return brandService.findByIds(brandIds);
+        } else {
+            return brandService.findAll();
+        }
     }
 
     @RequestMapping("/feedback_getBrand")
