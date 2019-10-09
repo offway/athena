@@ -51,6 +51,9 @@ public class PhOfflineOrders implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 是否有留言:[0-无,1-有] **/
+    private String message;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -153,5 +156,14 @@ public class PhOfflineOrders implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "message", length = 2)
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

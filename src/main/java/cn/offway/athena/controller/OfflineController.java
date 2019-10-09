@@ -50,6 +50,9 @@ public class OfflineController {
 
 	@Autowired
 	private PhGoodsStockService goodsStockService;
+
+	@Autowired
+	private PhOfflineRemarkService offlineRemarkService;
 	
 	@RequestMapping("/offline.html")
 	public String order(ModelMap map){
@@ -115,6 +118,7 @@ public class OfflineController {
 			offlineOrders.setState("0");
 			offlineOrders.setOrdersNo(orderNo);
 			offlineOrders.setGoodsCount((long) goodsID.length);
+			offlineOrders.setMessage("0");
 			offlineOrdersService.save(offlineOrders);
 		} else {
 			orderNo = offlineOrders.getOrdersNo();
@@ -189,6 +193,55 @@ public class OfflineController {
 		map.put("offlineOrders",offlineOrders);
 		map.put("offlineOrdersGoods",list);
 		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping("/offline-remarkbyid")
+	public Map<String,Object> remarkbyid(HttpServletRequest request,String id){
+		String sortCol = request.getParameter("iSortCol_0");
+		String sortName = request.getParameter("mDataProp_"+sortCol);
+		String sortDir = request.getParameter("sSortDir_0");
+		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
+
+		Page<PhOfflineRemark> pages = offlineRemarkService.findAllByPage(id,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		// 为操作次数加1，必须这样做
+		int initEcho = sEcho + 1;
+		Map<String, Object> map = new HashMap<>();
+		map.put("sEcho", initEcho);
+		map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+		map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+		map.put("aData", pages.getContent());//数据集合
+		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping("/offline-addremark")
+	public boolean addremark(String id,String content){
+		try {
+			PhOfflineRemark offlineRemark = new PhOfflineRemark();
+			PhOfflineOrders offlineOrders = offlineOrdersService.findOne(Long.valueOf(id));
+			offlineRemark.setContent(content);
+			offlineRemark.setCreateTime(new Date());
+			offlineRemark.setOrdersNo(offlineOrders.getOrdersNo());
+			offlineRemark.setOrdersId(id);
+			offlineRemarkService.save(offlineRemark);
+			offlineOrders.setMessage("1");
+			offlineOrdersService.save(offlineOrders);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("order-addremark异常id:{},content:{}",id,content,e);
+			return false;
+		}
+	}
+
+	@ResponseBody
+	@RequestMapping("/offline-delremark")
+	public boolean delremark(Long id){
+		offlineRemarkService.delete(id);
+		return true;
 	}
 
 }
