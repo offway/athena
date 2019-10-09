@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -48,9 +49,11 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, @AuthenticationPrincipal PhAdmin admin) {
-        Sort sort = new Sort("id");
-        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, @AuthenticationPrincipal PhAdmin admin, HttpServletRequest request) {
+        String sortCol = request.getParameter("iSortCol_0");
+        String sortName = request.getParameter("mDataProp_" + sortCol);
+        String sortDir = request.getParameter("sSortDir_0");
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName);
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         List<Long> brandIds = null;
         if (roles.contains(BigInteger.valueOf(8L))) {
@@ -79,9 +82,11 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_detail_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, long id) {
-        Sort sort = new Sort("id");
-        Page<PhFeedbackDetail> pages = feedbackDetailService.findByPid(id, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, long id, HttpServletRequest request) {
+        String sortCol = request.getParameter("iSortCol_0");
+        String sortName = request.getParameter("mDataProp_" + sortCol);
+        String sortDir = request.getParameter("sSortDir_0");
+        Page<PhFeedbackDetail> pages = feedbackDetailService.findByPid(id, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
