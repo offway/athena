@@ -270,6 +270,10 @@
 	var oTable0;
 
 	function delremark(id) {
+		var confirm = window.confirm("你确定要这么做？");
+		if (confirm == false) {
+			return;
+		}
 		$.post("/order-delremark", {"id": id}, function (data) {
 			if (data) {
 				toastr.success("操作已成功！", "温馨提示");
