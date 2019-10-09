@@ -56,7 +56,7 @@ public class FeedbackController {
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName);
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         List<Long> brandIds = null;
-        if (roles.contains(BigInteger.valueOf(8L))) {
+        if (roles.contains(BigInteger.valueOf(10L))) {
             brandIds = brandadminService.findBrandIdByAdminId(admin.getId());
         }
         Page<PhFeedback> pages = feedbackService.findAll(pr, brandId, brandIds);
@@ -232,7 +232,7 @@ public class FeedbackController {
     @RequestMapping("/feedback_brand_list")
     public List<PhBrand> getBrandList(@AuthenticationPrincipal PhAdmin admin) {
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
-        if (roles.contains(BigInteger.valueOf(8L))) {
+        if (roles.contains(BigInteger.valueOf(10L))) {
             List<Long> brandIds = brandadminService.findBrandIdByAdminId(admin.getId());
             return brandService.findByIds(brandIds);
         } else {
