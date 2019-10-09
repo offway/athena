@@ -120,6 +120,7 @@ public class PhAdminServiceImpl implements PhAdminService {
 			phAdmin.setPassword(passwordEncoder.encode(DEFAULT_PWD));
 		}
 		phAdmin = save(phAdmin);
+		adminId = phAdmin.getId();
 		
 		
 		phRoleadminRepository.deleteByAdminId(adminId);
