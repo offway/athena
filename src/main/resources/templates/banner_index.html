@@ -73,6 +73,7 @@
             <button class="btn btn-info add">添加</button>
             <button class="btn btn-info edit">修改</button>
             <button class="btn btn-info del">删除</button>
+            <button class="btn btn-info rank">统计</button>
             <!--                <button class="btn btn-info up">上架</button>-->
             <!--                <button class="btn btn-info down">下架</button>-->
         </div>
@@ -81,8 +82,6 @@
         <footer th:replace="footer"></footer>
     </div>
 </div>
-
-<div th:replace="body-under"></div>
 
 <div class="modal fade in" id="modal-6">
     <div class="modal-dialog">
@@ -156,6 +155,25 @@
     </div>
 </div>
 
+<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog" style=" width: 800px;">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
+
+            <div class="modal-body" id="preview_body">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://admin.offway.cn/js/common.js"></script>
 <script src="assets/js/moment.min.js"></script>
 <script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
@@ -216,6 +234,48 @@
                 toastr.error("非管理员无权操作", "温馨提示");
             }
         });
+    }
+
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-6" style="height: 100px;align-items: center;display: flex;"' +
+            key +
+            '</div>' +
+            '<div class="col-md-6">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
+
+    function appendToPreviewList(one, two, three, four, five, six) {
+        return '<div class="row">' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            one +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            two +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            three +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            four +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            five +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            six +
+            '</div>' +
+            '</div>';
+    }
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
     }
 
     var qiniuUrl = [[${qiniuUrl}]];
@@ -499,6 +559,20 @@
                 if (data) {
                     toastr.success("操作已成功！", "温馨提示");
                     oTable.fnDraw();
+                }
+            });
+        });
+
+        $(".btn.btn-info.rank").click(function () {
+            $.post("/banner_listHistoryRank", {}, function (data) {
+                if (data) {
+                    var preview = $("#preview_body");
+                    var str = appendToPreviewList("数量", "品牌名", "品牌ID", "", "图片", "");
+                    for (var obj of data) {
+                        str += appendToPreviewList(obj["bannerId"], obj["banner"], obj["id"], "", buildImg(obj["bannerImg"]), "");
+                    }
+                    preview.html(str);
+                    jQuery('#preview').modal('show', {backdrop: 'fade'});
                 }
             });
         });
