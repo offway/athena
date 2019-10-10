@@ -144,29 +144,38 @@ public class FeedbackController {
     @ResponseBody
     @RequestMapping("/feedback_detail_save")
     @Transactional
-    public boolean save(PhFeedbackDetail detail, @RequestParam("image") String[] images, String action, @RequestParam("goodsID") String[] goodsIDs) {
+    public boolean save(PhFeedbackDetail detail, @RequestParam("image") String[] images, String action, @RequestParam(name = "goodsID", required = false, defaultValue = "") String[] goodsIDs, String brandIDStr) {
         if ("add".equals(action)) {
-            HashMap<Long, List<String>> map = new HashMap<>();
-            //将商品ID按所属品牌分类
-            for (String goodsId : goodsIDs) {
-                PhGoods goods = goodsService.findOne(Long.valueOf(goodsId));
-                if (goods != null) {
-                    if (map.containsKey(goods.getBrandId())) {
-                        List<String> list = map.get(goods.getBrandId());
-                        list.add(goodsId);
-                        map.put(goods.getBrandId(), list);
-                    } else {
-                        List<String> list = new ArrayList<>();
-                        list.add(goodsId);
-                        map.put(goods.getBrandId(), list);
+            if (goodsIDs.length != 0) {
+                HashMap<Long, List<String>> map = new HashMap<>();
+                //将商品ID按所属品牌分类
+                for (String goodsId : goodsIDs) {
+                    PhGoods goods = goodsService.findOne(Long.valueOf(goodsId));
+                    if (goods != null) {
+                        if (map.containsKey(goods.getBrandId())) {
+                            List<String> list = map.get(goods.getBrandId());
+                            list.add(goodsId);
+                            map.put(goods.getBrandId(), list);
+                        } else {
+                            List<String> list = new ArrayList<>();
+                            list.add(goodsId);
+                            map.put(goods.getBrandId(), list);
+                        }
                     }
                 }
-            }
-            //按品牌ID依次添加
-            for (long bid : map.keySet()) {
-                PhFeedbackDetail obj = SerializationUtils.clone(detail);
-                obj.setBrandId(bid);
-                saveObj(obj, images, map.get(bid).toArray(new String[0]));
+                //按品牌ID依次添加
+                for (long bid : map.keySet()) {
+                    PhFeedbackDetail obj = SerializationUtils.clone(detail);
+                    obj.setBrandId(bid);
+                    saveObj(obj, images, map.get(bid).toArray(new String[0]));
+                }
+            } else {
+                //按品牌ID依次添加
+                for (String bid : brandIDStr.split(",")) {
+                    PhFeedbackDetail obj = SerializationUtils.clone(detail);
+                    obj.setBrandId(Long.valueOf(bid));
+                    saveObj(obj, images, new String[0]);
+                }
             }
         } else {
             PhFeedbackDetail feedbackDetailFull = feedbackDetailService.findOne(detail.getId());

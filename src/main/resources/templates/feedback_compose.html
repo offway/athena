@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery-ui.theme.min.css"/>
 	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/dd.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/selectize.bootstrap3.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 		.form-group img {
@@ -94,6 +95,16 @@
 							<div class="form-group">
 								<label class="control-label">上传图片(多选)</label>
 								<input type="file" class="form-control" name="imageFile" placeholder="上传图片" onchange="uploadFile(this)" multiple="multiple"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">选择品牌(不添加商品时使用，优先使用商品)</label>
+								<select class="form-control" id="brandID"
+										multiple="multiple"></select>
+								<input type="hidden" class="form-control" name="brandIDStr" value=""/>
 							</div>
 						</div>
 					</div>
@@ -186,6 +197,7 @@
 <script src="https://admin.offway.cn/assets/js/async.min.js"></script>
 <script src="https://admin.offway.cn/assets/js/jquery-ui/jquery-ui.js"></script>
 <script src="https://admin.offway.cn/assets/js/jquery.dd.js"></script>
+<script src="https://admin.offway.cn/assets/js/selectize.min.js"></script>
 <script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -451,7 +463,7 @@
 						addIntroFileUploaded("#imgPool", url);
 					}
 				}
-				if (data["goodsId"] != null) {
+				if (data["goodsId"] != null && data["goodsId"] !== "") {
 					var gids = data["goodsId"].split(",");
 					for (let gid of gids) {
 						$.post("/goods-one", {"id": gid}, function (data) {
@@ -462,6 +474,7 @@
 				form.find(".btn.image").show();
 				form.find("input[name='action']").val("edit");
 				//编辑时不允许变更所属品牌
+				$("#brandID")[0].selectize.disable();
 				// $("#brandId").attr("readonly", "readonly");
 				// $("#brandId").css('pointer-events', 'none');
 				// $("#brandId:not(:selected)").attr('disabled',true);
@@ -492,7 +505,20 @@
 				for (let obj of data) {
 					str += '<option value="VV">SS</option>'.replace("VV", obj["id"]).replace("SS", obj["name"]);
 				}
-				$("#brandId").html(str);
+				// $("#brandId").html(str);
+				var that = $("#brandID");
+				that.html(str);
+				that.selectize({
+					// "plugins": ['drag_drop', 'remove_button'],
+					"persist": false,
+					"create": false,
+					"maxItems": null,
+					"delimiter": ",",
+					"hideSelected": true,
+					"sortField": "text",
+					"searchField": ['text'],
+					"placeholder": "选择品牌"
+				});
 			}
 		});
 
@@ -541,16 +567,21 @@
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
-			var brandId = form.find("select[name='brandId']").val();
 			var starName = form.find("input[name='starName']").val();
 			var weibo = form.find("input[name='weibo']").val();
 			var images = form.find("input[name='image']");
 
-			if (brandId == '' || starName == '' || weibo == '' || images.length == 0) {
+			if (starName == '' || weibo == '' || images.length == 0) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
 				return;
+			}
+
+			//收集品牌ID列表
+			var bids = $("#brandID").val();
+			if (bids != null) {
+				form.find("input[name='brandIDStr']").val(bids.join(","));
 			}
 
 			//提交保存
