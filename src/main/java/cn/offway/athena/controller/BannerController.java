@@ -1,13 +1,16 @@
 package cn.offway.athena.controller;
 
 import cn.offway.athena.domain.PhBanner;
+import cn.offway.athena.domain.PhBannerHistory;
 import cn.offway.athena.properties.QiniuProperties;
+import cn.offway.athena.service.PhBannerHistoryService;
 import cn.offway.athena.service.PhBannerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +28,8 @@ public class BannerController {
     private PhBannerService bannerService;
     @Autowired
     private QiniuProperties qiniuProperties;
+    @Autowired
+    private PhBannerHistoryService bannerHistoryService;
 
     @RequestMapping("/banner.html")
     public String index(ModelMap map) {
@@ -49,21 +54,37 @@ public class BannerController {
         return map;
     }
 
+    private void saveHistory(PhBanner banner) {
+        PhBannerHistory history = new PhBannerHistory();
+        history.setBanner(banner.getRemark());
+        history.setBannerId(banner.getRedirectId());
+        history.setBannerImg(banner.getBanner());
+        history.setBeginTime(banner.getBeginTime());
+        history.setEndTime(banner.getEndTime());
+        history.setCreateTime(new Date());
+        bannerHistoryService.save(history);
+    }
+
+    @Transactional
     @RequestMapping("/banner_save")
     @ResponseBody
     public boolean save(PhBanner banner) {
         if (banner.getId() == null) {
             banner.setStatus("0");
             banner.setSort(null);
-            if (null == banner.getRedirectId()){
+            if (null == banner.getRedirectId()) {
                 banner.setRedirectId("");
             }
             banner.setCreateTime(new Date());
+            saveHistory(banner);
         } else {
-            PhBanner bannernew = bannerService.findOne(banner.getId());
-            banner.setStatus(bannernew.getStatus());
-            banner.setSort(bannernew.getSort());
-            banner.setCreateTime(bannernew.getCreateTime());
+            PhBanner bannerSaved = bannerService.findOne(banner.getId());
+            banner.setStatus(bannerSaved.getStatus());
+            banner.setSort(bannerSaved.getSort());
+            banner.setCreateTime(bannerSaved.getCreateTime());
+            if (Math.abs(banner.getBeginTime().compareTo(bannerSaved.getBeginTime())) + Math.abs(banner.getEndTime().compareTo(bannerSaved.getEndTime())) != 0) {
+                saveHistory(banner);
+            }
         }
         bannerService.save(banner);
         return true;

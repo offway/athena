@@ -240,7 +240,7 @@
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
-            order: [[ 0, "desc" ]],columnDefs: [
+            columnDefs: [
                 {
                     targets: 0,
                     data: "id",
@@ -406,7 +406,7 @@
             var imageVal = form.find("input[name='imageFile']")[0].value;
             //已上传的图片地址
             var imageVals = form.find("input[name='banner']").val();
-            if (imageVals == null || redirectId == null || beginTime == null || endTime == null) {
+            if ((imageVals == "" && imageVal == "") || redirectId == "" || beginTime == "" || endTime == "") {
                 toastr.error("请填写完整数据后提交", "温馨提示");
                 footer.find("button").show();
                 footer.find(".bg-lg").hide();
