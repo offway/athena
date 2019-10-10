@@ -174,6 +174,25 @@
     </div>
 </div>
 
+<div class="modal fade in" id="previewAlt" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog" style=" width: 800px;">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
+
+            <div class="modal-body" id="preview_body_alt">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://admin.offway.cn/js/common.js"></script>
 <script src="assets/js/moment.min.js"></script>
 <script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
@@ -276,6 +295,22 @@
 
     function buildImg(url) {
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+    function checkIt(id) {
+        $.post("/banner_listHistorySub", {"id": id}, function (data) {
+            if (data) {
+                var preview = $("#preview_body_alt");
+                var contentStr = appendToPreviewList("品牌名", "品牌ID", "图片", "创建时间", "开始时间", "结束时间");
+                for (var obj of data) {
+                    contentStr += appendToPreviewList(obj["banner"], obj["bannerId"], buildImg(obj["bannerImg"]), formatTime(obj["createTime"]), formatTime(obj["beginTime"]), formatTime(obj["endTime"]));
+                }
+                preview.html(contentStr);
+                jQuery('#previewAlt').modal('show', {backdrop: 'fade'});
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
     }
 
     var qiniuUrl = [[${qiniuUrl}]];
@@ -567,9 +602,10 @@
             $.post("/banner_listHistoryRank", {}, function (data) {
                 if (data) {
                     var preview = $("#preview_body");
-                    var str = appendToPreviewList("数量", "品牌名", "品牌ID", "", "图片", "");
+                    var str = appendToPreviewList("次数", "品牌名", "品牌ID", "", "图片", "操作");
                     for (var obj of data) {
-                        str += appendToPreviewList(obj["bannerId"], obj["banner"], obj["id"], "", buildImg(obj["bannerImg"]), "");
+                        var btn = '<input type="button" onclick="checkIt(VVV)" value="查看" />'.replace("VVV", obj["id"]);
+                        str += appendToPreviewList(obj["bannerId"], obj["banner"], obj["id"], "", buildImg(obj["bannerImg"]), btn);
                     }
                     preview.html(str);
                     jQuery('#preview').modal('show', {backdrop: 'fade'});

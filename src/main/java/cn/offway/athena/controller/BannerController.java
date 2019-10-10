@@ -100,6 +100,12 @@ public class BannerController {
         return bannerHistoryRepository.listRank();
     }
 
+    @RequestMapping("/banner_listHistorySub")
+    @ResponseBody
+    public List<PhBannerHistory> listHistorySub(String id) {
+        return bannerHistoryService.findList(id);
+    }
+
     @RequestMapping("/banner_get")
     @ResponseBody
     public PhBanner get(@RequestParam("id") Long id) {
