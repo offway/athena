@@ -79,9 +79,9 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 	public PhOrderInfo findByOrderNo(String orderNo){
 		return phOrderInfoRepository.findByOrderNo(orderNo);
 	}
-	
+
 	@Override
-	public Page<PhOrderInfo> findByPage(final String sku, final String isUpload, final String realName, final String position, final String orderNo, final String unionid, final String status, final Long brandId, final String isOffway, final List<Long> brandIds, Pageable page){
+	public Page<PhOrderInfo> findByPage(final String sku, final String isUpload, final String realName, final String position, final String orderNo, final String unionid, final String status, final Long brandId, final String isOffway, final List<Long> brandIds, String users, Pageable page) {
 		return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
 			
 			@Override
@@ -118,6 +118,10 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 				
 				if(StringUtils.isNotBlank(isOffway)){
 					params.add(criteriaBuilder.equal(root.get("isOffway"), isOffway));
+				}
+
+				if (StringUtils.isNotBlank(users)) {
+					params.add(criteriaBuilder.like(root.get("users"), "%" + users + "%"));
 				}
 
 				if(StringUtils.isNotBlank(sku)){
