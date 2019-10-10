@@ -73,14 +73,11 @@ public class OrderController {
 	
 	/**
 	 * 查询数据
-	 * @param request
-	 * @param order
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/order-data")
-	public Map<String, Object> orderData(HttpServletRequest request,String orderNo, String unionid,String sku,
-			String realName, String position,String status,Long brandId,String isOffway,String isUpload,Authentication authentication){
+	public Map<String, Object> orderData(HttpServletRequest request, String orderNo, String unionid, String sku,
+										 String realName, String position, String status, Long brandId, String isOffway, String isUpload, Authentication authentication, String users) {
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -91,8 +88,9 @@ public class OrderController {
 		
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
-		
-		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(sku,isUpload,realName.trim(),position.trim(), orderNo.trim(),null!=unionid?unionid.trim():unionid,status.trim(),brandId,isOffway,brandIds, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+
+		PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
+		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(sku, isUpload, realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, status.trim(), brandId, isOffway, brandIds, users, pr);
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
