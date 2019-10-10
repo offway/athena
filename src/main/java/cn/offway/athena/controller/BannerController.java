@@ -3,6 +3,7 @@ package cn.offway.athena.controller;
 import cn.offway.athena.domain.PhBanner;
 import cn.offway.athena.domain.PhBannerHistory;
 import cn.offway.athena.properties.QiniuProperties;
+import cn.offway.athena.repository.PhBannerHistoryRepository;
 import cn.offway.athena.service.PhBannerHistoryService;
 import cn.offway.athena.service.PhBannerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -30,6 +32,8 @@ public class BannerController {
     private QiniuProperties qiniuProperties;
     @Autowired
     private PhBannerHistoryService bannerHistoryService;
+    @Autowired
+    private PhBannerHistoryRepository bannerHistoryRepository;
 
     @RequestMapping("/banner.html")
     public String index(ModelMap map) {
@@ -88,6 +92,12 @@ public class BannerController {
         }
         bannerService.save(banner);
         return true;
+    }
+
+    @RequestMapping("/banner_listHistoryRank")
+    @ResponseBody
+    public List<PhBannerHistory> listHistoryRank() {
+        return bannerHistoryRepository.listRank();
     }
 
     @RequestMapping("/banner_get")
