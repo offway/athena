@@ -52,7 +52,7 @@ public class GoodsCategoryController {
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         long id = Long.valueOf(request.getParameter("id"));
-        Sort sort = new Sort("id");
+        Sort sort = new Sort("sort");
         Page<PhGoodsCategory> pages = goodsCategoryService.findByPid(id, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();

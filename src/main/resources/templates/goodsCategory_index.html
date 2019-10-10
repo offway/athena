@@ -231,7 +231,7 @@
 				$.merge(aData, searchArray);
 				aData.push({"name": "id", "value": theId});//append pid
 			},
-            columnDefs: [
+			order: [[ 7, "desc" ]],columnDefs: [
 				{	
 					targets: 0,
 				    data: "id",
@@ -253,16 +253,16 @@
 	                data: "name",
 	                title: "名称"
             	},
+				// {
+				// 	targets: 3,
+				// 	data: "image",
+				// 	title: "图片",
+				// 	render: function (data, type, row, meta) {
+				// 		return buildImg(data);
+				// 	}
+				// },
 				{
 					targets: 3,
-					data: "image",
-					title: "图片",
-					render: function (data, type, row, meta) {
-						return buildImg(data);
-					}
-				},
-				{
-					targets: 4,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -270,27 +270,27 @@
 					}
 				},
 				{
-					targets: 5,
+					targets: 4,
 					data: "goodsType",
 					title: "商品类别ID"
 				},
 				{
-					targets: 6,
+					targets: 5,
 					data: "goodsTypeName",
 					title: "商品类别名称"
 				},
 				{
-					targets: 7,
+					targets: 6,
 					data: "remark",
 					title: "备注"
 				},
 				{
-					targets: 8,
+					targets: 7,
 					data: "sort",
 					title: "排序"
 				},
                 {
-                    targets: 9,
+                    targets: 8,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -299,7 +299,7 @@
                     }
                 },
 				{
-					targets: 10,
+					targets: 9,
 					data: "id",
 					orderable: false,
 					title: "操作",
