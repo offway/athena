@@ -585,21 +585,21 @@
 
 			//提交保存
 			var map = form.serializeArray();
-            $.post("/feedback_detail_save", map, function (data) {
-                if (data) {
-                    footer.find("button").show();
-                    footer.find(".bg-lg").hide();
-                    toastr.success("操作已成功！", "温馨提示");
-                    setTimeout(function () {
-                        // window.close();
-                        window.location.href = '/feedback.html';
-                    }, 1000);
-                } else {
-                    footer.find("button").show();
-                    footer.find(".bg-lg").hide();
-                    toastr.error("操作失败", "温馨提示");
-                }
-            });
+			$.post("/feedback_detail_save", map, function (data) {
+				if (data) {
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.success("操作已成功！", "温馨提示");
+					setTimeout(function () {
+						// window.close();
+						window.location.href = document.referrer;
+					}, 1000);
+				} else {
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
 		});
 	});
 	/*]]>*/
