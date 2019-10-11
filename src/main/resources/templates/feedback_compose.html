@@ -568,10 +568,9 @@
 			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
 			var starName = form.find("input[name='starName']").val();
-			var weibo = form.find("input[name='weibo']").val();
 			var images = form.find("input[name='image']");
 
-			if (starName == '' || weibo == '' || images.length == 0) {
+			if (starName == '' || images.length == 0) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
