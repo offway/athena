@@ -4,6 +4,10 @@ import cn.offway.athena.domain.*;
 import cn.offway.athena.properties.QiniuProperties;
 import cn.offway.athena.service.*;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,12 +87,20 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_detail_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, long id, String starName, HttpServletRequest request) {
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, long id, String starName, String sTime, String eTime, HttpServletRequest request) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        Date sTimeDate = null, eTimeDate = null;
+        if (StringUtils.isNotBlank(sTime)) {
+            sTimeDate = DateTime.parse(sTime, format).toDate();
+        }
+        if (StringUtils.isNotBlank(eTime)) {
+            eTimeDate = DateTime.parse(eTime, format).toDate();
+        }
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName);
-        Page<PhFeedbackDetail> pages = feedbackDetailService.findByPid(id, starName, pr);
+        Page<PhFeedbackDetail> pages = feedbackDetailService.findByPid(id, starName, sTimeDate, eTimeDate, pr);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

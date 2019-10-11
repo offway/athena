@@ -5,6 +5,7 @@ import cn.offway.athena.domain.PhFeedbackDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public interface PhFeedbackDetailService {
 
     List<PhFeedbackDetail> save(List<PhFeedbackDetail> entities);
 
-    Page<PhFeedbackDetail> findByPid(Long pid, String starName, Pageable pageable);
+    Page<PhFeedbackDetail> findByPid(Long pid, String starName, Date sTime, Date eTime, Pageable pageable);
 
     void delByPid(Long pid);
 }

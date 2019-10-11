@@ -4,6 +4,7 @@
 	<head th:replace="head"></head>
 	<title>返图明细管理</title>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
 	<link rel="stylesheet" href="assets/js/viewer.css"/>
 	<style type="text/css">
 	.form-group img{
@@ -45,6 +46,16 @@
 						<div class="form-group" style="margin-bottom: 15px;">
 							<div class="input-group">
 								<input type="text" name="starName" id="starName" class="form-control" style="height:35px" placeholder="艺人名称"/>
+							</div>
+						</div>
+						<div class="form-group" style="margin-bottom: 15px;">
+							<div class="input-group">
+								<input type="text" name="sTime" id="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
+							</div>
+						</div>
+						<div class="form-group" style="margin-bottom: 15px;">
+							<div class="input-group">
+								<input type="text" name="eTime" id="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
 							</div>
 						</div>
 						<div class="form-group" style="margin-bottom: 15px;">
@@ -101,6 +112,7 @@
 
 	<script src="https://admin.offway.cn/js/common.js"></script>
 	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
+	<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/viewer.js"></script>
 	<script src="assets/js/jquery-viewer.js"></script>
 	<script th:inline="javascript">
@@ -216,6 +228,28 @@
 	jQuery(document).ready(function($)
 	{
 		$("#starName").val(starName);
+
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#sTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#eTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
 
 		var oTable = $("#example-1").dataTable({
 			language: {

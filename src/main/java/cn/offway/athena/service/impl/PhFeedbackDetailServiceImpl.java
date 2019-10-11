@@ -17,6 +17,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -50,7 +51,7 @@ public class PhFeedbackDetailServiceImpl implements PhFeedbackDetailService {
     }
 
     @Override
-    public Page<PhFeedbackDetail> findByPid(Long pid, String starName, Pageable pageable) {
+    public Page<PhFeedbackDetail> findByPid(Long pid, String starName, Date sTime, Date eTime, Pageable pageable) {
         return phFeedbackDetailRepository.findAll(new Specification<PhFeedbackDetail>() {
             @Override
             public Predicate toPredicate(Root<PhFeedbackDetail> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -58,6 +59,13 @@ public class PhFeedbackDetailServiceImpl implements PhFeedbackDetailService {
                 params.add(cb.equal(root.get("pid"), pid));
                 if (StringUtils.isNotBlank(starName)) {
                     params.add(cb.like(root.get("starName"), "%" + starName + "%"));
+                }
+                if (sTime != null && eTime != null) {
+                    params.add(cb.between(root.get("backTime"), sTime, eTime));
+                } else if (sTime != null) {
+                    params.add(cb.greaterThanOrEqualTo(root.get("backTime"), sTime));
+                } else if (eTime != null) {
+                    params.add(cb.lessThanOrEqualTo(root.get("backTime"), eTime));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 query.where(params.toArray(predicates));
