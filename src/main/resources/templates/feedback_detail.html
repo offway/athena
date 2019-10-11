@@ -152,14 +152,38 @@
 		var goodsPlace = $("#goodsPlace");
 		var contentStr = "";
 		var imgs = imgUrl.split(",");
-		$.post("/feedback_goods", {"ids": goodsId}, function (data) {
-			if (data) {
-				var str = "";
-				for (var obj of data) {
-					str += appendToPreview(obj["name"], buildImg(obj["image"]));
+		if (null != goodsId && goodsId != ""){
+			$.post("/feedback_goods", {"ids": goodsId}, function (data) {
+				if (data) {
+					var str = "";
+					for (var obj of data) {
+						str += appendToPreview(obj["name"], buildImg(obj["image"]));
+					}
+					goodsPlace.html(str);
 				}
-				goodsPlace.html(str);
-			}
+				for (let url of imgs) {
+					contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
+				}
+				preview.html(contentStr);
+				if (viewPort) {
+					// viewPort.destroy();
+					// viewPort.update();
+				}
+				$image.viewer("destroy");
+				$image.viewer({
+					inline: false,
+					viewed: function () {
+						$image.viewer('zoomTo', 1);
+					}
+				});
+				// Get the Viewer.js instance after initialized
+				viewPort = $image.data('viewer');
+				// View a list of images
+				preview.viewer("destroy");
+				preview.viewer();
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+			});
+		}else {
 			for (let url of imgs) {
 				contentStr += "<li><img src='AAA'></li>".replace("AAA", url);
 			}
@@ -181,7 +205,8 @@
 			preview.viewer("destroy");
 			preview.viewer();
 			jQuery('#preview').modal('show', {backdrop: 'fade'});
-		});
+		}
+
 	}
 
 	var table_global;
