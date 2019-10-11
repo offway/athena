@@ -1,6 +1,7 @@
 package cn.offway.athena.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.*;
 
 /**
@@ -31,6 +32,8 @@ public class PhFeedback implements Serializable {
     /**  **/
     private Long imgNum;
 
+    /**  **/
+    private Date updateTime;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,4 +91,13 @@ public class PhFeedback implements Serializable {
         this.imgNum = imgNum;
     }
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "update_time")
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 }

@@ -137,6 +137,7 @@ public class FeedbackController {
             PhFeedback feedback = feedbackService.findByBrandId(brand.getId());
             if (feedback != null) {
                 feedback.setImgNum(feedback.getImgNum() + images.length);
+                feedback.setUpdateTime(new Date());
                 long num = feedbackDetailService.checkStarName(feedback.getId(), detail.getStarName());
                 if (num == 0) {
                     feedback.setStarNum(feedback.getStarNum() + 1);
@@ -144,6 +145,7 @@ public class FeedbackController {
             } else {
                 feedback = new PhFeedback();
                 feedback.setImgNum((long) images.length);
+                feedback.setUpdateTime(new Date());
                 feedback.setBrandId(brand.getId());
                 feedback.setBrandLogo(brand.getLogo());
                 feedback.setBrandName(brand.getName());
@@ -195,6 +197,7 @@ public class FeedbackController {
             PhFeedbackDetail feedbackDetailFull = feedbackDetailService.findOne(detail.getId());
             PhFeedback feedback = feedbackService.findOne(feedbackDetailFull.getPid());
             feedback.setImgNum(feedback.getImgNum() - feedbackDetailFull.getImgNum() + images.length);
+            feedback.setUpdateTime(new Date());
             if (!detail.getStarName().equals(feedbackDetailFull.getStarName())) {
                 long oldNum = feedbackDetailService.checkStarName(feedbackDetailFull.getPid(), feedbackDetailFull.getStarName());
                 long newNum = feedbackDetailService.checkStarName(feedbackDetailFull.getPid(), detail.getStarName());

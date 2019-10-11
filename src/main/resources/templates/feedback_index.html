@@ -166,6 +166,7 @@
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
+			order: [[7, "desc"]],
             columnDefs: [
 				{	
 					targets: 0,
@@ -213,6 +214,14 @@
 				},
 				{
 					targets: 7,
+					data: "updateTime",
+					title: "更新时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 8,
 					data: "id",
 					orderable: false,
 					title: "操作",
