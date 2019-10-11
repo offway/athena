@@ -48,6 +48,10 @@
 									<option value="" selected="selected">全部</option>
 								</select>
 							</div>
+							<div class="input-group">
+								<label for="brandId" class="control-label">艺人名称</label>
+								<input type="text" name="starName" id="starName" class="form-control" style="height:35px" placeholder="艺人名称"/>
+							</div>
 						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px;margin-top: 24px;">查询</button>
@@ -125,7 +129,7 @@
     }
 
 	function checkItsList(id) {
-		window.location.href = '/feedback_detail.html?id=' + id;
+		window.location.href = '/feedback_detail.html?id=AAA&starName=BBB'.replace("AAA", id).replace("BBB", $("#starName").val());
 	}
 
 	function checkImg(list) {

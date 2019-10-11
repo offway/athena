@@ -3,6 +3,7 @@ package cn.offway.athena.service.impl;
 import cn.offway.athena.domain.PhFeedbackDetail;
 import cn.offway.athena.repository.PhFeedbackDetailRepository;
 import cn.offway.athena.service.PhFeedbackDetailService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,12 +50,15 @@ public class PhFeedbackDetailServiceImpl implements PhFeedbackDetailService {
     }
 
     @Override
-    public Page<PhFeedbackDetail> findByPid(Long pid, Pageable pageable) {
+    public Page<PhFeedbackDetail> findByPid(Long pid, String starName, Pageable pageable) {
         return phFeedbackDetailRepository.findAll(new Specification<PhFeedbackDetail>() {
             @Override
             public Predicate toPredicate(Root<PhFeedbackDetail> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 params.add(cb.equal(root.get("pid"), pid));
+                if (StringUtils.isNotBlank(starName)) {
+                    params.add(cb.like(root.get("starName"), "%" + starName + "%"));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 query.where(params.toArray(predicates));
                 return null;

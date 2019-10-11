@@ -49,7 +49,7 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, @AuthenticationPrincipal PhAdmin admin, HttpServletRequest request) {
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, String starName, @AuthenticationPrincipal PhAdmin admin, HttpServletRequest request) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
@@ -59,7 +59,7 @@ public class FeedbackController {
         if (roles.contains(BigInteger.valueOf(10L))) {
             brandIds = brandadminService.findBrandIdByAdminId(admin.getId());
         }
-        Page<PhFeedback> pages = feedbackService.findAll(pr, brandId, brandIds);
+        Page<PhFeedback> pages = feedbackService.findAll(pr, brandId, brandIds, starName);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -70,10 +70,11 @@ public class FeedbackController {
     }
 
     @RequestMapping("/feedback_detail.html")
-    public String index(ModelMap map, Long id) {
+    public String index(ModelMap map, Long id, String starName) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("theId", id);
-        PhFeedback obj = feedbackService.findOne(Long.valueOf(id));
+        map.addAttribute("starName", starName);
+        PhFeedback obj = feedbackService.findOne(id);
         if (obj != null) {
             map.addAttribute("theName", obj.getBrandName());
         }
@@ -82,11 +83,12 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_detail_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, long id, HttpServletRequest request) {
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, long id, String starName, HttpServletRequest request) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
-        Page<PhFeedbackDetail> pages = feedbackDetailService.findByPid(id, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName));
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName);
+        Page<PhFeedbackDetail> pages = feedbackDetailService.findByPid(id, starName, pr);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

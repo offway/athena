@@ -25,7 +25,7 @@ public interface PhFeedbackDetailService {
 
     List<PhFeedbackDetail> save(List<PhFeedbackDetail> entities);
 
-    Page<PhFeedbackDetail> findByPid(Long pid, Pageable pageable);
+    Page<PhFeedbackDetail> findByPid(Long pid, String starName, Pageable pageable);
 
     void delByPid(Long pid);
 }

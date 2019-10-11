@@ -42,14 +42,14 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<form role="form" class="form-inline">
-<!--						<div class="form-group" style="margin-bottom: 15px;">-->
-<!--							<div class="input-group">-->
-<!--								<input type="text" name="name" class="form-control" style="height:35px" placeholder="活动名"/>-->
-<!--							</div>-->
-<!--						</div>-->
-<!--						<div class="form-group" style="margin-bottom: 15px;">-->
-<!--							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>-->
-<!--						</div>-->
+						<div class="form-group" style="margin-bottom: 15px;">
+							<div class="input-group">
+								<input type="text" name="starName" id="starName" class="form-control" style="height:35px" placeholder="艺人名称"/>
+							</div>
+						</div>
+						<div class="form-group" style="margin-bottom: 15px;">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
 						<div class="form-group" style="margin-left: 0;display: block;">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="history.go(-1)">返回</button>
 						</div>
@@ -212,8 +212,11 @@
 	var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];
 	var theId = [[${theId}]];
+	var starName = [[${starName}]];
 	jQuery(document).ready(function($)
 	{
+		$("#starName").val(starName);
+
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"

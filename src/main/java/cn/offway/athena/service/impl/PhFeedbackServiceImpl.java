@@ -1,6 +1,7 @@
 package cn.offway.athena.service.impl;
 
 import cn.offway.athena.domain.PhFeedback;
+import cn.offway.athena.domain.PhFeedbackDetail;
 import cn.offway.athena.repository.PhFeedbackRepository;
 import cn.offway.athena.service.PhFeedbackService;
 import org.apache.commons.lang3.StringUtils;
@@ -12,10 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,13 +48,23 @@ public class PhFeedbackServiceImpl implements PhFeedbackService {
     }
 
     @Override
-    public Page<PhFeedback> findAll(Pageable pageable, String brandId, List<Long> brandIds) {
+    public Page<PhFeedback> findAll(Pageable pageable, String brandId, List<Long> brandIds, String starName) {
         return phFeedbackRepository.findAll(new Specification<PhFeedback>() {
             @Override
             public Predicate toPredicate(Root<PhFeedback> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 if (StringUtils.isNotBlank(brandId)) {
                     params.add(criteriaBuilder.equal(root.get("brandId"), brandId));
+                }
+                if (StringUtils.isNotBlank(starName)) {
+                    Subquery<PhFeedbackDetail> subquery = criteriaQuery.subquery(PhFeedbackDetail.class);
+                    Root<PhFeedbackDetail> subRoot = subquery.from(PhFeedbackDetail.class);
+                    subquery.select(subRoot);
+                    subquery.where(
+                            criteriaBuilder.equal(root.get("id"), subRoot.get("pid")),
+                            criteriaBuilder.like(subRoot.get("starName"), "%" + starName + "%")
+                    );
+                    params.add(criteriaBuilder.exists(subquery));
                 }
                 if (brandIds != null) {
                     CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("brandId"));
