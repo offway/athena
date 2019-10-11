@@ -3,14 +3,16 @@ package cn.offway.athena.controller;
 import cn.offway.athena.domain.*;
 import cn.offway.athena.properties.QiniuProperties;
 import cn.offway.athena.service.*;
-import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,7 +71,7 @@ public class OfflineController {
 	 */
 	@ResponseBody
 	@RequestMapping("/offline-data")
-	public Map<String, Object> offlineData(HttpServletRequest request,String realName,String users,String state,String ordersNo){
+	public Map<String, Object> offlineData(HttpServletRequest request,String realName,String users,String state,String ordersNo,String sTime,String eTime){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -77,8 +79,17 @@ public class OfflineController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		
-		Page<PhOfflineOrders> pages = offlineOrdersService.findByPage(realName,users,state,ordersNo,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+
+		PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
+		Date sTimeDate = null, eTimeDate = null;
+		DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		if (StringUtils.isNotBlank(sTime)) {
+			sTimeDate = DateTime.parse(sTime, format).toDate();
+		}
+		if (StringUtils.isNotBlank(eTime)) {
+			eTimeDate = DateTime.parse(eTime, format).toDate();
+		}
+		Page<PhOfflineOrders> pages = offlineOrdersService.findByPage(realName, users, state, ordersNo, sTimeDate, eTimeDate, pr);
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
