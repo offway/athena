@@ -217,7 +217,11 @@
 					data: "updateTime",
 					title: "更新时间",
 					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+						if (data) {
+							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+						} else {
+							return "";
+						}
 					}
 				},
 				{
