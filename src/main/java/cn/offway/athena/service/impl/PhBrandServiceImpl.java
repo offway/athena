@@ -59,7 +59,13 @@ public class PhBrandServiceImpl implements PhBrandService {
 
     @Override
     public List<PhBrand> findByIds(List<Long> ids) {
-        return phBrandRepository.findByIds(ids);
+        if (null != ids && ids.size()>0){
+            return phBrandRepository.findByIds(ids);
+        }else {
+            List<PhBrand> brands = new ArrayList<>();
+            return brands;
+        }
+
     }
 
     @Override

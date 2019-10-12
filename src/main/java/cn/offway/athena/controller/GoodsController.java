@@ -73,9 +73,8 @@ public class GoodsController {
 		
 		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
-		
-		map.addAttribute("brands", phBrandService.findByIds(brandIds));
 
+		map.addAttribute("brands", phBrandService.findByIds(brandIds));
 		return "goods";
 	}
 	
