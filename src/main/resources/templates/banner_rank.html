@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head th:replace="head"></head>
+    <title>Banner统计</title>
+    <link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img{
+            max-width:400px;
+            max-height:300px;
+        }
+    </style>
+</head>
+<body class="page-body">
+
+<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+
+    <div th:replace="sidebar-menu"></div>
+    <div class="main-content">
+        <!-- User Info, Notifications and activity Bar -->
+        <nav th:replace="navbar"></nav>
+        <div class="page-title">
+
+            <div class="title-env">
+                <h1 class="title">Banner统计</h1>
+                <p class="activityDescription"></p>
+            </div>
+
+            <div class="breadcrumb-env">
+
+                <ol class="breadcrumb bc-1">
+                    <li><a href="/"><i class="fa-home"></i>Home</a></li>
+                    <li><a>系统管理</a></li>
+                    <li class="active"><strong>Banner统计</strong></li>
+                </ol>
+
+            </div>
+
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+            </div>
+
+            <div class="panel-body">
+                <table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                </table>
+            </div>
+<!--            <button class="btn btn-info add">添加</button>-->
+<!--            <button class="btn btn-info edit">修改</button>-->
+<!--            <button class="btn btn-info del">删除</button>-->
+<!--            <button class="btn btn-info rank">统计</button>-->
+            <!--                <button class="btn btn-info up">上架</button>-->
+            <!--                <button class="btn btn-info down">下架</button>-->
+        </div>
+
+
+        <footer th:replace="footer"></footer>
+    </div>
+</div>
+
+<div class="modal fade in" id="previewAlt" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog" style=" width: 800px;">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
+
+            <div class="modal-body" id="preview_body_alt">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://admin.offway.cn/js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    function topIt(id) {
+        var num = prompt("输入排序位置,从0开始,0为第一位", "0");
+        if (isNaN(num) || num == null) {
+            alert("请输入数字！");
+        } else {
+            $.post("/banner_top", {"id": id, "sort": num}, function (data) {
+                if (data) {
+                    table_global.fnDraw();
+                    toastr.success("操作已成功！", "温馨提示");
+                } else {
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+        }
+    }
+
+    function upIt(id, self) {
+        $.post("/banner_up", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("下架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    downIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+                table_global.fnDraw();
+            } else {
+                toastr.error("非管理员无权操作", "温馨提示");
+            }
+        });
+    }
+
+    function downIt(id, self) {
+        $.post("/banner_down", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("上架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    upIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+                table_global.fnDraw();
+            } else {
+                toastr.error("非管理员无权操作", "温馨提示");
+            }
+        });
+    }
+
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-6" style="height: 100px;align-items: center;display: flex;"' +
+            key +
+            '</div>' +
+            '<div class="col-md-6">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
+
+    function appendToPreviewList(one, two, three, four, five, six) {
+        return '<div class="row">' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            one +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            two +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            three +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            four +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            five +
+            '</div>' +
+            '<div class="col-md-2" style="height: 100px;align-items: center;display: flex;">' +
+            six +
+            '</div>' +
+            '</div>';
+    }
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+    function checkIt(id) {
+        $.post("/banner_listHistorySub", {"id": id}, function (data) {
+            if (data) {
+                var preview = $("#preview_body_alt");
+                var contentStr = appendToPreviewList("品牌名", "品牌ID", "图片", "创建时间", "开始时间", "结束时间");
+                for (var obj of data) {
+                    contentStr += appendToPreviewList(obj["banner"], obj["bannerId"], buildImg(obj["bannerImg"]), formatTime(obj["createTime"]), formatTime(obj["beginTime"]), formatTime(obj["endTime"]));
+                }
+                preview.html(contentStr);
+                jQuery('#previewAlt').modal('show', {backdrop: 'fade'});
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    var qiniuUrl = [[${qiniuUrl}]];
+    var table_global;
+    jQuery(document).ready(function($)
+    {
+        $(".searchBtn").click(function(){
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw(); //or fnReloadAjax()
+            return false;
+        });
+
+        var oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            bFilter : false,
+            bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有
+            sAjaxSource : "/banner_listHistoryRank?from=2",//通过ajax实现分页的url路径。
+            fnServerParams : function(aData){
+                // var searchArray = $(".form-inline").serializeArray();
+                // $.merge(aData, searchArray);
+            },
+            searching: false,
+            lengthChange: false,
+            paging: false,
+            ordering: false,
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "bannerId",
+                    title: "次数"
+                },
+                {
+                    targets: 1,
+                    data: "banner",
+                    title: "品牌名"
+                },
+                {
+                    targets: 2,
+                    data: "id",
+                    title: "品牌ID"
+                },
+                {
+                    targets: 3,
+                    data: "bannerImg",
+                    title: "图片",
+                    render: function (data, type, full, meta) {
+                        return buildImg(data);
+                    }
+                },
+                {
+                    targets: 4,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看"/>';
+                    }
+                }
+            ]
+        });
+        table_global = oTable;
+    });
+    /*]]>*/
+</script>
+</body>
+
+</html>

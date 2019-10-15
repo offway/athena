@@ -599,7 +599,7 @@
         });
 
         $(".btn.btn-info.rank").click(function () {
-            $.post("/banner_listHistoryRank", {}, function (data) {
+            $.post("/banner_listHistoryRank?from=1", {}, function (data) {
                 if (data) {
                     var preview = $("#preview_body");
                     var str = appendToPreviewList("次数", "品牌名", "品牌ID", "", "图片", "操作");

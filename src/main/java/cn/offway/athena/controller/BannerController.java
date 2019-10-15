@@ -1,15 +1,19 @@
 package cn.offway.athena.controller;
 
+import cn.offway.athena.domain.PhAdmin;
 import cn.offway.athena.domain.PhBanner;
 import cn.offway.athena.domain.PhBannerHistory;
 import cn.offway.athena.properties.QiniuProperties;
 import cn.offway.athena.repository.PhBannerHistoryRepository;
 import cn.offway.athena.service.PhBannerHistoryService;
 import cn.offway.athena.service.PhBannerService;
+import cn.offway.athena.service.PhBrandadminService;
+import cn.offway.athena.service.PhRoleadminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,11 +39,21 @@ public class BannerController {
     private PhBannerHistoryService bannerHistoryService;
     @Autowired
     private PhBannerHistoryRepository bannerHistoryRepository;
+    @Autowired
+    private PhRoleadminService roleadminService;
+    @Autowired
+    private PhBrandadminService brandadminService;
 
     @RequestMapping("/banner.html")
     public String index(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         return "banner_index";
+    }
+
+    @RequestMapping("/banner_rank.html")
+    public String rank(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        return "banner_rank";
     }
 
     @RequestMapping("/banner_list")
@@ -96,8 +111,31 @@ public class BannerController {
 
     @RequestMapping("/banner_listHistoryRank")
     @ResponseBody
-    public List<PhBannerHistory> listHistoryRank() {
-        return bannerHistoryRepository.listRank();
+    public Object listHistoryRank(@AuthenticationPrincipal PhAdmin admin, String from) {
+        if ("1".equals(from)) {
+            return bannerHistoryRepository.listRank();
+        } else {
+            List<PhBannerHistory> res;
+            List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+            if (roles.contains(BigInteger.valueOf(1L))) {
+                res = bannerHistoryRepository.listRank();
+            } else {
+                List<Long> brandIds = brandadminService.findBrandIdByAdminId(admin.getId());
+                if (brandIds != null && brandIds.size() > 0) {
+//                    String inStr = StringUtils.join(brandIds, ",");
+                    res = bannerHistoryRepository.listRank(brandIds);
+                } else {
+                    return null;
+                }
+            }
+            int initEcho = 1;
+            Map<String, Object> map = new HashMap<>();
+            map.put("sEcho", initEcho);
+            map.put("iTotalRecords", res.size());//数据总条数
+            map.put("iTotalDisplayRecords", res.size());//显示的条数
+            map.put("aData", res);//数据集合
+            return map;
+        }
     }
 
     @RequestMapping("/banner_listHistorySub")
