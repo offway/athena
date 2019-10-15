@@ -105,10 +105,8 @@
 	<div class="modal fade in" data-backdrop="static" id="modal-goods">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
-
 				<table id="example-2" class="table table-striped table-bordered" cellspacing="0" width="100%">
 				</table>
-
 				<div class="modal-footer">
 					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
@@ -116,38 +114,28 @@
 		</div>
 	</div>
 
-	<div th:replace="body-under"></div>
-	
-	<div class="modal fade" id="modal-updateStatus">
+	<div class="modal fade in" data-backdrop="static" id="modal-remark">
 		<div class="modal-dialog">
-			<div class="modal-content">
-				<input type="hidden" id="orderid"/>
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">温馨提示</h4>
-				</div>
-				
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								
-								<select id="status" class="form-control" style="height:35px">
-									<option value="1">已发货</option>
-									<option value="2">已寄回</option>
-									<option value="3">已收货</option>
-								</select>
-							</div>	
-
-						</div>
-					</div>
-				</div>
-				
+			<div class="modal-content" style="width: 800px;">
+				<table id="example-3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+				</table>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-info save">确定</button>
-					
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info addMesg">添加</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade in" data-backdrop="static" id="modal-goods-status">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<table id="example-4" class="table table-striped table-bordered" cellspacing="0" width="100%">
+				</table>
+				<div class="modal-footer">
+					<input type="hidden" name="orderID" id="orderID"/>
+					<button class="btn btn-danger confirmBack">确认归还</button>
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
 			</div>
 		</div>
@@ -298,22 +286,6 @@
 		</div>
 	</div>
 
-	<div class="modal fade in" data-backdrop="static" id="modal-remark">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-
-
-				<table id="example-3" class="table table-striped table-bordered" cellspacing="0" width="100%">
-				</table>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info addMesg">添加</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
 	<input type="hidden" name="remarkid"/>
 	<input type="hidden" id="IMGHOLDER"/>
 	<input type="hidden" id="type_and_category_list"/>
@@ -322,7 +294,6 @@
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
-	var qiniuUrl = [[${qiniuUrl}]];
 	function addTheGoods(all) {
 		var ele = $("#goodsSelect");
 		var imgList = JSON.parse($("#IMGHOLDER").val());
@@ -505,13 +476,13 @@
 		$(".modal-backdrop").css("z-index", 999);
 	}
 
-	function confirm(id,state){
-		$.post("/offline-confirm",{id:id,state:state},function (data) {
-			if (data){
+	function confirm(id, state) {
+		$.post("/offline-confirm", {id: id, state: state}, function (data) {
+			if (data) {
 				toastr.success("操作成功！", "温馨提示");
-				oTable.fnDraw(oTable.fnSettings());
+				oTable1.fnDraw(oTable1.fnSettings());
 				jQuery('#modal-ex').modal('hide', {backdrop: 'fade'});
-			}else {
+			} else {
 				toastr.success("操作失败！", "温馨提示");
 			}
 		})
@@ -617,9 +588,114 @@
 		jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
 	}
 
-
-	var theId = [[${theId}]];
-	var oTable0;
+	function pickGoodsForReturn(id, ordersNo) {
+		$("#orderID").val(id);
+		$("#example-4").dataTable({
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/offlineOrdersGoods-data?ordersNo=" + ordersNo,//通过ajax实现分页的url路径。
+			destroy: true,
+			fnServerParams: function (aData) {
+			},
+			searching: false,
+			lengthChange: false,
+			// paging: false,
+			// ordering: false,
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						var state = full["state"];
+						if (state == "1") {
+							return '<input type="checkbox" name="pickedGoodsId" disabled="disabled" value="' + data + '" />';
+						} else {
+							return '<input type="checkbox" name="pickedGoodsId" value="' + data + '" />';
+						}
+					}
+				},
+				{
+					targets: 1,
+					data: "sku",
+					title: "SKU编码"
+				},
+				{
+					targets: 2,
+					data: "goodsImage",
+					title: "商品图片",
+					render: function (data, type, row, meta) {
+						return "<img src=" + data + "></img>";
+					}
+				},
+				{
+					targets: 3,
+					data: "goodsName",
+					title: "商品名称"
+				},
+				{
+					targets: 4,
+					data: "brandName",
+					title: "品牌名称"
+				},
+				{
+					targets: 5,
+					data: "size",
+					title: "尺码"
+				},
+				{
+					targets: 6,
+					data: "color",
+					title: "颜色"
+				},
+				{
+					targets: 7,
+					data: "expressOrderNo",
+					title: "物流单号",
+					render: function (data, type, row, meta) {
+						if (data.length <= 0) {
+							return "无";
+						} else {
+							return data;
+						}
+					}
+				},
+				{
+					targets: 8,
+					data: "way",
+					title: "寄出方式",
+					render: function (data, type, row, meta) {
+						if (data == 0) {
+							return "平台";
+						} else {
+							return "品牌";
+						}
+					}
+				},
+				{
+					targets: 9,
+					data: "state",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						//状态:[0-未收回,1-已收回]
+						if (data == 0) {
+							return "未收回";
+						} else {
+							return "已收回";
+						}
+					}
+				}
+			]
+		});
+		jQuery('#modal-goods-status').modal('show', {backdrop: 'fade'});
+	}
 
 	function addremark(id){
 		$("input[name='remarkid']").val(id);
@@ -677,6 +753,10 @@
 		jQuery('#modal-remark').modal('show', {backdrop: 'fade'});
 	}
 
+	var qiniuUrl = [[${qiniuUrl}]];
+	var theId = [[${theId}]];
+	var oTable0;
+	var oTable1;
 	jQuery(document).ready(function($)
 	{
 		jQuery.datetimepicker.setLocale('zh');
@@ -735,6 +815,7 @@
 			$("#type_and_category_list").val(JSON.stringify(data));
 			bindTypeSelector(data);
 		});
+
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
@@ -828,18 +909,11 @@
 					data: "state",
 					title: "状态",
 					render: function (data, type, row, meta) {
-						/** 状态:[0-未寄出,1-已寄出,2-已寄出/未收回,3-已寄出/已收回] **/
-						if ("0" == data) {
-							return "未寄出";
-						} else if ("1" == data) {
-							return "已寄出";
-						} else if ("2" == data) {
-							return "已寄出/未收回";
-						} else if ("3" == data) {
-							return "已寄出/已收回";
-						}
+						/** 状态:[0-未寄出,1-已寄出,2-未收回,3-已部分收回,4-已收回] **/
+						var map = ["未寄出", "已寄出", "已寄出/未收回", "已寄出/已部分收回", "已寄出/已收回"];
+						return map[data];
 					}
-            	},
+				},
 				{
 					targets: 12,
 					data: "remark",
@@ -851,11 +925,12 @@
 					title: "操作",
 					render: function (data, type, row, meta) {
 						var status = row["state"];
-						if("0"==status){
+						var ordersNo = row["ordersNo"];
+						if ("0" == status) {
 							return '<input type="button" name="checkIt" onclick="confirm(' + data + ',0)" value="确认发货"/>';
-						}else if("1"==status){
-							return '<input type="button" name="checkIt" onclick="confirm(' + data + ',1)" value="确认收货"/>';
-						}else {
+						} else if ("1" == status || "4" != status) {
+							return '<input type="button" name="checkIt" onclick="pickGoodsForReturn(' + data + ',\'' + ordersNo + '\')" value="确认收货"/>';
+						} else {
 							return '';
 						}
 					}
@@ -875,6 +950,7 @@
 				}
                ]
 		});
+		oTable1 = oTable;
 
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
@@ -912,93 +988,77 @@
 					break;
 			}
 		});
-			
-		 
-		 $("body").on("click","a.showGoods",function(){
-			 var orderNo = $(this).attr("orderNo");
-			 var tr = $(this).parents("tr")
-			 $('#modal-goods .a .col-xs-4:nth-child(1)').text("序号："+tr.find("td:nth-child(2)").text());
-			 $('#modal-goods .a .col-xs-4:nth-child(2)').text("订单号："+tr.find("td:nth-child(3)").text());
-			 $('#modal-goods .a .col-xs-4:nth-child(3)').text("使用日期："+tr.find("td:nth-child(4)").text());
-			 $('#modal-goods .b .col-xs-4:nth-child(1)').text("姓名："+tr.find("td:nth-child(5)").text());
-			 $('#modal-goods .b .col-xs-4:nth-child(2)').text("职位："+tr.find("td:nth-child(6)").text());
-			 $('#modal-goods .b .col-xs-4:nth-child(3)').text("使用者："+tr.find("td:nth-child(7)").text());
-			 
-			 $.get("/deliver-goods",{orderNo:orderNo},function(data){
+
+		$("body").on("click", "a.showGoods", function () {
+			var orderNo = $(this).attr("orderNo");
+			var tr = $(this).parents("tr")
+			$('#modal-goods .a .col-xs-4:nth-child(1)').text("序号：" + tr.find("td:nth-child(2)").text());
+			$('#modal-goods .a .col-xs-4:nth-child(2)').text("订单号：" + tr.find("td:nth-child(3)").text());
+			$('#modal-goods .a .col-xs-4:nth-child(3)').text("使用日期：" + tr.find("td:nth-child(4)").text());
+			$('#modal-goods .b .col-xs-4:nth-child(1)').text("姓名：" + tr.find("td:nth-child(5)").text());
+			$('#modal-goods .b .col-xs-4:nth-child(2)').text("职位：" + tr.find("td:nth-child(6)").text());
+			$('#modal-goods .b .col-xs-4:nth-child(3)').text("使用者：" + tr.find("td:nth-child(7)").text());
+
+			$.get("/deliver-goods", {orderNo: orderNo}, function (data) {
 				var html = "";
 				$('#modal-goods tbody').html("");
-				 $.each(data,function(i,e){
-					 html+="<tr><td>"+e.sku+"</td><td><img src=\""+e.image+"\" /></td><td>"+e.goodsName+"</td><td>"+e.brandName+"</td><td>"+e.size+"</td><td>"+e.color+"</td></tr>";
-				 });
-				 $('#modal-goods tbody').html(html);
-			 
-			 });
-			 
-			 jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
-		 });
-		 
-		 $("body").on("click","a.showEx",function(){
-			 var orderNo = $(this).attr("orderNo");
-			 var type = $(this).attr("type");
-			 $.get("/order-express",{orderNo:orderNo,type:type},function(e){
+				$.each(data, function (i, e) {
+					html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
+				});
+				$('#modal-goods tbody').html(html);
+
+			});
+
+			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+		});
+
+		$("body").on("click", "a.showEx", function () {
+			var orderNo = $(this).attr("orderNo");
+			var type = $(this).attr("type");
+			$.get("/order-express", {orderNo: orderNo, type: type}, function (e) {
 				var html = "";
 				$('#modal-ex tbody').html("");
-				if(e!=''){
-					 html+="<tr><th>订单号</th><td>"+e.orderNo+"</td></tr>";
-					 html+="<tr><th>快递运单号</th><td>"+e.mailNo+"</td></tr>";
-					 html+="<tr><th>寄件方手机</th><td>"+e.fromPhone+"</td></tr>";
-					 html+="<tr><th>寄件方姓名</th><td>"+e.fromRealName+"</td></tr>";
-					 html+="<tr><th>寄件方省份</th><td>"+e.fromProvince+"</td></tr>";
-					 html+="<tr><th>寄件方城市</th><td>"+e.fromCity+"</td></tr>";
-					 html+="<tr><th>寄件方区/县</th><td>"+e.fromCounty+"</td></tr>";
-					 html+="<tr><th>寄件方详细地址</th><td>"+e.fromContent+"</td></tr>";
-					 html+="<tr><th>取件快递员手机号</th><td>"+e.exPhone+"</td></tr>";
-					 html+="<tr><th>快递员最晚上门时间</th><td>"+e.lastTime+"</td></tr>";
-					 html+="<tr><th>收件方手机</th><td>"+e.toPhone+"</td></tr>";
-					 html+="<tr><th>收件方姓名</th><td>"+e.toRealName+"</td></tr>";
-					 html+="<tr><th>收件方省份</th><td>"+e.toProvince+"</td></tr>";
-					 html+="<tr><th>收件方城市</th><td>"+e.toCity+"</td></tr>";
-					 html+="<tr><th>收件方区/县</th><td>"+e.toCounty+"</td></tr>";
-					 html+="<tr><th>收件方详细地址</th><td>"+e.toContent+"</td></tr>";
-					 
-					 html = html.replace(new RegExp("null","g"),"暂无");
-					 $('#modal-ex tbody').html(html);
-				}
-				 jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
-			 
-			 });
-			 
-			
-		 });
-		 
-		 $(".btn.btn-info.updateStatus").click(function(){
-				
-				var stockId = $("input[name='authId']:checked");
-				if(stockId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
-					return ;
-				}
-				
-				stockId = stockId[0].value;
-				$("#orderid").val(stockId);
-				
-				jQuery('#modal-updateStatus').modal('show', {backdrop: 'fade'});
-					
-		 });
-		 
-		 $(".btn.btn-info.save").click(function(){
-			 var data = $("#saveForm").serializeArray();
-			 $.post("/offline-save",data,function(data){
-				 if(data){
+				if (e != '') {
+					html += "<tr><th>订单号</th><td>" + e.orderNo + "</td></tr>";
+					html += "<tr><th>快递运单号</th><td>" + e.mailNo + "</td></tr>";
+					html += "<tr><th>寄件方手机</th><td>" + e.fromPhone + "</td></tr>";
+					html += "<tr><th>寄件方姓名</th><td>" + e.fromRealName + "</td></tr>";
+					html += "<tr><th>寄件方省份</th><td>" + e.fromProvince + "</td></tr>";
+					html += "<tr><th>寄件方城市</th><td>" + e.fromCity + "</td></tr>";
+					html += "<tr><th>寄件方区/县</th><td>" + e.fromCounty + "</td></tr>";
+					html += "<tr><th>寄件方详细地址</th><td>" + e.fromContent + "</td></tr>";
+					html += "<tr><th>取件快递员手机号</th><td>" + e.exPhone + "</td></tr>";
+					html += "<tr><th>快递员最晚上门时间</th><td>" + e.lastTime + "</td></tr>";
+					html += "<tr><th>收件方手机</th><td>" + e.toPhone + "</td></tr>";
+					html += "<tr><th>收件方姓名</th><td>" + e.toRealName + "</td></tr>";
+					html += "<tr><th>收件方省份</th><td>" + e.toProvince + "</td></tr>";
+					html += "<tr><th>收件方城市</th><td>" + e.toCity + "</td></tr>";
+					html += "<tr><th>收件方区/县</th><td>" + e.toCounty + "</td></tr>";
+					html += "<tr><th>收件方详细地址</th><td>" + e.toContent + "</td></tr>";
 
-					 	jQuery('#modal-6').modal('hide');
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw(oTable.fnSettings());
-				 }else{
-					 toastr.error("操作失败", "温馨提示");
-				 }
-			 });
-		 });
+					html = html.replace(new RegExp("null", "g"), "暂无");
+					$('#modal-ex tbody').html(html);
+				}
+				jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
+
+			});
+
+
+		});
+
+		$(".btn.btn-info.save").click(function () {
+			var data = $("#saveForm").serializeArray();
+			$.post("/offline-save", data, function (data) {
+				if (data) {
+
+					jQuery('#modal-6').modal('hide');
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw(oTable.fnSettings());
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		});
 
 		$(".btn.btn-info.addMesg").click(function () {
 			var remarkid = $("input[name='remarkid']").val();
@@ -1006,7 +1066,7 @@
 			if (content.length == 0 || content == null) {
 				alert("请输入内容！");
 			} else {
-				$.post("/offline-addremark", {id:remarkid,content:content}, function (data) {
+				$.post("/offline-addremark", {id: remarkid, content: content}, function (data) {
 					if (data) {
 						toastr.success("操作已成功！", "温馨提示");
 						oTable0.fnDraw();
@@ -1017,7 +1077,26 @@
 			}
 		});
 
-		$(".btn.btn-info.add").click(function(){
+		$(".btn.btn-danger.confirmBack").click(function () {
+			var activityId = $("input[name='pickedGoodsId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+			$.post("/offline-confirm-back", {"ids": ids, "id": $("#orderID").val()}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					jQuery('#modal-goods-status').modal('hide');
+					oTable.fnDraw();
+				}
+			});
+		});
+
+		$(".btn.btn-info.add").click(function () {
 			buildAZBar();
 			clean();
 			var form = $("#modal-6");
@@ -1029,7 +1108,7 @@
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 		});
 
-		$(".btn.btn-info.edit").click(function(){
+		$(".btn.btn-info.edit").click(function () {
 			var activityId = $("input[name='activityId']:checked");
 			if (activityId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
@@ -1051,8 +1130,8 @@
 				form.find("input[name = returnTime]").val(returnTime);
 				form.find("input[name = way]").val(data["offlineOrders"]["way"]);
 				form.find("input[name = remark]").val(data["offlineOrders"]["remark"]);
-				for (var i in data["offlineOrdersGoods"]){
-					var name = "way" +i;
+				for (var i in data["offlineOrdersGoods"]) {
+					var name = "way" + i;
 					var uuid = UUID.randomUUID();
 					var that = $("#goodsPool");
 					var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
@@ -1070,7 +1149,7 @@
 					str += '</div>';
 					that.append(str);
 
-					$("#way"+i+"").val(data["offlineOrdersGoods"][i]["way"]);
+					$("#way" + i + "").val(data["offlineOrdersGoods"][i]["way"]);
 				}
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 			});

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,9 +66,6 @@ public class OfflineController {
 	
 	/**
 	 * 查询数据
-	 * @param request
-	 * @param order
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/offline-data")
@@ -112,6 +110,43 @@ public class OfflineController {
 			offlineOrders.setState("3");
 		}
 		offlineOrdersService.save(offlineOrders);
+		return true;
+	}
+
+	@ResponseBody
+	@RequestMapping("/offline-confirm-back")
+	@Transactional
+	public boolean confirmBack(Long id, @RequestParam("ids[]") Long[] ids) {
+		for (long gid : ids) {
+			PhOfflineOrdersGoods goods = offlineOrdersGoodsService.findOne(gid);
+			if (goods != null) {
+				/* 状态:[0-未收回,1-已收回] **/
+				goods.setState("1");
+				offlineOrdersGoodsService.save(goods);
+			}
+		}
+		PhOfflineOrders offlineOrders = offlineOrdersService.findOne(id);
+		if (offlineOrders != null) {
+			int a = 0, b = 0;
+			for (PhOfflineOrdersGoods goods : offlineOrdersGoodsService.findByordersNo(offlineOrders.getOrdersNo())) {
+				if ("0".equals(goods.getState())) {
+					a++;
+				} else {
+					b++;
+				}
+			}
+			if (a == 0) {
+				/*状态:[0-未寄出,1-已寄出,2-未收回,3-已部分收回,4-已收回]*/
+				offlineOrders.setState("4");
+			} else if (b == 0) {
+				/*状态:[0-未寄出,1-已寄出,2-未收回,3-已部分收回,4-已收回]*/
+				offlineOrders.setState("2");
+			} else {
+				/*状态:[0-未寄出,1-已寄出,2-未收回,3-已部分收回,4-已收回]*/
+				offlineOrders.setState("3");
+			}
+			offlineOrdersService.save(offlineOrders);
+		}
 		return true;
 	}
 
