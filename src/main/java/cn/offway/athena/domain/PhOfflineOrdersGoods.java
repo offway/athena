@@ -59,6 +59,8 @@ public class PhOfflineOrdersGoods implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 状态:[0-未收回,1-已收回] **/
+    private String state;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -198,4 +200,12 @@ public class PhOfflineOrdersGoods implements Serializable {
         this.remark = remark;
     }
 
+    @Column(name = "state", length = 2)
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 }

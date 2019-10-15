@@ -45,7 +45,7 @@ public class PhOfflineOrders implements Serializable {
     /** 创建时间 **/
     private Date createTime;
 
-    /** 状态:[0-未寄出,1-已寄出,2-已寄出/未收回,3-已寄出/已收回] **/
+    /** 状态:[0-未寄出,1-已寄出,2-未收回,3-已部分收回,4-已收回] **/
     private String state;
 
     /** 备注 **/
