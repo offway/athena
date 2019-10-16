@@ -18,8 +18,5 @@ public interface PhBannerHistoryRepository extends JpaRepository<PhBannerHistory
     List<PhBannerHistory> listRank();
 
     @Query(nativeQuery = true, value = "SELECT count(`banner_id`) as banner_id,`banner`,`banner_id` as id,`banner_img`,`create_time`,`begin_time`,`end_time` FROM ph_banner_history where `banner_id` in (?1) group by banner_id order by count(`banner_id`) desc")
-    List<PhBannerHistory> listRank(String brandIds);
-
-    @Query(nativeQuery = true, value = "SELECT count(`banner_id`) as banner_id,`banner`,`banner_id` as id,`banner_img`,`create_time`,`begin_time`,`end_time` FROM ph_banner_history where `banner_id` in (?1) group by banner_id order by count(`banner_id`) desc")
     List<PhBannerHistory> listRank(List<Long> brandIds);
 }
