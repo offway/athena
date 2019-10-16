@@ -9,6 +9,7 @@ import cn.offway.athena.service.PhBannerHistoryService;
 import cn.offway.athena.service.PhBannerService;
 import cn.offway.athena.service.PhBrandadminService;
 import cn.offway.athena.service.PhRoleadminService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -112,19 +113,35 @@ public class BannerController {
 
     @RequestMapping("/banner_listHistoryRank")
     @ResponseBody
-    public Object listHistoryRank(@AuthenticationPrincipal PhAdmin admin, String from) {
+    public Object listHistoryRank(@AuthenticationPrincipal PhAdmin admin, String from, String id, String name) {
         if ("1".equals(from)) {
             return bannerHistoryRepository.listRank();
         } else {
             List<PhBannerHistory> res;
             List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
             if (roles.contains(BigInteger.valueOf(1L))) {
-                res = bannerHistoryRepository.listRank();
+                if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(name)) {
+                    res = bannerHistoryRepository.listRank(Long.valueOf(id), "%" + name + "%");
+                } else if (StringUtils.isNotBlank(id)) {
+                    res = bannerHistoryRepository.listRank(Long.valueOf(id));
+                } else if (StringUtils.isNotBlank(name)) {
+                    res = bannerHistoryRepository.listRank("%" + name + "%");
+                } else {
+                    res = bannerHistoryRepository.listRank();
+                }
             } else {
                 List<Long> brandIds = brandadminService.findBrandIdByAdminId(admin.getId());
                 if (brandIds != null && brandIds.size() > 0) {
 //                    String inStr = StringUtils.join(brandIds, ",");
-                    res = bannerHistoryRepository.listRank(brandIds);
+                    if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(name)) {
+                        res = bannerHistoryRepository.listRank(Long.valueOf(id), "%" + name + "%", brandIds);
+                    } else if (StringUtils.isNotBlank(id)) {
+                        res = bannerHistoryRepository.listRank(Long.valueOf(id), brandIds);
+                    } else if (StringUtils.isNotBlank(name)) {
+                        res = bannerHistoryRepository.listRank("%" + name + "%", brandIds);
+                    } else {
+                        res = bannerHistoryRepository.listRank(brandIds);
+                    }
                 } else {
                     return null;
                 }
