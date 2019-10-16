@@ -95,13 +95,14 @@ public class BannerController {
                 banner.setRedirectId("");
             }
             banner.setCreateTime(new Date());
-            saveHistory(banner);
         } else {
             PhBanner bannerSaved = bannerService.findOne(banner.getId());
             banner.setStatus(bannerSaved.getStatus());
             banner.setSort(bannerSaved.getSort());
             banner.setCreateTime(bannerSaved.getCreateTime());
-            if (Math.abs(banner.getBeginTime().compareTo(bannerSaved.getBeginTime())) + Math.abs(banner.getEndTime().compareTo(bannerSaved.getEndTime())) != 0) {
+            boolean timeRangeChanged = Math.abs(banner.getBeginTime().compareTo(bannerSaved.getBeginTime())) + Math.abs(banner.getEndTime().compareTo(bannerSaved.getEndTime())) != 0;
+            /* 状态[0-未上架,1-已上架] **/
+            if (timeRangeChanged && "1".equals(banner.getStatus())) {
                 saveHistory(banner);
             }
         }
@@ -179,6 +180,7 @@ public class BannerController {
         banner.setStatus("1");
         banner.setSort(latest + 1);
         bannerService.save(banner);
+        saveHistory(banner);
         return true;
     }
 
