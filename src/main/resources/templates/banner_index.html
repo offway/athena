@@ -94,6 +94,16 @@
             <div class="modal-body">
                 <form role="form" id="saveForm">
                     <input type="hidden" name="id"/>
+                    <input type="hidden" name="redirectId" id="redirectId" />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">是否跳转品牌</label>
+                                <label><input name="method" id="method_brand" class="notMe" type="radio" checked="checked" value="0"/>是</label>
+                                <label><input name="method" class="notMe" type="radio" value="1"/>否</label>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -134,11 +144,20 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+<!--                    <div class="row">-->
+<!--                        <div class="col-md-12">-->
+<!--                            <div class="form-group redirectId">-->
+<!--                                <label class="control-label">跳转品牌id</label>-->
+<!--                                <input type="text" class="form-control" name="redirectId" placeholder="详情ID"/>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div class="row" id="azBarDiv">
                         <div class="col-md-12">
-                            <div class="form-group redirectId">
-                                <label class="control-label">跳转品牌id</label>
-                                <input type="text" class="form-control" name="redirectId" placeholder="详情ID"/>
+                            <div class="form-group">
+                                <label class="control-label">品牌首字母索引</label>
+                                <select class="form-control" id="brandSelect" onchange="setbrandid(this)"></select>
+                                <div id="azBar"></div>
                             </div>
                         </div>
                     </div>
@@ -213,6 +232,43 @@
                 }
             });
         }
+    }
+
+    function setbrandid(self) {
+        var that = $(self);
+        var theId;
+        theId = that.val();
+        $("#redirectId").val(theId);
+    }
+
+    function renderBrandSelect(key) {
+        $("#goodsSelect").html("");
+        $.post("/feedback_getBrand", {"prefix": key}, function (data) {
+            var str = "";
+            for (var i in data) {
+                var brand = data[i];
+                if (i == 0) {
+                    $("#redirectId").val(brand["id"]);
+                }
+                str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+            $("#brandSelect").html(str);
+        });
+    }
+
+    function buildAZBar() {
+        var str = "";
+        var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
+        for (var i in AZ.split("")) {
+            var char = AZ[i];
+            str += "<a href='#' onclick='renderBrandSelect(\"VAL\")'>CHAR</a>&nbsp;".replace("CHAR", char).replace("VAL", char);
+        }
+        $("#azBar").html(str);
+        $("#brandSelect").html("");
+        $("#goodsSelect").html("");
+        $("#goodsPool").html("");
+        $("img[name='imageUrlImg']").hide();
+        $("img[name='shareImgImg']").hide();
     }
 
     function upIt(id, self) {
@@ -479,7 +535,18 @@
             }
         }
 
+        $('[name="method"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            var azBarDiv = $("#azBarDiv");
+            if (parseInt(value) == 1){
+                azBarDiv.hide();
+            }else {
+                azBarDiv.show();
+            }
+        });
+
         $(".btn.btn-info.add").click(function () {
+            buildAZBar();
             var form = $("#saveForm");
             form.find("input:not(.notMe)").val("");
             form.find("img").attr("src", "");
@@ -501,7 +568,7 @@
             var imageVal = form.find("input[name='imageFile']")[0].value;
             //已上传的图片地址
             var imageVals = form.find("input[name='banner']").val();
-            if ((imageVals == "" && imageVal == "") || redirectId == "" || beginTime == "" || endTime == "") {
+            if ((imageVals == "" && imageVal == "") || beginTime == "" || endTime == "") {
                 toastr.error("请填写完整数据后提交", "温馨提示");
                 footer.find("button").show();
                 footer.find(".bg-lg").hide();
@@ -558,6 +625,7 @@
             $.post("/banner_get", {"id": activityId.val()}, function (data) {
                 var form = $("#saveForm");
                 form.find("input[name='id']").val(data.id);
+                // $("#redirectId").val(data.redirectId);
                 form.find("input[name='redirectId']").val(data.redirectId);
                 form.find("input[name='sort']").val(data.sort);
                 form.find("input[name='remark']").val(data.remark);
