@@ -11,8 +11,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -105,6 +107,57 @@ public class OrderController {
 	@RequestMapping("/order-goods")
 	public List<PhOrderGoods> phOrderGoods(String orderNo){
 		return phOrderGoodsService.findByOrderNo(orderNo);
+	}
+
+	@ResponseBody
+	@RequestMapping("order-goods-page")
+	public Map<String, Object> phOrderGoodsPage(String orderNo) {
+		List<PhOrderGoods> pages = phOrderGoodsService.findByOrderNo(orderNo);
+		// 为操作次数加1，必须这样做
+		int initEcho = 1;
+		Map<String, Object> map = new HashMap<>();
+		map.put("sEcho", initEcho);
+		map.put("iTotalRecords", pages.size());//数据总条数
+		map.put("iTotalDisplayRecords", pages.size());//显示的条数
+		map.put("aData", pages);//数据集合
+		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping("/order-confirm-back")
+	@Transactional
+	public boolean confirmBack(String id, @RequestParam("ids[]") Long[] ids) {
+		for (long gid : ids) {
+			PhOrderGoods goods = phOrderGoodsService.findOne(gid);
+			if (goods != null) {
+				/* 状态:[0-未收回,1-已收回] **/
+				goods.setState("1");
+				phOrderGoodsService.save(goods);
+			}
+		}
+		PhOrderInfo orderInfo = phOrderInfoService.findByOrderNo(id);
+		if (orderInfo != null) {
+			int a = 0, b = 0;
+			for (PhOrderGoods goods : phOrderGoodsService.findByOrderNo(orderInfo.getOrderNo())) {
+				if ("0".equals(goods.getState())) {
+					a++;
+				} else {
+					b++;
+				}
+			}
+			if (a == 0) {
+				/*状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货]*/
+				orderInfo.setStatus("3");
+			} else if (b == 0) {
+				/*状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货]*/
+				orderInfo.setStatus("2");
+			} else {
+				/*状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货]*/
+				orderInfo.setStatus("5");
+			}
+			phOrderInfoService.save(orderInfo);
+		}
+		return true;
 	}
 	
 	@ResponseBody
