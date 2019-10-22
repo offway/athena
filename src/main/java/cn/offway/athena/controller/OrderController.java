@@ -79,27 +79,27 @@ public class OrderController {
 	@ResponseBody
 	@RequestMapping("/order-data")
 	public Map<String, Object> orderData(HttpServletRequest request, String orderNo, String unionid, String sku,
-										 String realName, String position, String status, Long brandId, String isOffway, String isUpload, Authentication authentication, String users) {
-		
+										 String realName, String position, String status, Long brandId, String isOffway, String isUpload, Authentication authentication, String users, String size) {
+
 		String sortCol = request.getParameter("iSortCol_0");
-		String sortName = request.getParameter("mDataProp_"+sortCol);
+		String sortName = request.getParameter("mDataProp_" + sortCol);
 		String sortDir = request.getParameter("sSortDir_0");
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		
-		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+
+		PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
 
 		PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
-		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(sku, isUpload, realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, status.trim(), brandId, isOffway, brandIds, users, pr);
-		 // 为操作次数加1，必须这样做  
-        int initEcho = sEcho + 1;  
-        Map<String, Object> map = new HashMap<>();
-		map.put("sEcho", initEcho);  
-        map.put("iTotalRecords", pages.getTotalElements());//数据总条数  
-        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数  
-        map.put("aData", pages.getContent());//数据集合 
+		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(sku, isUpload, realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, status.trim(), brandId, isOffway, brandIds, users, size, pr);
+		// 为操作次数加1，必须这样做
+		int initEcho = sEcho + 1;
+		Map<String, Object> map = new HashMap<>();
+		map.put("sEcho", initEcho);
+		map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+		map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+		map.put("aData", pages.getContent());//数据集合
 		return map;
 	}
 	

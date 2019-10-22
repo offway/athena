@@ -14,20 +14,20 @@ import cn.offway.athena.utils.JsonResult;
  * @author wn
  * @version $v: 1.0.0, $time:2018-02-12 11:26:00 Exp $
  */
-public interface PhOrderInfoService{
+public interface PhOrderInfoService {
 
-	PhOrderInfo save(PhOrderInfo phOrderInfo);
-	
-	PhOrderInfo findOne(Long id);
+    PhOrderInfo save(PhOrderInfo phOrderInfo);
 
-	String generateOrderNo(String prefix);
+    PhOrderInfo findOne(Long id);
 
-	Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String status, Long brandId, String isOffway, List<Long> brandIds, String users, Pageable page);
+    String generateOrderNo(String prefix);
+
+    Page<PhOrderInfo> findByPage(String sku, String isUpload, String realName, String position, String orderNo, String unionid, String status, Long brandId, String isOffway, List<Long> brandIds, String users, String size, Pageable page);
 
     JsonResult saveOrder(String orderNo);
 
-	PhOrderInfo findByOrderNo(String orderNo);
+    PhOrderInfo findByOrderNo(String orderNo);
 
-	void cancel(String orderNo) throws Exception;
+    void cancel(String orderNo) throws Exception;
 
 }
