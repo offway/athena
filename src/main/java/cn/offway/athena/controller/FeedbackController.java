@@ -57,7 +57,7 @@ public class FeedbackController {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
-        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName);
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, new Sort(new Sort.Order(Sort.Direction.fromString(sortDir), sortName), new Sort.Order(Sort.Direction.ASC, "id")));
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         List<Long> brandIds = null;
         if (roles.contains(BigInteger.valueOf(10L))) {
