@@ -78,4 +78,9 @@ public class PhCodeServiceImpl implements PhCodeService {
 			}
 		}, page);
 	}
+
+	@Override
+	public void coddel(Long id){
+		phCodeRepository.delete(id);
+	}
 }
