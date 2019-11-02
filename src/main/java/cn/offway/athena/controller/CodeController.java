@@ -76,7 +76,7 @@ public class CodeController {
 	@PostMapping("/code-save")
 	@ResponseBody
 	public boolean codeSave(PhCode phCode){
-		if ("".equals(phCode.getId())){
+		if ("".equals(phCode.getId()) || phCode.getId() == null){
 			phCode.setCode(""+RandomUtils.nextInt(1000, 9999));
 			phCode.setCreateTime(new Date());
 			phCode.setStatus("0");
