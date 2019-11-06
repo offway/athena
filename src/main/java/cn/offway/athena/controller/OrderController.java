@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -87,7 +88,7 @@ public class OrderController {
 
 		PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
 		List<Long> brandIds;
-		if (phAdmin.getRoleIds().contains(1L)) {
+		if (phAdmin.getRoleIds().contains(BigInteger.ONE)) {
 			brandIds = new ArrayList<>();
 		} else {
 			brandIds = phAdmin.getBrandIds();
