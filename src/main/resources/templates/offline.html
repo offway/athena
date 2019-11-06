@@ -476,8 +476,24 @@
 		$(".modal-backdrop").css("z-index", 999);
 	}
 
-	function confirm(id, state) {
+	function setState(id, state) {
 		$.post("/offline-confirm", {id: id, state: state}, function (data) {
+			if (data) {
+				toastr.success("操作成功！", "温馨提示");
+				oTable1.fnDraw(oTable1.fnSettings());
+				jQuery('#modal-ex').modal('hide', {backdrop: 'fade'});
+			} else {
+				toastr.success("操作失败！", "温馨提示");
+			}
+		})
+	}
+
+	function deleteOrder(id) {
+		var confirm = window.confirm("一旦删除该笔订单将无法恢复，您确认要这样做吗？");
+		if (confirm == false) {
+			return;
+		}
+		$.post("/offline-deloder", {id: id}, function (data) {
 			if (data) {
 				toastr.success("操作成功！", "温馨提示");
 				oTable1.fnDraw(oTable1.fnSettings());
@@ -927,7 +943,7 @@
 						var status = row["state"];
 						var ordersNo = row["ordersNo"];
 						if ("0" == status) {
-							return '<input type="button" name="checkIt" onclick="confirm(' + data + ',0)" value="确认发货"/>';
+							return '<input type="button" name="checkIt" onclick="setState(' + data + ',0)" value="确认发货"/>';
 						} else if ("1" == status || "4" != status) {
 							return '<input type="button" name="checkIt" onclick="pickGoodsForReturn(' + data + ',\'' + ordersNo + '\')" value="确认收货"/>';
 						} else {
@@ -946,6 +962,14 @@
 						}else {
 							return '<input type="button" name="remark" id="remark" onclick="addremark('+data+')" value="添加留言"/>';
 						}
+					}
+				},
+				{
+					targets: 15,
+					data: "id",
+					title: "操作",
+					render: function (data, type, row, meta) {
+						return '<input type="button" name="checkIt" onclick="deleteOrder(' + data + ')" value="删除"/>';
 					}
 				}
                ]

@@ -290,4 +290,10 @@ public class OfflineController {
 		return true;
 	}
 
+	@ResponseBody
+	@RequestMapping("/offline-deloder")
+	public boolean deloder(Long id){
+		offlineOrdersService.delete(id);
+		return true;
+	}
 }
