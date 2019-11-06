@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 订单查询
@@ -89,7 +86,12 @@ public class OrderController {
 		int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
 
 		PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
-		List<Long> brandIds = phAdmin.getBrandIds();
+		List<Long> brandIds;
+		if (phAdmin.getRoleIds().contains(1L)) {
+			brandIds = new ArrayList<>();
+		} else {
+			brandIds = phAdmin.getBrandIds();
+		}
 
 		PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
 		Page<PhOrderInfo> pages = phOrderInfoService.findByPage(sku, isUpload, realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, status.trim(), brandId, isOffway, brandIds, users, size, pr);
