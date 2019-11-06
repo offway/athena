@@ -76,11 +76,26 @@ public class CodeController {
 	@PostMapping("/code-save")
 	@ResponseBody
 	public boolean codeSave(PhCode phCode){
-		
-		phCode.setCode(""+RandomUtils.nextInt(1000, 9999));
-		phCode.setCreateTime(new Date());
-		phCode.setStatus("0");
-		phCodeService.save(phCode);
+		if ("".equals(phCode.getId()) || phCode.getId() == null){
+			phCode.setCode(""+RandomUtils.nextInt(1000, 9999));
+			phCode.setCreateTime(new Date());
+			phCode.setStatus("0");
+			phCodeService.save(phCode);
+		}else {
+			PhCode code = phCodeService.findOne(phCode.getId());
+			code.setPhone(phCode.getPhone());
+			code.setRealName(phCode.getRealName());
+			code.setPosition(phCode.getPosition());
+			phCodeService.save(code);
+		}
+
+		return true;
+	}
+
+	@PostMapping("/code-del")
+	@ResponseBody
+	public boolean codeDel(Long id){
+		phCodeService.coddel(id);
 		return true;
 	}
 	
