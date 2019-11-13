@@ -5,6 +5,7 @@ import cn.offway.athena.domain.PhFeedback;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,5 +26,5 @@ public interface PhFeedbackService {
 
     List<PhFeedback> save(List<PhFeedback> entities);
 
-    Page<PhFeedback> findAll(Pageable pageable, String brandId, List<Long> brandIds, String starName);
+    Page<PhFeedback> findAll(Pageable pageable, String brandId, List<Long> brandIds, String starName, Date sTime, Date eTime);
 }

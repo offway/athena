@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -48,7 +49,7 @@ public class PhFeedbackServiceImpl implements PhFeedbackService {
     }
 
     @Override
-    public Page<PhFeedback> findAll(Pageable pageable, String brandId, List<Long> brandIds, String starName) {
+    public Page<PhFeedback> findAll(Pageable pageable, String brandId, List<Long> brandIds, String starName, Date sTime, Date eTime) {
         return phFeedbackRepository.findAll(new Specification<PhFeedback>() {
             @Override
             public Predicate toPredicate(Root<PhFeedback> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -72,6 +73,13 @@ public class PhFeedbackServiceImpl implements PhFeedbackService {
                         in.value(brandId);
                     }
                     params.add(in);
+                }
+                if (sTime != null && eTime != null) {
+                    params.add(criteriaBuilder.between(root.get("updateTime"), sTime, eTime));
+                } else if (sTime != null) {
+                    params.add(criteriaBuilder.greaterThanOrEqualTo(root.get("updateTime"), sTime));
+                } else if (eTime != null) {
+                    params.add(criteriaBuilder.lessThanOrEqualTo(root.get("updateTime"), eTime));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));

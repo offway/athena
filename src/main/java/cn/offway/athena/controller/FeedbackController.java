@@ -53,7 +53,7 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/feedback_list")
-    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, String starName, @AuthenticationPrincipal PhAdmin admin, HttpServletRequest request) {
+    public Map<String, Object> getList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, String starName, String sTime, String eTime, @AuthenticationPrincipal PhAdmin admin, HttpServletRequest request) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
@@ -63,7 +63,15 @@ public class FeedbackController {
         if (roles.contains(BigInteger.valueOf(10L))) {
             brandIds = brandadminService.findBrandIdByAdminId(admin.getId());
         }
-        Page<PhFeedback> pages = feedbackService.findAll(pr, brandId, brandIds, starName);
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        Date sTimeDate = null, eTimeDate = null;
+        if (StringUtils.isNotBlank(sTime)) {
+            sTimeDate = DateTime.parse(sTime, format).toDate();
+        }
+        if (StringUtils.isNotBlank(eTime)) {
+            eTimeDate = DateTime.parse(eTime, format).toDate();
+        }
+        Page<PhFeedback> pages = feedbackService.findAll(pr, brandId, brandIds, starName, sTimeDate, eTimeDate);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

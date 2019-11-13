@@ -4,6 +4,7 @@
 	<head th:replace="head"></head>
 	<title>返图管理</title>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
 	<style type="text/css">
 	.form-group img{
 		max-width:400px;
@@ -52,6 +53,14 @@
 								<label for="brandId" class="control-label">艺人名称</label>
 								<input type="text" name="starName" id="starName" class="form-control" style="height:35px" placeholder="艺人名称"/>
 							</div>
+							<div class="input-group">
+								<label for="sTime" class="control-label">开始时间</label>
+								<input type="text" name="sTime" id="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
+							</div>
+							<div class="input-group">
+								<label for="eTime" class="control-label">结束时间</label>
+								<input type="text" name="eTime" id="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
+							</div>
 						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px;margin-top: 24px;">查询</button>
@@ -61,7 +70,6 @@
 				<div class="panel-body">
 					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
 					</table>
-					
 				</div>
 				<button class="btn btn-info add" >添加</button>
 <!--				<button class="btn btn-info edit">修改</button>-->
@@ -74,6 +82,7 @@
 
 	<script src="https://admin.offway.cn/js/common.js"></script>
 	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
+	<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -154,6 +163,28 @@
 	var qiniuUrl = [[${qiniuUrl}]];
 	jQuery(document).ready(function($)
 	{
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#sTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#eTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
