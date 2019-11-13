@@ -1,5 +1,6 @@
 package cn.offway.athena.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -13,15 +14,15 @@ import cn.offway.athena.domain.PhShowImageFilter;
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
  */
-public interface PhShowImageFilterService{
+public interface PhShowImageFilterService {
 
-	PhShowImageFilter save(PhShowImageFilter phShowImageFilter);
-	
-	PhShowImageFilter findOne(Long id);
+    PhShowImageFilter save(PhShowImageFilter phShowImageFilter);
 
-	Page<PhShowImageFilter> findByPage(Long brandId, List<Long> brandIds, Pageable page);
+    PhShowImageFilter findOne(Long id);
 
-	List<PhShowImageFilter> save(List<PhShowImageFilter> phShowImageFilters);
+    Page<PhShowImageFilter> findByPage(Long brandId, List<Long> brandIds, Date sTime, Date eTime, Pageable page);
 
-	int countByShowImage(String showImage);
+    List<PhShowImageFilter> save(List<PhShowImageFilter> phShowImageFilters);
+
+    int countByShowImage(String showImage);
 }

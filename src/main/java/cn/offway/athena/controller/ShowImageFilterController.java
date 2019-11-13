@@ -1,14 +1,14 @@
 package cn.offway.athena.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import cn.offway.athena.domain.*;
+import cn.offway.athena.service.PhBrandService;
+import cn.offway.athena.service.PhOrderInfoService;
+import cn.offway.athena.service.PhShowImageFilterService;
+import cn.offway.athena.service.PhShowImageService;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +21,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.offway.athena.domain.PhAdmin;
-import cn.offway.athena.domain.PhBrand;
-import cn.offway.athena.domain.PhOrderInfo;
-import cn.offway.athena.domain.PhShowImage;
-import cn.offway.athena.domain.PhShowImageFilter;
-import cn.offway.athena.service.PhBrandService;
-import cn.offway.athena.service.PhOrderInfoService;
-import cn.offway.athena.service.PhShowImageFilterService;
-import cn.offway.athena.service.PhShowImageService;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * 返图查看
@@ -65,31 +58,35 @@ public class ShowImageFilterController {
 	
 	/**
 	 * 查询数据
-	 * @param request
-	 * @param showImage
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/showImageFilter-data")
-	public Map<String, Object> showImageData(HttpServletRequest request,Long brandId,Authentication authentication){
-		
+	public Map<String, Object> showImageData(HttpServletRequest request, Long brandId, String sTime, String eTime, Authentication authentication) {
 		String sortCol = request.getParameter("iSortCol_0");
-		String sortName = request.getParameter("mDataProp_"+sortCol);
+		String sortName = request.getParameter("mDataProp_" + sortCol);
 		String sortDir = request.getParameter("sSortDir_0");
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		
-		PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
+		int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+		PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
 		List<Long> brandIds = phAdmin.getBrandIds();
-		Page<PhShowImageFilter> pages = PhShowImageFilterService.findByPage(brandId,brandIds,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
-		 // 为操作次数加1，必须这样做  
-        int initEcho = sEcho + 1;  
-        Map<String, Object> map = new HashMap<>();
-		map.put("sEcho", initEcho);  
-        map.put("iTotalRecords", pages.getTotalElements());//数据总条数  
-        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数  
-        map.put("aData", pages.getContent());//数据集合 
+		DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		Date sTimeDate = null, eTimeDate = null;
+		if (StringUtils.isNotBlank(sTime)) {
+			sTimeDate = DateTime.parse(sTime, format).toDate();
+		}
+		if (StringUtils.isNotBlank(eTime)) {
+			eTimeDate = DateTime.parse(eTime, format).toDate();
+		}
+		PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
+		Page<PhShowImageFilter> pages = PhShowImageFilterService.findByPage(brandId, brandIds, sTimeDate, eTimeDate, pr);
+		// 为操作次数加1，必须这样做
+		int initEcho = sEcho + 1;
+		Map<String, Object> map = new HashMap<>();
+		map.put("sEcho", initEcho);
+		map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+		map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+		map.put("aData", pages.getContent());//数据集合
 		return map;
 	}
 	

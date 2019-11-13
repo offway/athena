@@ -5,8 +5,8 @@
 	<title>返图查看</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<link rel="stylesheet" href="assets/js/jquery-editable-select-master/jquery-editable-select.css"/>
+	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
 	<script src="js/qiniu.min.js"></script>
 	
 	<style type="text/css">
@@ -57,11 +57,19 @@
 								</select>
 							</div>
 						</div>
-						
+						<div class="form-group">
+							<div class="input-group">
+								<input type="text" name="sTime" id="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group">
+								<input type="text" name="eTime" id="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
+							</div>
+						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
-						
 					</form>
 				</div>
 				<div class="panel-body">
@@ -116,16 +124,36 @@
 	
 	
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
 	<script src="assets/js/pictureViewer.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/	
 	jQuery(document).ready(function($)
 	{
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#sTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#eTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+
 		$("#brandId").editableSelect();
 		var oTable = $("#example-1").dataTable({
 			language: {
