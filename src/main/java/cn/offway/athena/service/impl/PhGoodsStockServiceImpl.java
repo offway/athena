@@ -87,24 +87,19 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 	public int deleteByIds(List<Long> ids){
 		return phGoodsStockRepository.deleteByIds(ids);
 	}
-	
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
-	public boolean updateStock(String orderNo) throws Exception{
-		List<PhOrderGoods> orderGoods =  phOrderGoodsService.findByOrderNo(orderNo);
-		int i = 0;
+	public boolean updateStock(String orderNo) {
+		List<PhOrderGoods> orderGoods = phOrderGoodsService.findByOrderNo(orderNo);
 		for (PhOrderGoods phOrderGoods : orderGoods) {
-			i += phGoodsStockRepository.updateStock(phOrderGoods.getGoodsId(),phOrderGoods.getColor(),phOrderGoods.getSize());
+			phGoodsStockRepository.updateStock(phOrderGoods.getGoodsId(), phOrderGoods.getColor(), phOrderGoods.getSize());
 		}
-		if(i==orderGoods.size()){
-			PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
-			phOrderInfo.setStatus("3");
-			phOrderInfo.setReceiptTime(new Date());
-			phOrderInfoService.save(phOrderInfo);
-			return true;
-		}
-		throw new Exception("加库存失败,orderNo="+orderNo);
-		
+		PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
+		phOrderInfo.setStatus("3");
+		phOrderInfo.setReceiptTime(new Date());
+		phOrderInfoService.save(phOrderInfo);
+		return true;
 	}
 	
 	@Override
