@@ -198,7 +198,7 @@
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								<label for="field-4" class="control-label">封面图片</label>
+								<label class="control-label">封面图片</label>
 								<button class="btn btn-info appendimage">添加</button>
 								<input style="display: none" type="file" name="imageFile" param="image" />
 								<input type="hidden" class="form-control" name="image" />
@@ -209,9 +209,9 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">轮播图片</label>
+								<label class="control-label">轮播图片</label>
 								<button class="btn btn-info appendbanner">添加</button>
-								<input style="display: none" type="file" name="bannerFile" param="banner" />
+								<input style="display: none" type="file" name="bannerFile" multiple="multiple" param="banner" />
 								<input type="hidden" class="form-control" name="banner" />
 							</div>
 						</div>
@@ -219,9 +219,9 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">详情图片</label>
+								<label class="control-label">详情图片</label>
 								<button class="btn btn-info appenddetail">添加</button>
-								<input style="display: none" type="file" name="detailFile" param="detail" />
+								<input style="display: none" type="file" name="detailFile" multiple="multiple" param="detail" />
 								<input type="hidden" class="form-control" name="detail" />
 							</div>
 						</div>
@@ -268,6 +268,7 @@
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/jquery-editable-select-master/jquery-editable-select.js"></script>
+	<script src="https://admin.offway.cn/assets/js/async.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 	function bindTypeSelector(data, isEdit) {
@@ -488,36 +489,40 @@
 		$("input[type='file']").change(function () {
 			var that = $(this);
 			var param = that.attr("param");
-			var file = that[0].files[0];
-			if (file == '') {
-				return;
-			}
-
-			if (param != "detail" && file.size / 1024 > 500) {
-				toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
-				return;
-			}
-
 			var form = $("#saveForm");
-			upload(param, token, file, function (res) {
-			}, function (err) {
-				console.log("上传type异常:" + err);
-			}, function (res) {
-				//上传成功
-				console.log(res);
-				if (res != '') {
-					var url = qiniuUrl + "/" + res.key;
-					var fileVal = form.find("input[name='" + res.param + "']");
-					if (res.param == 'image') {
-						fileVal.val(url);
-						var formgroup = form.find(".btn.btn-info.append" + param).parent(".form-group");
-						formgroup.find(".imageShow").remove();
-						formgroup.append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
-					} else {
-						fileVal.val(fileVal.val() + "#" + url);
-						form.find(".btn.btn-info.append" + param).parent(".form-group").append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
-					}
+			async.eachSeries(that[0].files, function (file, cb) {
+				if (file == '') {
+					cb("ERROR");
+				} else if (param != "detail" && file.size / 1024 > 500) {
+					toastr.error("图片大小超过500K,请压缩处理后上传", "温馨提示");
+					cb("ERROR");
+				} else {
+					upload(param, token, file, function (res) {
+					}, function (err) {
+						console.log("上传type异常:" + err);
+						cb("ERROR");
+					}, function (res) {
+						//上传成功
+						console.log(res);
+						if (res != '') {
+							var url = qiniuUrl + "/" + res.key;
+							var fileVal = form.find("input[name='" + res.param + "']");
+							if (res.param == 'image') {
+								fileVal.val(url);
+								var formgroup = form.find(".btn.btn-info.append" + param).parent(".form-group");
+								formgroup.find(".imageShow").remove();
+								formgroup.append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
+							} else {
+								fileVal.val(fileVal.val() + "#" + url);
+								form.find(".btn.btn-info.append" + param).parent(".form-group").append("<div class='imageShow'><img src='" + url + "'></img><button class='btn btn-info' key=" + url + ">删除</button></div>");
+							}
+						}
+						cb();
+					});
 				}
+			}, function (err, res) {
+				console.log(err);
+				console.log(res);
 			});
 		});
 		//保存
