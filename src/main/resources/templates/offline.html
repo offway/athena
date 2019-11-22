@@ -204,13 +204,13 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">商品模式</label>
-									<label><input name="goodsMode" class="notMe" type="radio" checked="checked" value="0"/>普通商品模式</label>
-									<label><input name="goodsMode" class="notMe" type="radio" value="1"/>自定义商品模式</label>
+									<label><input name="goodsMode" id="goodsMode1" class="notMe" type="radio" checked="checked" value="0"/>普通商品模式</label>
+									<label><input name="goodsMode" id="goodsMode2" class="notMe" type="radio" value="1"/>自定义商品模式</label>
 								</div>
 							</div>
 						</div>
 						<div id="addModeDiv" style="display: none;">
-							<button onclick="addDIVGoods(this)" type="button">添加商品</button>
+							<button id="addDIVGoodsBtn" onclick="addDIVGoods(this)" type="button">添加商品</button>
 						</div>
 						<div id="searchModeDiv">
 							<div class="row">
@@ -302,7 +302,7 @@
 	/*<![CDATA[*/
 
 	const DIV = `
-\t\t\t\t\t\t\t<div>
+\t\t\t\t\t\t\t<div class="DIV_GOODS">
 \t\t\t\t\t\t\t\t<div class="row">
 \t\t\t\t\t\t\t\t\t<div class="col-md-6">
 \t\t\t\t\t\t\t\t\t\t<div class="form-group">
@@ -365,7 +365,22 @@
 	function addDIVGoods(self, obj) {
 		var btn = $(self);
 		btn.before(DIV);
-		$("#saveForm").find("select[name='div_brand']").last().html(BRAND_STR);
+		var form = $("#saveForm");
+		form.find("select[name='div_brand']").last().html(BRAND_STR);
+		if (obj) {
+			form.find("select[name='div_brand']").last().val(obj["brandId"]);
+			form.find("input[name='div_goodsName']").last().val(obj["goodsName"]);
+			form.find("input[name='div_goodsImg']").last().val(obj["goodsImage"]);
+			var img = form.find("img[name='div_goodsImgImg']").last();
+			img.attr("src", obj["goodsImage"]);
+			img.attr("width", "100px");
+			img.attr("height", "100px");
+			img.show();
+			form.find("input[name='div_goodsColor']").last().val(obj["color"]);
+			form.find("input[name='div_goodsSize']").last().val(obj["size"]);
+			form.find("input[name='div_goodsExpress']").last().val(obj["expressOrderNo"]);
+			form.find("select[name='div_goodsWay']").last().val(obj["way"]);
+		}
 	}
 
 	var BRAND_STR;
@@ -626,7 +641,7 @@
 			}
 		})
 	}
-	
+
 	function clean() {
 		var form = $("#modal-6");
 		form.find("input[name = realName]").val("");
@@ -638,6 +653,7 @@
 		form.find("input[name = startTime]").val();
 		form.find("input[name = returnTime]").val();
 		form.find("input[name = way]").val();
+		form.find("div.DIV_GOODS").remove();
 		$("#goodsPool").empty();
 	}
 
@@ -1232,24 +1248,30 @@
 				form.find("input[name = way]").val(data["offlineOrders"]["way"]);
 				form.find("input[name = remark]").val(data["offlineOrders"]["remark"]);
 				for (var i in data["offlineOrdersGoods"]) {
-					var name = "way" + i;
-					var uuid = UUID.randomUUID();
-					var that = $("#goodsPool");
-					var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
-					str += '<img style="display:inline-block;width: 40px; height: 30px" class="form-control" src="SRC" />'.replace("SRC", data["offlineOrdersGoods"][i]["goodsImage"]);
-					str += '<input style="display:inline-block;width: 600px;" type="text" class="form-control" value="VALUE" readonly="readonly" />'.replace("VALUE", data["offlineOrdersGoods"][i]["goodsName"]);
-					str += '<input type="hidden" value="VALUE" name="goodsID" />'.replace("VALUE", data["offlineOrdersGoods"][i]["goodsId"]);
-					str += '<input type="text" class="form-control" value="VALUE" name="size" placeholder="尺码"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["size"]);
-					str += '<input type="text" class="form-control" value="VALUE" name="color" placeholder="颜色"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["color"]);
-					str += '<input type="text" class="form-control" value="VALUE" name="expressOrderNo" placeholder="填写物流单号"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["expressOrderNo"]);
-					str += '<select id="VALUE" name = "way" class="form-control" style="height:35px">\n'.replace("VALUE", name) +
-							'\t\t\t\t\t\t\t\t\t\t<option value="0">平台</option>\n' +
-							'\t\t\t\t\t\t\t\t\t\t<option value="1">品牌</option>\n' +
-							'\t\t\t\t\t\t\t\t\t</select>';
-					str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
-					str += '</div>';
-					that.append(str);
-					$("#way" + i + "").val(data["offlineOrdersGoods"][i]["way"]);
+					if (data["offlineOrdersGoods"][i]["goodsId"]) {
+						var name = "way" + i;
+						var uuid = UUID.randomUUID();
+						var that = $("#goodsPool");
+						var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
+						str += '<img style="display:inline-block;width: 40px; height: 30px" class="form-control" src="SRC" />'.replace("SRC", data["offlineOrdersGoods"][i]["goodsImage"]);
+						str += '<input style="display:inline-block;width: 600px;" type="text" class="form-control" value="VALUE" readonly="readonly" />'.replace("VALUE", data["offlineOrdersGoods"][i]["goodsName"]);
+						str += '<input type="hidden" value="VALUE" name="goodsID" />'.replace("VALUE", data["offlineOrdersGoods"][i]["goodsId"]);
+						str += '<input type="text" class="form-control" value="VALUE" name="size" placeholder="尺码"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["size"]);
+						str += '<input type="text" class="form-control" value="VALUE" name="color" placeholder="颜色"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["color"]);
+						str += '<input type="text" class="form-control" value="VALUE" name="expressOrderNo" placeholder="填写物流单号"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["expressOrderNo"]);
+						str += '<select id="VALUE" name = "way" class="form-control" style="height:35px">\n'.replace("VALUE", name) +
+								'\t\t\t\t\t\t\t\t\t\t<option value="0">平台</option>\n' +
+								'\t\t\t\t\t\t\t\t\t\t<option value="1">品牌</option>\n' +
+								'\t\t\t\t\t\t\t\t\t</select>';
+						str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
+						str += '</div>';
+						that.append(str);
+						$("#way" + i + "").val(data["offlineOrdersGoods"][i]["way"]);
+						$("#goodsMode1").click();
+					} else {
+						addDIVGoods("#addDIVGoodsBtn", data["offlineOrdersGoods"][i]);
+						$("#goodsMode2").click();
+					}
 				}
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 			});
