@@ -7,14 +7,6 @@
 	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
 	<script src="js/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:40px;
-		max-height:30px;
-	}
-	a {
-     	color: blue; 
-    	text-decoration: none;
-	}
 	</style>
 </head>
 <body class="page-body">
@@ -209,67 +201,81 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">查询商品</label>
-									<select class="form-control" id="goodsSelect"></select>
-								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-									<label class="control-label"></label>
-									<input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)" />
-								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-									<label class="control-label"></label>
-									<input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
-									<label class="control-label">选择方式</label>
-									<label><input name="method" id="method_brand" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
-									<label><input name="method" class="notMe" type="radio" value="1"/>按分类索引</label>
-									<label><input name="method" class="notMe" type="radio" value="2"/>按关键字索引</label>
+									<label class="control-label">商品模式</label>
+									<label><input name="goodsMode" class="notMe" type="radio" checked="checked" value="0"/>普通商品模式</label>
+									<label><input name="goodsMode" class="notMe" type="radio" value="1"/>自定义商品模式</label>
 								</div>
 							</div>
 						</div>
-						<div class="row" id="azBarDiv">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">品牌首字母索引</label>
-									<select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
-									<div id="azBar"></div>
-								</div>
-							</div>
+						<div id="addModeDiv" style="display: none;">
+							<button onclick="addDIVGoods(this)" type="button">添加商品</button>
 						</div>
-						<div class="row" id="typeAndCategoryDiv" style="display: none">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">一级分类</label>
-									<select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
+						<div id="searchModeDiv">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="control-label">查询商品</label>
+										<select class="form-control" id="goodsSelect"></select>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+										<label class="control-label"></label>
+										<input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)" />
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+										<label class="control-label"></label>
+										<input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)" />
+									</div>
 								</div>
 							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">二级分类</label>
-									<select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">选择方式</label>
+										<label><input name="method" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
+										<label><input name="method" class="notMe" type="radio" value="1"/>按分类索引</label>
+										<label><input name="method" class="notMe" type="radio" value="2"/>按关键字索引</label>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="row" id="searchDiv" style="display: none">
-							<div class="col-md-8">
-								<div class="form-group">
-									<input type="text" class="form-control" name="keyword" placeholder="商品名关键字"/>
+							<div class="row" id="azBarDiv">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">品牌首字母索引</label>
+										<select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
+										<div id="azBar"></div>
+									</div>
 								</div>
 							</div>
-							<div class="col-md-4">
-								<div class="form-group">
-									<input type="button" onclick="renderKeywordGoodsSelect()" class="notMe form-control" value="查询" />
+							<div class="row" id="typeAndCategoryDiv" style="display: none">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="control-label">一级分类</label>
+										<select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="control-label">二级分类</label>
+										<select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
+									</div>
+								</div>
+							</div>
+							<div class="row" id="searchDiv" style="display: none">
+								<div class="col-md-8">
+									<div class="form-group">
+										<input type="text" class="form-control" name="keyword" placeholder="商品名关键字"/>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<input type="button" onclick="renderKeywordGoodsSelect()" class="notMe form-control" value="查询" />
+									</div>
 								</div>
 							</div>
 						</div>
@@ -289,10 +295,127 @@
 	<input type="hidden" name="remarkid"/>
 	<input type="hidden" id="IMGHOLDER"/>
 	<input type="hidden" id="type_and_category_list"/>
+	<script src="https://admin.offway.cn/js/common1.js"></script>
 	<script src="https://admin.offway.cn/assets/js/jquery.dd.js"></script>
 	<script src="https://admin.offway.cn/assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
+
+	const DIV = `
+\t\t\t\t\t\t\t<div>
+\t\t\t\t\t\t\t\t<div class="row">
+\t\t\t\t\t\t\t\t\t<div class="col-md-6">
+\t\t\t\t\t\t\t\t\t\t<div class="form-group">
+\t\t\t\t\t\t\t\t\t\t\t<label class="control-label">品牌</label>
+\t\t\t\t\t\t\t\t\t\t\t<select class="form-control" name="div_brand"></select>
+\t\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t<div class="row">
+\t\t\t\t\t\t\t\t\t<div class="col-md-6">
+\t\t\t\t\t\t\t\t\t\t<div class="form-group">
+\t\t\t\t\t\t\t\t\t\t\t<label class="control-label">商品名称</label>
+\t\t\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="div_goodsName" placeholder="商品名称"/>
+\t\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t<div class="col-md-6">
+\t\t\t\t\t\t\t\t\t\t<div class="form-group">
+\t\t\t\t\t\t\t\t\t\t\t<label class="control-label">商品图片</label>
+\t\t\t\t\t\t\t\t\t\t\t<input type="file" class="form-control" name="div_goodsImgFile" onchange="uploadMainFile(this)"/>
+\t\t\t\t\t\t\t\t\t\t\t<input type="hidden" class="form-control" name="div_goodsImg"/>
+\t\t\t\t\t\t\t\t\t\t\t<img src="" name="div_goodsImgImg" style="display: none"/>
+\t\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t<div class="row">
+\t\t\t\t\t\t\t\t\t<div class="col-md-6">
+\t\t\t\t\t\t\t\t\t\t<div class="form-group">
+\t\t\t\t\t\t\t\t\t\t\t<label class="control-label">颜色</label>
+\t\t\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="div_goodsColor" placeholder="颜色"/>
+\t\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t<div class="col-md-6">
+\t\t\t\t\t\t\t\t\t\t<div class="form-group">
+\t\t\t\t\t\t\t\t\t\t\t<label class="control-label">尺码</label>
+\t\t\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="div_goodsSize" placeholder="尺码"/>
+\t\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t<div class="row">
+\t\t\t\t\t\t\t\t\t<div class="col-md-6">
+\t\t\t\t\t\t\t\t\t\t<div class="form-group">
+\t\t\t\t\t\t\t\t\t\t\t<label class="control-label">物流单号</label>
+\t\t\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="div_goodsExpress" placeholder="物流单号"/>
+\t\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t<div class="col-md-6">
+\t\t\t\t\t\t\t\t\t\t<div class="form-group">
+\t\t\t\t\t\t\t\t\t\t\t<label class="control-label">寄出方式</label>
+\t\t\t\t\t\t\t\t\t\t\t<select class="form-control" name="div_goodsWay">
+\t\t\t\t\t\t\t\t\t\t\t<option value="0">平台</option>
+\t\t\t\t\t\t\t\t\t\t\t<option value="1">商家</option>
+\t\t\t\t\t\t\t\t\t\t\t</select>
+\t\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t</div>
+\t\t\t\t\t\t\t\t<button onclick="delMe(this)" type="button">删除</button>
+\t\t\t\t\t\t\t</div>
+	`;
+
+	function addDIVGoods(self, obj) {
+		var btn = $(self);
+		btn.before(DIV);
+		$("#saveForm").find("select[name='div_brand']").last().html(BRAND_STR);
+	}
+
+	var BRAND_STR;
+
+	function getBrandList() {
+		$.post("/offline_brand_list", {}, function (data) {
+			if (data) {
+				let str = "";
+				for (let obj of data) {
+					str += '<option value="VV">SS</option>'.replace("VV", obj["id"]).replace("SS", obj["name"]);
+				}
+				BRAND_STR = str;
+			}
+		});
+	}
+
+	function getQNToken(cb) {
+		$.get("/qiniu/token", {}, function (token) {
+			cb(token);
+		});
+	}
+
+	function uploadMainFile(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=div_goodsImg]").val(url);
+					that.parent().find("[name=div_goodsImgImg]").attr("src", url);
+					that.parent().find("[name=div_goodsImgImg]").attr("width", "100px");
+					that.parent().find("[name=div_goodsImgImg]").attr("height", "100px");
+					that.parent().find("[name=div_goodsImgImg]").show();
+				});
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+	function delMe(self) {
+		var that = $(self).parent();
+		that.remove();
+	}
 
 	function addTheGoods(all) {
 		var ele = $("#goodsSelect");
@@ -832,6 +955,8 @@
 			bindTypeSelector(data);
 		});
 
+		getBrandList();
+
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
@@ -981,13 +1106,22 @@
 			oTable.fnDraw();  //or fnReloadAjax()  
 			return false;
 		});
-		
-		//  $('#example-1').on('click',"#checkbox-all",function() {
-		// 	var obj = $(this);
-		// 	$("input[name='authId']").each(function(i,e){
-		// 		 this.checked = obj[0].checked;
-		// 	});
-		// });
+
+		$('[name="goodsMode"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			var searchDiv = $("#searchModeDiv");
+			var addDiv = $("#addModeDiv");
+			switch (parseInt(value)) {
+				case 0:
+					searchDiv.show();
+					addDiv.hide();
+					break;
+				case 1:
+					searchDiv.hide();
+					addDiv.show();
+					break;
+			}
+		});
 
 		$('[name="method"]').click(function () {
 			var value = $(this).val();  //获取选中的radio的值
@@ -1011,63 +1145,6 @@
 					searchDiv.show();
 					break;
 			}
-		});
-
-		$("body").on("click", "a.showGoods", function () {
-			var orderNo = $(this).attr("orderNo");
-			var tr = $(this).parents("tr")
-			$('#modal-goods .a .col-xs-4:nth-child(1)').text("序号：" + tr.find("td:nth-child(2)").text());
-			$('#modal-goods .a .col-xs-4:nth-child(2)').text("订单号：" + tr.find("td:nth-child(3)").text());
-			$('#modal-goods .a .col-xs-4:nth-child(3)').text("使用日期：" + tr.find("td:nth-child(4)").text());
-			$('#modal-goods .b .col-xs-4:nth-child(1)').text("姓名：" + tr.find("td:nth-child(5)").text());
-			$('#modal-goods .b .col-xs-4:nth-child(2)').text("职位：" + tr.find("td:nth-child(6)").text());
-			$('#modal-goods .b .col-xs-4:nth-child(3)').text("使用者：" + tr.find("td:nth-child(7)").text());
-
-			$.get("/deliver-goods", {orderNo: orderNo}, function (data) {
-				var html = "";
-				$('#modal-goods tbody').html("");
-				$.each(data, function (i, e) {
-					html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
-				});
-				$('#modal-goods tbody').html(html);
-
-			});
-
-			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
-		});
-
-		$("body").on("click", "a.showEx", function () {
-			var orderNo = $(this).attr("orderNo");
-			var type = $(this).attr("type");
-			$.get("/order-express", {orderNo: orderNo, type: type}, function (e) {
-				var html = "";
-				$('#modal-ex tbody').html("");
-				if (e != '') {
-					html += "<tr><th>订单号</th><td>" + e.orderNo + "</td></tr>";
-					html += "<tr><th>快递运单号</th><td>" + e.mailNo + "</td></tr>";
-					html += "<tr><th>寄件方手机</th><td>" + e.fromPhone + "</td></tr>";
-					html += "<tr><th>寄件方姓名</th><td>" + e.fromRealName + "</td></tr>";
-					html += "<tr><th>寄件方省份</th><td>" + e.fromProvince + "</td></tr>";
-					html += "<tr><th>寄件方城市</th><td>" + e.fromCity + "</td></tr>";
-					html += "<tr><th>寄件方区/县</th><td>" + e.fromCounty + "</td></tr>";
-					html += "<tr><th>寄件方详细地址</th><td>" + e.fromContent + "</td></tr>";
-					html += "<tr><th>取件快递员手机号</th><td>" + e.exPhone + "</td></tr>";
-					html += "<tr><th>快递员最晚上门时间</th><td>" + e.lastTime + "</td></tr>";
-					html += "<tr><th>收件方手机</th><td>" + e.toPhone + "</td></tr>";
-					html += "<tr><th>收件方姓名</th><td>" + e.toRealName + "</td></tr>";
-					html += "<tr><th>收件方省份</th><td>" + e.toProvince + "</td></tr>";
-					html += "<tr><th>收件方城市</th><td>" + e.toCity + "</td></tr>";
-					html += "<tr><th>收件方区/县</th><td>" + e.toCounty + "</td></tr>";
-					html += "<tr><th>收件方详细地址</th><td>" + e.toContent + "</td></tr>";
-
-					html = html.replace(new RegExp("null", "g"), "暂无");
-					$('#modal-ex tbody').html(html);
-				}
-				jQuery('#modal-ex').modal('show', {backdrop: 'fade'});
-
-			});
-
-
 		});
 
 		$(".btn.btn-info.save").click(function () {
@@ -1172,7 +1249,6 @@
 					str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
 					str += '</div>';
 					that.append(str);
-
 					$("#way" + i + "").val(data["offlineOrdersGoods"][i]["way"]);
 				}
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
