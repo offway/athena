@@ -7,6 +7,15 @@
 	<link rel="stylesheet" href="https://admin.offway.cn/assets/css/jquery.datetimepicker.min.css"/>
 	<script src="js/qiniu.min.js"></script>
 	<style type="text/css">
+		.form-group span img {
+			max-width: 40px;
+			max-height: 30px;
+		}
+
+		.form-group li img {
+			max-width: 40px;
+			max-height: 30px;
+		}
 	</style>
 </head>
 <body class="page-body">
@@ -195,6 +204,14 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
+									<label class="control-label">借出商品</label>
+									<div id="goodsPool"></div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
 									<label class="control-label">商品模式</label>
 									<label><input name="goodsMode" id="goodsMode1" class="notMe" type="radio" checked="checked" value="0"/>普通商品模式</label>
 									<label><input name="goodsMode" id="goodsMode2" class="notMe" type="radio" value="1"/>自定义商品模式</label>
@@ -205,14 +222,6 @@
 							<button id="addDIVGoodsBtn" onclick="addDIVGoods(this)" type="button">添加商品</button>
 						</div>
 						<div id="searchModeDiv">
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group">
-										<label class="control-label">借出商品</label>
-										<div id="goodsPool"></div>
-									</div>
-								</div>
-							</div>
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
@@ -363,8 +372,8 @@
 	`;
 
 	function addDIVGoods(self, obj) {
-		var btn = $(self);
-		btn.before(DIV);
+		var btn = $("#goodsPool");
+		btn.append(DIV);
 		var form = $("#saveForm");
 		form.find("select[name='div_brand']").last().html(BRAND_STR);
 		if (obj) {

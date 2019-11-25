@@ -158,25 +158,24 @@ public class OfflineController {
                         @RequestParam(name = "div_brand", required = false) String[] div_brand, @RequestParam(name = "div_goodsName", required = false) String[] div_goodsName,
                         @RequestParam(name = "div_goodsImg", required = false) String[] div_goodsImg, @RequestParam(name = "div_goodsColor", required = false) String[] div_goodsColor,
                         @RequestParam(name = "div_goodsSize", required = false) String[] div_goodsSize, @RequestParam(name = "div_goodsWay", required = false) String[] div_goodsWay,
-                        @RequestParam(name = "div_goodsExpress", required = false) String[] div_goodsExpress, String goodsMode) {
+                        @RequestParam(name = "div_goodsExpress", required = false) String[] div_goodsExpress) {
         long goodsCount = 0;
-        switch (goodsMode) {
-            case "0":
-                if (size.length != color.length && color.length != goodsID.length) {
-                    return false;
-                } else {
-                    goodsCount = goodsID.length;
-                }
-                break;
-            case "1":
-                if (div_goodsSize.length != div_goodsColor.length && div_goodsColor.length != div_goodsName.length) {
-                    return false;
-                } else {
-                    goodsCount = div_goodsName.length;
-                }
-                break;
-            default:
+        long goodsCountAlt = 0;
+        //校验正常商品
+        if (size != null && color != null && goodsID != null) {
+            if (size.length != color.length && color.length != goodsID.length) {
                 return false;
+            } else {
+                goodsCount = goodsID.length;
+            }
+        }
+        //校验特殊商品
+        if (div_goodsSize != null && div_goodsColor != null && div_goodsName != null) {
+            if (div_goodsSize.length != div_goodsColor.length && div_goodsColor.length != div_goodsName.length) {
+                return false;
+            } else {
+                goodsCountAlt = div_goodsName.length;
+            }
         }
         String orderNo = "";
         List<PhOfflineOrdersGoods> offlineOrdersGoodsList = new ArrayList<>();
@@ -185,17 +184,18 @@ public class OfflineController {
             offlineOrders.setCreateTime(new Date());
             offlineOrders.setState("0");
             offlineOrders.setOrdersNo(orderNo);
-            offlineOrders.setGoodsCount(goodsCount);
+            offlineOrders.setGoodsCount(goodsCount + goodsCountAlt);
             offlineOrders.setMessage("0");
             offlineOrdersService.save(offlineOrders);
         } else {
             orderNo = offlineOrders.getOrdersNo();
-            offlineOrders.setGoodsCount(goodsCount);
+            offlineOrders.setGoodsCount(goodsCount + goodsCountAlt);
             offlineOrders.setState("0");
             offlineOrdersService.save(offlineOrders);
             offlineOrdersGoodsService.delbyOrdersNo(orderNo);
         }
-        if ("0".equals(goodsMode)) {
+        //处理正常商品
+        if (goodsCount > 0) {
             for (int i = 0; i < goodsID.length; i++) {
                 PhGoods goods = goodsService.findOne(Long.valueOf(goodsID[i]));
                 PhGoodsStock goodsStock = goodsStockService.findOne(Long.valueOf(goodsID[i]));
@@ -227,7 +227,9 @@ public class OfflineController {
                 }
                 offlineOrdersGoodsList.add(offlineOrdersGoods);
             }
-        } else {
+        }
+        //处理特殊商品
+        if (goodsCountAlt > 0) {
             for (int i = 0; i < div_brand.length; i++) {
                 PhOfflineOrdersGoods offlineOrdersGoods = new PhOfflineOrdersGoods();
                 PhBrand brand = brandService.findOne(Long.valueOf(div_brand[i]));
