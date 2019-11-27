@@ -4,6 +4,7 @@ import cn.offway.athena.domain.*;
 import cn.offway.athena.properties.QiniuProperties;
 import cn.offway.athena.service.*;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -87,14 +88,21 @@ public class OfflineController {
         if (StringUtils.isNotBlank(eTime)) {
             eTimeDate = DateTime.parse(eTime, format).toDate();
         }
+        ObjectMapper objectMapper = new ObjectMapper();
         Page<PhOfflineOrders> pages = offlineOrdersService.findByPage(realName, users, state, ordersNo, sTimeDate, eTimeDate, pr);
+        List<Object> list = new ArrayList<>();
+        for (PhOfflineOrders tmp : pages.getContent()) {
+            Map m = objectMapper.convertValue(tmp, Map.class);
+            m.put("msg", offlineRemarkService.findLatest(tmp.getId()));
+            list.add(m);
+        }
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数  
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数  
-        map.put("aData", pages.getContent());//数据集合 
+        map.put("aData", list);//数据集合
         return map;
     }
 
