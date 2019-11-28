@@ -472,6 +472,7 @@
 	    str += '<input type="text" class="form-control" name="size" placeholder="尺码"/>';
 		str += '<input type="text" class="form-control" name="color" placeholder="颜色"/>';
 		str += '<input type="text" class="form-control" name="expressOrderNo" placeholder="填写物流单号"/>';
+		str += '<input type="text" class="form-control" name="skuCode" placeholder="SKU编码，非必填"/>';
 		str += '<select id="way" name = "way" class="form-control" style="height:35px">\n' +
 				'\t\t\t\t\t\t\t\t\t\t<option value="0">平台</option>\n' +
 				'\t\t\t\t\t\t\t\t\t\t<option value="1">品牌</option>\n' +
@@ -1273,6 +1274,7 @@
 						str += '<input type="text" class="form-control" value="VALUE" name="size" placeholder="尺码"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["size"]);
 						str += '<input type="text" class="form-control" value="VALUE" name="color" placeholder="颜色"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["color"]);
 						str += '<input type="text" class="form-control" value="VALUE" name="expressOrderNo" placeholder="填写物流单号"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["expressOrderNo"]);
+						str += '<input type="text" class="form-control" value="VALUE" name="skuCode" placeholder="SKU编码，非必填"/>'.replace("VALUE", data["offlineOrdersGoods"][i]["sku"]);
 						str += '<select id="VALUE" name = "way" class="form-control" style="height:35px">\n'.replace("VALUE", name) +
 								'\t\t\t\t\t\t\t\t\t\t<option value="0">平台</option>\n' +
 								'\t\t\t\t\t\t\t\t\t\t<option value="1">品牌</option>\n' +

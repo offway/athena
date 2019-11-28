@@ -166,7 +166,7 @@ public class OfflineController {
                         @RequestParam(name = "div_brand", required = false) String[] div_brand, @RequestParam(name = "div_goodsName", required = false) String[] div_goodsName,
                         @RequestParam(name = "div_goodsImg", required = false) String[] div_goodsImg, @RequestParam(name = "div_goodsColor", required = false) String[] div_goodsColor,
                         @RequestParam(name = "div_goodsSize", required = false) String[] div_goodsSize, @RequestParam(name = "div_goodsWay", required = false) String[] div_goodsWay,
-                        @RequestParam(name = "div_goodsExpress", required = false) String[] div_goodsExpress) {
+                        @RequestParam(name = "div_goodsExpress", required = false) String[] div_goodsExpress, @RequestParam(name = "skuCode", required = false) String[] skuCode) {
         long goodsCount = 0;
         long goodsCountAlt = 0;
         //校验正常商品
@@ -206,7 +206,6 @@ public class OfflineController {
         if (goodsCount > 0) {
             for (int i = 0; i < goodsID.length; i++) {
                 PhGoods goods = goodsService.findOne(Long.valueOf(goodsID[i]));
-                PhGoodsStock goodsStock = goodsStockService.findOne(Long.valueOf(goodsID[i]));
                 PhOfflineOrdersGoods offlineOrdersGoods = new PhOfflineOrdersGoods();
                 offlineOrdersGoods.setBrandId(goods.getBrandId());
                 offlineOrdersGoods.setBrandLogo(goods.getBrandLogo());
@@ -230,9 +229,7 @@ public class OfflineController {
                     offlineOrdersGoods.setOrdersNo("无");
                 }
                 offlineOrdersGoods.setSize(size[i]);
-                if (null != goodsStock) {
-                    offlineOrdersGoods.setSku(goodsStock.getSku());
-                }
+                offlineOrdersGoods.setSku(skuCode[i]);
                 offlineOrdersGoodsList.add(offlineOrdersGoods);
             }
         }
@@ -261,7 +258,7 @@ public class OfflineController {
                     offlineOrdersGoods.setOrdersNo("无");
                 }
                 offlineOrdersGoods.setSize(div_goodsSize[i]);
-                offlineOrdersGoods.setSku(null);
+                offlineOrdersGoods.setSku("");
                 offlineOrdersGoodsList.add(offlineOrdersGoods);
             }
         }
