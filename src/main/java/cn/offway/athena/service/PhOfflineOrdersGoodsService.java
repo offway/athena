@@ -28,4 +28,6 @@ public interface PhOfflineOrdersGoodsService{
     List<PhOfflineOrdersGoods> findByordersNo(String ordersNo);
 
     void delbyOrdersNo(String ordersNo);
+
+    List<PhOfflineOrdersGoods> findByBrandName(String brandName);
 }

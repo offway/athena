@@ -1,8 +1,11 @@
 package cn.offway.athena.service.impl;
 
 import cn.offway.athena.domain.PhOfflineOrders;
+import cn.offway.athena.domain.PhOfflineOrdersGoods;
 import cn.offway.athena.repository.PhOfflineOrdersRepository;
+import cn.offway.athena.service.PhOfflineOrdersGoodsService;
 import cn.offway.athena.service.PhOfflineOrdersService;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,9 @@ public class PhOfflineOrdersServiceImpl implements PhOfflineOrdersService {
 
 	@Autowired
 	private PhOfflineOrdersRepository phOfflineOrdersRepository;
+
+	@Autowired
+	private PhOfflineOrdersGoodsService phOfflineOrdersGoodsService;
 	
 	@Override
 	public PhOfflineOrders save(PhOfflineOrders phOfflineOrders){
@@ -56,7 +62,7 @@ public class PhOfflineOrdersServiceImpl implements PhOfflineOrdersService {
 	}
 
 	@Override
-	public Page<PhOfflineOrders> findByPage(String realName, String users, String state, String ordersNo, Date sTime, Date eTime, Pageable page) {
+	public Page<PhOfflineOrders> findByPage(String realName, String users, String state, String ordersNo, Date sTime, Date eTime, String brandName, Pageable page) {
 		return phOfflineOrdersRepository.findAll(new Specification<PhOfflineOrders>() {
 			@Override
 			public Predicate toPredicate(Root<PhOfflineOrders> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -73,6 +79,21 @@ public class PhOfflineOrdersServiceImpl implements PhOfflineOrdersService {
 				if (StringUtils.isNotBlank(ordersNo)) {
 					params.add(criteriaBuilder.equal(root.get("ordersNo"), ordersNo));
 				}
+				if(StringUtils.isNotBlank(brandName)){
+					List<PhOfflineOrdersGoods> offlineOrdersGoods  = phOfflineOrdersGoodsService.findByBrandName(brandName);
+					if(offlineOrdersGoods.size()>0){
+						List<String> orderNos = new ArrayList<>();
+						for (PhOfflineOrdersGoods offlineOrdersGood : offlineOrdersGoods) {
+							orderNos.add(offlineOrdersGood.getOrdersNo());
+						}
+						In<Object> in = criteriaBuilder.in(root.get("ordersNo"));
+						for (Object orderNo : orderNos) {
+							in.value(orderNo);
+						}
+						params.add(in);
+					}
+				}
+
 				if (sTime != null && eTime != null) {
 					params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
 				} else if (sTime != null) {

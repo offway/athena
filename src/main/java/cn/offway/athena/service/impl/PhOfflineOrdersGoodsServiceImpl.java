@@ -82,4 +82,9 @@ public class PhOfflineOrdersGoodsServiceImpl implements PhOfflineOrdersGoodsServ
 	public void delbyOrdersNo(String ordersNo){
 		phOfflineOrdersGoodsRepository.deleteByOrdersNo(ordersNo);
 	}
+
+	@Override
+	public List<PhOfflineOrdersGoods> findByBrandName(String brandName){
+		return phOfflineOrdersGoodsRepository.findByBrandName(brandName);
+	}
 }

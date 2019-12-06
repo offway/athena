@@ -70,7 +70,7 @@ public class OfflineController {
      */
     @ResponseBody
     @RequestMapping("/offline-data")
-    public Map<String, Object> offlineData(HttpServletRequest request, String realName, String users, String state, String ordersNo, String sTime, String eTime) {
+    public Map<String, Object> offlineData(HttpServletRequest request, String realName, String users, String state, String ordersNo,String brandName, String sTime, String eTime) {
 
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
@@ -89,7 +89,7 @@ public class OfflineController {
             eTimeDate = DateTime.parse(eTime, format).toDate();
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        Page<PhOfflineOrders> pages = offlineOrdersService.findByPage(realName, users, state, ordersNo, sTimeDate, eTimeDate, pr);
+        Page<PhOfflineOrders> pages = offlineOrdersService.findByPage(realName, users, state, ordersNo, sTimeDate, eTimeDate, brandName, pr);
         List<Object> list = new ArrayList<>();
         for (PhOfflineOrders tmp : pages.getContent()) {
             Map m = objectMapper.convertValue(tmp, Map.class);

@@ -22,4 +22,6 @@ public interface PhOfflineOrdersGoodsRepository extends JpaRepository<PhOfflineO
 
 	@Transactional
 	void deleteByOrdersNo(String ordersNo);
+
+	List<PhOfflineOrdersGoods> findByBrandName(String brandName);
 }

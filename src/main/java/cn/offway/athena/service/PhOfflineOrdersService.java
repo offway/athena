@@ -24,5 +24,5 @@ public interface PhOfflineOrdersService {
 
     List<PhOfflineOrders> save(List<PhOfflineOrders> entities);
 
-    Page<PhOfflineOrders> findByPage(String realName, String users, String state, String ordersNo, Date sTime, Date eTime, Pageable page);
+    Page<PhOfflineOrders> findByPage(String realName, String users, String state, String ordersNo, Date sTime, Date eTime,String brandName, Pageable page);
 }
