@@ -30,6 +30,6 @@ public interface PhOrderGoodsRepository extends JpaRepository<PhOrderGoods, Long
     @Query(nativeQuery = true, value = "select max(batch) from ph_order_goods where order_no = ?1")
     Object getMaxBatch(String order_no);
 
-    @Query(nativeQuery = true, value = "select count(id) as ct from ph_order_goods where mail_no is null and order_no = ?1")
+    @Query(nativeQuery = true, value = "select count(id) as ct from ph_order_goods where mail_no is null and state != 2 and order_no = ?1")
     Object getRest(String order_no);
 }
