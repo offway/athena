@@ -1,9 +1,6 @@
 package cn.offway.athena.controller;
 
-import cn.offway.athena.domain.PhAdmin;
-import cn.offway.athena.domain.PhOrderExpressInfo;
-import cn.offway.athena.domain.PhOrderGoods;
-import cn.offway.athena.domain.VOrder;
+import cn.offway.athena.domain.*;
 import cn.offway.athena.service.*;
 import cn.offway.athena.utils.JsonResult;
 import org.slf4j.Logger;
@@ -111,11 +108,20 @@ public class DeliverController {
 
     @ResponseBody
     @RequestMapping("/deliver-cancel-goods")
+    @Transactional
     public boolean cancelGoods(Long gid) {
         PhOrderGoods orderGoods = phOrderGoodsService.findOne(gid);
         if (orderGoods != null) {
             orderGoods.setState("2");
             phOrderGoodsService.save(orderGoods);
+            //更新订单状态
+            PhOrderInfo orderInfo = phOrderInfoService.findByOrderNo(orderGoods.getOrderNo());
+            if (phOrderGoodsService.getRest(orderInfo.getOrderNo()) == 0) {
+                orderInfo.setStatus("1");
+            } else {
+                orderInfo.setStatus("7");
+            }
+            phOrderInfoService.save(orderInfo);
         }
         return true;
     }
