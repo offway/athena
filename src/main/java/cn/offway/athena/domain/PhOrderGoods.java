@@ -59,6 +59,12 @@ public class PhOrderGoods implements Serializable {
     /** 状态:[0-未收回,1-已收回] **/
     private String state;
 
+    /** 快递批次 **/
+    private String batch;
+
+    /** 快递单号 **/
+    private String mailNo;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -195,5 +201,23 @@ public class PhOrderGoods implements Serializable {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    @Column(name = "batch", length = 5)
+    public String getBatch() {
+        return batch;
+    }
+
+    public void setBatch(String batch) {
+        this.batch = batch;
+    }
+
+    @Column(name = "mailNo", length = 50)
+    public String getMailNo() {
+        return mailNo;
+    }
+
+    public void setMailNo(String mailNo) {
+        this.mailNo = mailNo;
     }
 }
