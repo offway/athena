@@ -46,8 +46,6 @@ public class RankingController {
 	private PhOrderGoodsService orderGoodsService;
 	/**
 	 * 借衣排行
-	 * @param map
-	 * @return
 	 */
 	@RequestMapping("/ranking.html")
 	public String brand(ModelMap map){
@@ -76,7 +74,7 @@ public class RankingController {
 
 	@ResponseBody
 	@RequestMapping("/ranking-countbrand")
-	public Map<String, Object> rankingBybrand(HttpServletRequest request,Long brandId){
+	public Map<String, Object> rankingBybrand(HttpServletRequest request,String brandId){
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
 		String sortDir = request.getParameter("sSortDir_0");
