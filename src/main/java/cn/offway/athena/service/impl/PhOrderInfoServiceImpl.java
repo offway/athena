@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -56,6 +57,9 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
     @Autowired
     private PhOrderGoodsService phOrderGoodsService;
+
+    @Value("${is-prd}")
+    private boolean isPrd;
 
     @Override
     public PhOrderInfo save(PhOrderInfo phOrderInfo) {
@@ -217,7 +221,12 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
         addOrder.setPay_method("2");//付款方式：1:寄方付2:收方付3:第三方付
         addOrder.setRemark("");
         addOrder.setSendstarttime("");
-        JsonResult result = sfExpressService.addOrder(addOrder);
+        JsonResult result;
+        if (isPrd) {
+            result = sfExpressService.addOrder(addOrder);
+        } else {
+            result = new JsonResult("200", "", "1234567890");
+        }
         if ("200".equals(result.getCode())) {
             long batch = -2;
             String mailNo = String.valueOf(result.getData());
