@@ -1,7 +1,13 @@
 package cn.offway.athena.controller;
 
-import cn.offway.athena.domain.*;
+import cn.offway.athena.domain.PhAdmin;
+import cn.offway.athena.domain.PhOrderGoods;
+import cn.offway.athena.domain.PhOrderInfo;
+import cn.offway.athena.domain.PhOrderRemark;
 import cn.offway.athena.service.*;
+import cn.offway.athena.utils.HttpClientUtil;
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -188,9 +194,25 @@ public class OrderController {
     }
 
     @ResponseBody
-    @RequestMapping("/order-express")
-    public PhOrderExpressInfo phOrderExpress(String orderNo, String type) {
-        return phOrderExpressInfoService.findByOrderNoAndType(orderNo, type);
+    @RequestMapping("/order_trackOrder")
+    public String trackOrder(String mailNo) {
+        return queryExpress("shunfeng", mailNo);
+    }
+
+    private String queryExpress(String expressCode, String mailNo) {
+        String key = "uyUDaSuE5009";
+        String customer = "28B3DE9A2485E14FE0DAD40604A8922C";
+        Map<String, String> innerParam = new HashMap<>();
+        innerParam.put("com", expressCode);
+        innerParam.put("num", mailNo);
+        String innerParamStr = JSON.toJSONString(innerParam);
+        String signStr = innerParamStr + key + customer;
+        String sign = DigestUtils.md5Hex(signStr.getBytes()).toUpperCase();
+        Map<String, String> param = new HashMap<>();
+        param.put("customer", customer);
+        param.put("param", innerParamStr);
+        param.put("sign", sign);
+        return HttpClientUtil.post("https://poll.kuaidi100.com/poll/query.do", param);
     }
 
     @ResponseBody
