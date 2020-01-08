@@ -193,244 +193,245 @@
 <script th:inline="javascript">
 	/*<![CDATA[*/
 
-	function submitDeliver() {
-		var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
-		var ids = [];
-		activityPrizeId.each(function (i, e) {
-			ids.push(e.value);
-		});
-		// var expressNo = prompt("非平台发货请输入快递单号，平台发货请留空", "");
-		// var expressNo = $("#modal-method").find("input[name='expressNo']").val();
-		$.post("/deliver-save", {"ids": ids, "orderNo": ORDER_NO}, function (data) {
-			if (data) {
-				jQuery('#modal-method').modal('hide');
-				jQuery('#modal-deliver').modal('hide');
-				toastr.success("操作已成功！", "温馨提示");
-				oTable.fnDraw(oTable.fnSettings());
-			} else {
-				toastr.error("操作失败,请联系管理员", "温馨提示");
-			}
-		});
-	}
+    function submitDeliver() {
+        var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
+        var ids = [];
+        activityPrizeId.each(function (i, e) {
+            ids.push(e.value);
+        });
+        // var expressNo = prompt("非平台发货请输入快递单号，平台发货请留空", "");
+        // var expressNo = $("#modal-method").find("input[name='expressNo']").val();
+        $.post("/deliver-save", {"ids": ids, "orderNo": ORDER_NO}, function (data) {
+            if (data) {
+                jQuery('#modal-method').modal('hide');
+                jQuery('#modal-deliver').modal('hide');
+                toastr.success("操作已成功！", "温馨提示");
+                table_global.fnDraw(table_global.fnSettings());
+            } else {
+                toastr.error("操作失败,请联系管理员", "温馨提示");
+            }
+        });
+    }
 
-	function pickDeliver() {
-		var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
-		if (activityPrizeId.length == 0) {
-			toastr.error("请至少选择一条数据操作", "温馨提示");
-		} else {
-			jQuery('#modal-method').modal('show', {backdrop: 'fade'});
-		}
-	}
+    function pickDeliver() {
+        var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
+        if (activityPrizeId.length == 0) {
+            toastr.error("请至少选择一条数据操作", "温馨提示");
+        } else {
+            jQuery('#modal-method').modal('show', {backdrop: 'fade'});
+        }
+    }
 
-	var ORDER_NO;
-	jQuery(document).ready(function($)
-	{
-		$("#brandId").editableSelect();
-		var oTable = $("#example-1").dataTable({
-			language: {
-				url: "../assets/Chinese.txt"
-			},
-			bFilter: false,
-			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-			sAjaxSource: "/deliver-data",//通过ajax实现分页的url路径。
-			fnServerParams: function (aData) {
-				var searchArray = $(".form-inline").serializeArray();
-				var brandId = $("#brandId").parent().find("li.es-visible").val();
-				if (brandId != "0") {
-					searchArray.push({"name": "brandId", "value": brandId});
-				} else {
-					searchArray.push({"name": "brandId", "value": ""});
-				}
-				$.merge(aData, searchArray);
-			},
-			columnDefs: [
-				{
-					targets: 0,
-					data: "orderNo",
-					width: "5%",
-					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
-					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="authId" value="' + data + '" />';
-					}
-				},
-				{
-					targets: 1,
-					data: "id",
-					title: "序号"
-				},
-				{
-					targets: 2,
-					data: "orderNo",
-					title: "订单号"
-				},
-				{
-					targets: 3,
-					data: "useDate",
-					title: "使用日期",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd");
-					}
-				},
-				{
-					targets: 4,
-					data: "realName",
-					title: "姓名"
-				},
-				{
-					targets: 5,
-					data: "position",
-					title: "职位"
-				},
-				{
-					targets: 6,
-					data: "users",
-					title: "使用者"
-				},
-				{
-					targets: 7,
-					data: "brandName",
-					title: "品牌名称"
-				},
-				{
-					targets: 8,
-					data: "isOffway",
-					title: "是否限定",
-					render: function (data, type, row, meta) {
-						return "1" == data ? "否" : "是";
-					}
-				},
-				{
-					targets: 9,
-					data: "toRealName",
-					title: "收件方姓名"
-				},
-				{
-					targets: 10,
-					data: "toPhone",
-					title: "收件方手机"
-				},
-				{
-					targets: 11,
-					data: "toContent",
-					title: "收件方详细地址"
-				},
-				{
-					targets: 12,
-					data: "orderNo",
-					title: "商品明细",
-					render: function (data, type, row, meta) {
-						return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
-					}
-				},
-				{
-					targets: 13,
-					data: "status",
-					title: "状态",
-					render: function (data, type, row, meta) {
-						switch (data) {
-							case "0":
-								return "未发货";
-							case "7":
-								return "部分发货";
-							default:
-								return "";
-						}
-					}
-				},
-				{
-					targets: 14,
-					data: "createTime",
-					title: "创建时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				}
-			]
-		});
-		$(".searchBtn").click(function () {
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw();  //or fnReloadAjax()
-			return false;
-		});
-		$('#example-1').on('click', "#checkbox-all", function () {
-			var obj = $(this);
-			$("input[name='authId']").each(function (i, e) {
-				this.checked = obj[0].checked;
-			});
-		});
-		$("body").on("click", "a.showGoods", function () {
-			var orderNo = $(this).attr("orderNo");
-			$.get("/deliver-goods", {orderNo: orderNo}, function (data) {
-				var html = "";
-				$('#modal-goods tbody').html("");
-				$.each(data, function (i, e) {
-					html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
-				});
-				$('#modal-goods tbody').html(html);
-			});
-			jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
-		});
-		$(".btn.btn-info.deliver").click(function () {
-			var activityPrizeId = $("input[name='authId']:checked");
-			if (activityPrizeId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-			} else {
-				activityPrizeId = activityPrizeId[0].value;
-				ORDER_NO = activityPrizeId;
-				// $.get("/deliver-address", {orderNo: activityPrizeId}, function (data) {
-				// 	var h4 = $('#modal-deliver h4.modal-title')[0];
-				// 	h4.innerText = "发货" + data["province"] + data["city"] + data["county"] + data["content"] + data["realName"] + data["phone"];
-				// });
-				$.get("/deliver-goods", {orderNo: activityPrizeId}, function (data) {
-					var tbody = $('#modal-deliver tbody');
-					var html = "";
-					tbody.html("");
-					$.each(data, function (i, e) {
-						html += "<tr>" +
-								"<td><input type='checkbox' value='VVV' name='id' DISABLE/>".replace("VVV", e.id).replace("DISABLE", (e.mailNo ? "disabled='disabled'" : "")) + "</td>" +
-								"<td>" + e.sku + "</td>" +
-								"<td><img src=\"" + e.image + "\" /></td>" +
-								"<td>" + e.goodsName + "</td>" +
-								"<td>" + e.brandName + "</td>" +
-								"<td>" + e.size + "</td>" +
-								"<td>" + e.color + "</td>" +
-								"<td>" + (e.mailNo ? "已寄出" : "未寄出") + "</td>" +
-								"</tr>";
-					});
-					tbody.html(html);
-				});
-				jQuery('#modal-deliver').modal('show', {backdrop: 'fade'});
-			}
-		});
-		$(".btn.btn-info.cancel").click(function () {
-			var activityPrizeId = $("input[name='authId']:checked");
-			if (activityPrizeId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-			} else {
-				jQuery('#modal-cancel').modal('show', {backdrop: 'fade'});
-			}
-		});
-		$(".btn.btn-info.submit-cancel").click(function () {
-			var activityPrizeId = $("input[name='authId']:checked");
-			if (activityPrizeId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-			} else {
-				activityPrizeId = activityPrizeId[0].value;
-				$.post("/deliver-cancel", {orderNo: activityPrizeId}, function (data) {
-					if (data) {
-						jQuery('#modal-cancel').modal('hide');
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw(oTable.fnSettings());
-					} else {
-						toastr.error("操作失败,请联系管理员", "温馨提示");
-					}
-				});
-			}
-		});
-	});
+    var ORDER_NO;
+    var table_global;
+    jQuery(document).ready(function ($) {
+        $("#brandId").editableSelect();
+        var oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/deliver-data",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                var brandId = $("#brandId").parent().find("li.es-visible").val();
+                if (brandId != "0") {
+                    searchArray.push({"name": "brandId", "value": brandId});
+                } else {
+                    searchArray.push({"name": "brandId", "value": ""});
+                }
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "orderNo",
+                    width: "5%",
+                    orderable: false,
+                    className: 'select-checkbox',
+                    title: '<input type="checkbox" id="checkbox-all"/>',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="authId" value="' + data + '" />';
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "orderNo",
+                    title: "订单号"
+                },
+                {
+                    targets: 3,
+                    data: "useDate",
+                    title: "使用日期",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd");
+                    }
+                },
+                {
+                    targets: 4,
+                    data: "realName",
+                    title: "姓名"
+                },
+                {
+                    targets: 5,
+                    data: "position",
+                    title: "职位"
+                },
+                {
+                    targets: 6,
+                    data: "users",
+                    title: "使用者"
+                },
+                {
+                    targets: 7,
+                    data: "brandName",
+                    title: "品牌名称"
+                },
+                {
+                    targets: 8,
+                    data: "isOffway",
+                    title: "是否限定",
+                    render: function (data, type, row, meta) {
+                        return "1" == data ? "否" : "是";
+                    }
+                },
+                {
+                    targets: 9,
+                    data: "toRealName",
+                    title: "收件方姓名"
+                },
+                {
+                    targets: 10,
+                    data: "toPhone",
+                    title: "收件方手机"
+                },
+                {
+                    targets: 11,
+                    data: "toContent",
+                    title: "收件方详细地址"
+                },
+                {
+                    targets: 12,
+                    data: "orderNo",
+                    title: "商品明细",
+                    render: function (data, type, row, meta) {
+                        return "<a href='javascript:void(0)' class='showGoods' orderNo='" + data + "' color='blue'>查看</a>";
+                    }
+                },
+                {
+                    targets: 13,
+                    data: "status",
+                    title: "状态",
+                    render: function (data, type, row, meta) {
+                        switch (data) {
+                            case "0":
+                                return "未发货";
+                            case "7":
+                                return "部分发货";
+                            default:
+                                return "";
+                        }
+                    }
+                },
+                {
+                    targets: 14,
+                    data: "createTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                }
+            ]
+        });
+        table_global = oTable;
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw();  //or fnReloadAjax()
+            return false;
+        });
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='authId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+        $("body").on("click", "a.showGoods", function () {
+            var orderNo = $(this).attr("orderNo");
+            $.get("/deliver-goods", {orderNo: orderNo}, function (data) {
+                var html = "";
+                $('#modal-goods tbody').html("");
+                $.each(data, function (i, e) {
+                    html += "<tr><td>" + e.sku + "</td><td><img src=\"" + e.image + "\" /></td><td>" + e.goodsName + "</td><td>" + e.brandName + "</td><td>" + e.size + "</td><td>" + e.color + "</td></tr>";
+                });
+                $('#modal-goods tbody').html(html);
+            });
+            jQuery('#modal-goods').modal('show', {backdrop: 'fade'});
+        });
+        $(".btn.btn-info.deliver").click(function () {
+            var activityPrizeId = $("input[name='authId']:checked");
+            if (activityPrizeId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+            } else {
+                activityPrizeId = activityPrizeId[0].value;
+                ORDER_NO = activityPrizeId;
+                // $.get("/deliver-address", {orderNo: activityPrizeId}, function (data) {
+                // 	var h4 = $('#modal-deliver h4.modal-title')[0];
+                // 	h4.innerText = "发货" + data["province"] + data["city"] + data["county"] + data["content"] + data["realName"] + data["phone"];
+                // });
+                $.get("/deliver-goods", {orderNo: activityPrizeId}, function (data) {
+                    var tbody = $('#modal-deliver tbody');
+                    var html = "";
+                    tbody.html("");
+                    $.each(data, function (i, e) {
+                        html += "<tr>" +
+                            "<td><input type='checkbox' value='VVV' name='id' DISABLE/>".replace("VVV", e.id).replace("DISABLE", (e.mailNo ? "disabled='disabled'" : "")) + "</td>" +
+                            "<td>" + e.sku + "</td>" +
+                            "<td><img src=\"" + e.image + "\" /></td>" +
+                            "<td>" + e.goodsName + "</td>" +
+                            "<td>" + e.brandName + "</td>" +
+                            "<td>" + e.size + "</td>" +
+                            "<td>" + e.color + "</td>" +
+                            "<td>" + (e.mailNo ? "已寄出" : "未寄出") + "</td>" +
+                            "</tr>";
+                    });
+                    tbody.html(html);
+                });
+                jQuery('#modal-deliver').modal('show', {backdrop: 'fade'});
+            }
+        });
+        $(".btn.btn-info.cancel").click(function () {
+            var activityPrizeId = $("input[name='authId']:checked");
+            if (activityPrizeId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+            } else {
+                jQuery('#modal-cancel').modal('show', {backdrop: 'fade'});
+            }
+        });
+        $(".btn.btn-info.submit-cancel").click(function () {
+            var activityPrizeId = $("input[name='authId']:checked");
+            if (activityPrizeId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+            } else {
+                activityPrizeId = activityPrizeId[0].value;
+                $.post("/deliver-cancel", {orderNo: activityPrizeId}, function (data) {
+                    if (data) {
+                        jQuery('#modal-cancel').modal('hide');
+                        toastr.success("操作已成功！", "温馨提示");
+                        oTable.fnDraw(oTable.fnSettings());
+                    } else {
+                        toastr.error("操作失败,请联系管理员", "温馨提示");
+                    }
+                });
+            }
+        });
+    });
 	/*]]>*/
 </script>
 </body>
