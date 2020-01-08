@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,21 @@ public class PhOrderGoodsServiceImpl implements PhOrderGoodsService {
     @Override
     public List<PhOrderGoods> findByOrderNo(String orderNo) {
         return phOrderGoodsRepository.findByOrderNoOrderByBrandId(orderNo);
+    }
+
+    @Override
+    public List<PhOrderGoods> findNormalByOrderNo(String orderNo) {
+        return phOrderGoodsRepository.findAll(new Specification<PhOrderGoods>() {
+            @Override
+            public Predicate toPredicate(Root<PhOrderGoods> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(cb.equal(root.get("orderNo"), orderNo));
+                params.add(cb.notEqual(root.get("state"), 2));
+                Predicate[] predicates = new Predicate[params.size()];
+                query.where(params.toArray(predicates));
+                return null;
+            }
+        }, new Sort("brandId"));
     }
 
     @Override

@@ -106,7 +106,18 @@ public class DeliverController {
     @ResponseBody
     @RequestMapping("/deliver-goods")
     public List<PhOrderGoods> phOrderGoods(String orderNo) {
-        return phOrderGoodsService.findByOrderNo(orderNo);
+        return phOrderGoodsService.findNormalByOrderNo(orderNo);
+    }
+
+    @ResponseBody
+    @RequestMapping("/deliver-cancel-goods")
+    public boolean cancelGoods(Long gid) {
+        PhOrderGoods orderGoods = phOrderGoodsService.findOne(gid);
+        if (orderGoods != null) {
+            orderGoods.setState("2");
+            phOrderGoodsService.save(orderGoods);
+        }
+        return true;
     }
 
     @ResponseBody

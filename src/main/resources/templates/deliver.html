@@ -141,6 +141,7 @@
 						<th>尺码</th>
 						<th>颜色</th>
 						<th>状态</th>
+						<th>操作</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -212,6 +213,18 @@
             }
         });
     }
+
+	function cancelDeliver(gid) {
+		$.post("/deliver-cancel-goods", {"gid": gid}, function (data) {
+			if (data) {
+				jQuery('#modal-deliver').modal('hide');
+				toastr.success("操作已成功！", "温馨提示");
+				table_global.fnDraw(table_global.fnSettings());
+			} else {
+				toastr.error("操作失败,请联系管理员", "温馨提示");
+			}
+		});
+	}
 
     function pickDeliver() {
         var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
@@ -389,18 +402,19 @@
                     var tbody = $('#modal-deliver tbody');
                     var html = "";
                     tbody.html("");
-                    $.each(data, function (i, e) {
-                        html += "<tr>" +
-                            "<td><input type='checkbox' value='VVV' name='id' DISABLE/>".replace("VVV", e.id).replace("DISABLE", (e.mailNo ? "disabled='disabled'" : "")) + "</td>" +
-                            "<td>" + e.sku + "</td>" +
-                            "<td><img src=\"" + e.image + "\" /></td>" +
-                            "<td>" + e.goodsName + "</td>" +
-                            "<td>" + e.brandName + "</td>" +
-                            "<td>" + e.size + "</td>" +
-                            "<td>" + e.color + "</td>" +
-                            "<td>" + (e.mailNo ? "已寄出" : "未寄出") + "</td>" +
-                            "</tr>";
-                    });
+					$.each(data, function (i, e) {
+						html += "<tr>" +
+								"<td><input type='checkbox' value='VVV' name='id' DISABLE/>".replace("VVV", e.id).replace("DISABLE", (e.mailNo ? "disabled='disabled'" : "")) + "</td>" +
+								"<td>" + e.sku + "</td>" +
+								"<td><img src=\"" + e.image + "\" /></td>" +
+								"<td>" + e.goodsName + "</td>" +
+								"<td>" + e.brandName + "</td>" +
+								"<td>" + e.size + "</td>" +
+								"<td>" + e.color + "</td>" +
+								"<td>" + (e.mailNo ? "已寄出" : "未寄出") + "</td>" +
+								"<td>" + (e.mailNo ? "" : "<button type='button' onclick='cancelDeliver(AAA)'>取消</button>".replace("AAA", e.id)) + "</td>" +
+								"</tr>";
+					});
                     tbody.html(html);
                 });
                 jQuery('#modal-deliver').modal('show', {backdrop: 'fade'});

@@ -20,6 +20,8 @@ public interface PhOrderGoodsService {
 
     List<PhOrderGoods> findByOrderNo(String orderNo);
 
+    List<PhOrderGoods> findNormalByOrderNo(String orderNo);
+
     Page<PhOrderGoods> findByBrandId(String brandId, Pageable page);
 
     int getMaxBatch(String oid);
