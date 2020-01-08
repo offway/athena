@@ -4,6 +4,7 @@ import cn.offway.athena.domain.*;
 import cn.offway.athena.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -106,13 +107,26 @@ public class OrderController {
 
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
         Page<PhOrderInfo> pages = phOrderInfoService.findByPage(sku, isUpload, realName.trim(), position.trim(), orderNo.trim(), null != unionid ? unionid.trim() : unionid, status.trim(), brandId, isOffway, brandIds, users, size, sTimeDate, eTimeDate, pr);
+        List<Map<String, Object>> list = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        for (PhOrderInfo info : pages.getContent()) {
+            long i = 0;
+            for (PhOrderGoods goods : phOrderGoodsService.findByOrderNo(info.getOrderNo())) {
+                if (goods.getBatch() != null && ((i & 1 << goods.getBatch()) == 0)) {
+                    i |= 1 << goods.getBatch();
+                    Map<String, Object> m = mapper.convertValue(info, Map.class);
+                    m.put("batch", goods.getBatch());
+                    list.add(m);
+                }
+            }
+        }
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+        map.put("aData", list);//数据集合
         return map;
     }
 
