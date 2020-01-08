@@ -7,6 +7,7 @@ import cn.offway.athena.dto.sf.ReqAddOrder;
 import cn.offway.athena.repository.PhOrderGoodsRepository;
 import cn.offway.athena.repository.PhOrderInfoRepository;
 import cn.offway.athena.service.PhOrderExpressInfoService;
+import cn.offway.athena.service.PhOrderGoodsService;
 import cn.offway.athena.service.PhOrderInfoService;
 import cn.offway.athena.service.SfExpressService;
 import cn.offway.athena.utils.JsonResult;
@@ -52,6 +53,9 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
     @Autowired
     private PhOrderGoodsRepository phOrderGoodsRepository;
+
+    @Autowired
+    private PhOrderGoodsService phOrderGoodsService;
 
     @Override
     public PhOrderInfo save(PhOrderInfo phOrderInfo) {
@@ -186,7 +190,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
 
     @Override
-    public JsonResult saveOrder(String orderNo) {
+    public JsonResult saveOrder(String orderNo, String[] ids) {
         /*
          * 1.修改订单状态
          * 2.快递预约上门
@@ -196,11 +200,8 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
         if ("1".equals(phOrderInfo.getStatus())) {
             return new JsonResult("500", "订单已发货！", null);
         }
-
-
         PhOrderExpressInfo phOrderExpressInfo = phOrderExpressInfoService.findByOrderNoAndType(orderNo, "0");
         phOrderExpressInfo.setExpressOrderNo(generateOrderNo("SF"));
-
         ReqAddOrder addOrder = new ReqAddOrder();
         addOrder.setD_address(phOrderExpressInfo.getToContent());
         addOrder.setD_contact(phOrderExpressInfo.getToRealName());
@@ -218,29 +219,43 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
         addOrder.setSendstarttime("");
         JsonResult result = sfExpressService.addOrder(addOrder);
         if ("200".equals(result.getCode())) {
+            long batch = -2;
             String mailNo = String.valueOf(result.getData());
-            phOrderExpressInfo.setMailNo(mailNo);
-            phOrderExpressInfo.setStatus("1");//已下单
+            for (String id : ids) {
+                PhOrderGoods orderGoods = phOrderGoodsService.findOne(Long.valueOf(id));
+                if (orderGoods != null) {
+                    if (batch == -2) {
+                        batch = phOrderGoodsService.getMaxBatch(orderGoods.getOrderNo());
+                    }
+                    orderGoods.setMailNo(mailNo);
+                    orderGoods.setBatch(batch + 1);
+                    orderGoods.setRemark("平台发货");
+                    phOrderGoodsService.save(orderGoods);
+                }
+            }
+//            phOrderExpressInfo.setBatch(batch + 1);
+//            phOrderExpressInfo.setMailNo(mailNo);
+            //状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出]
+            if (phOrderGoodsService.getRest(orderNo) == 0) {
+                phOrderInfo.setStatus("1");
+                phOrderExpressInfo.setStatus("1");//已下单
+            } else {
+                phOrderInfo.setStatus("7");
+                phOrderExpressInfo.setStatus("5");//已部分下单
+            }
             phOrderExpressInfoService.save(phOrderExpressInfo);
-            phOrderInfo.setStatus("1");
             save(phOrderInfo);
         }
         return result;
-
     }
 
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
     @Override
     public void cancel(String orderNo) throws Exception {
-
         PhOrderInfo phOrderInfo = findByOrderNo(orderNo);
         phOrderInfo.setStatus("4");
         save(phOrderInfo);
-
         phOrderGoodsRepository.updateStock(orderNo);
-
     }
-
-
 }
