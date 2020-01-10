@@ -161,7 +161,7 @@
 				<table class="table table-bordered table-striped">
 					<thead>
 					<tr>
-						<th>ID</th>
+						<th><input type='checkbox' onchange="selectAll(this)"/></th>
 						<th>SKU编码</th>
 						<th style="width:120px">商品图片</th>
 						<th>商品名称</th>
@@ -261,6 +261,17 @@
         } else {
             jQuery('#modal-method').modal('show', {backdrop: 'fade'});
         }
+    }
+
+    function selectAll(self) {
+        var obj = $(self);
+        $("#modal-deliver").find("input[name='id']").each(function (i, e) {
+            if (this.disabled) {
+                //skip
+            } else {
+                this.checked = obj[0].checked;
+            }
+        });
     }
 
     var ORDER_NO;
