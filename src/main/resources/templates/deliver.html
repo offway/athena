@@ -87,8 +87,39 @@
 			</div>
 			<button class="btn btn-info deliver">确认发货</button>
 			<button class="btn btn-info cancel">取消订单</button>
+			<button class="btn btn-info updateStatus">更新状态</button>
 		</div>
 		<footer th:replace="footer"></footer>
+	</div>
+</div>
+<div class="modal fade" id="modal-updateStatus">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<input type="hidden" id="orderid"/>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">温馨提示</h4>
+			</div>
+
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<select id="status" class="form-control" style="height:35px">
+								<option value="1">已发货</option>
+								<option value="2">已寄回</option>
+								<option value="3">已收货</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+				<button type="button" class="btn btn-info save">确定</button>
+			</div>
+		</div>
 	</div>
 </div>
 <div class="modal fade in" data-backdrop="static" id="modal-goods">
@@ -444,6 +475,35 @@
                 });
             }
         });
+		$(".btn.btn-info.updateStatus").click(function () {
+			var stockId = $("input[name='authId']:checked");
+			if (stockId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+			stockId = stockId[0].value;
+			$("#orderid").val(stockId);
+			jQuery('#modal-updateStatus').modal('show', {backdrop: 'fade'});
+		});
+		$(".btn.btn-info.save").click(function () {
+			var orderNo = $("#orderid").val();
+			var status = $("#status").val();
+			if (status != 3) {
+				$.post("/order-update", {orderNo: orderNo, status: status}, function (data) {
+					if (data) {
+						jQuery('#modal-updateStatus').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw(oTable.fnSettings());
+					} else {
+						toastr.error("操作失败", "温馨提示");
+					}
+				});
+			} else {
+				jQuery('#modal-updateStatus').modal('hide');
+				alert("请到订单查询页面继续完成具体归还操作");
+				//pickGoodsForReturn(orderNo);
+			}
+		});
     });
 	/*]]>*/
 </script>
