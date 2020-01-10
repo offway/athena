@@ -107,8 +107,6 @@
 						<div class="form-group">
 							<select id="status" class="form-control" style="height:35px">
 								<option value="1">已发货</option>
-								<option value="2">已寄回</option>
-								<option value="3">已收货</option>
 							</select>
 						</div>
 					</div>
@@ -488,21 +486,15 @@
 		$(".btn.btn-info.save").click(function () {
 			var orderNo = $("#orderid").val();
 			var status = $("#status").val();
-			if (status != 3) {
-				$.post("/order-update", {orderNo: orderNo, status: status}, function (data) {
-					if (data) {
-						jQuery('#modal-updateStatus').modal('hide');
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw(oTable.fnSettings());
-					} else {
-						toastr.error("操作失败", "温馨提示");
-					}
-				});
-			} else {
-				jQuery('#modal-updateStatus').modal('hide');
-				alert("请到订单查询页面继续完成具体归还操作");
-				//pickGoodsForReturn(orderNo);
-			}
+			$.post("/order-update", {orderNo: orderNo, status: status}, function (data) {
+				if (data) {
+					jQuery('#modal-updateStatus').modal('hide');
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw(oTable.fnSettings());
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
 		});
     });
 	/*]]>*/
