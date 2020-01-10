@@ -230,19 +230,26 @@ public class OrderController {
 
     @ResponseBody
     @RequestMapping("/order-update")
+    @Transactional
     public boolean orderUpdate(String orderNo, String status, Authentication auth) {
         try {
             PhOrderInfo phOrderInfo = phOrderInfoService.findByOrderNo(orderNo);
             phOrderInfo.setStatus(status);
             phOrderInfo.setRemark("修改订单状态为：" + status + ",修改时间：" + DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss") + ",修改人：" + auth.getName());
             phOrderInfoService.save(phOrderInfo);
+            if ("1".equals(status)) {
+                for (PhOrderGoods goods : phOrderGoodsService.findNormalByOrderNo(orderNo)) {
+                    goods.setBatch(0L);
+                    goods.setMailNo("外部发货");
+                    phOrderGoodsService.save(goods);
+                }
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("order-update异常orderNo:{},status:{}", orderNo, status, e);
             return false;
         }
-
     }
 
     @ResponseBody
