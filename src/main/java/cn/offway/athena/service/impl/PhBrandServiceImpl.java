@@ -59,9 +59,9 @@ public class PhBrandServiceImpl implements PhBrandService {
 
     @Override
     public List<PhBrand> findByIds(List<Long> ids) {
-        if (null != ids && ids.size()>0){
+        if (null != ids && ids.size() > 0) {
             return phBrandRepository.findByIds(ids);
-        }else {
+        } else {
             List<PhBrand> brands = new ArrayList<>();
             return brands;
         }
@@ -91,6 +91,33 @@ public class PhBrandServiceImpl implements PhBrandService {
                     params.add(criteriaBuilder.equal(root.get("id"), id));
                 }
 
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, page);
+    }
+
+    @Override
+    public Page<PhBrand> findByPage(Long id, String name, List<Long> brandIds, Pageable page) {
+        return phBrandRepository.findAll(new Specification<PhBrand>() {
+
+            @Override
+            public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (StringUtils.isNotBlank(name)) {
+                    params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
+                }
+                if (null != id) {
+                    params.add(criteriaBuilder.equal(root.get("id"), id));
+                }
+                if (brandIds != null) {
+                    CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("id"));
+                    for (Object id : brandIds) {
+                        in.value(id);
+                    }
+                    params.add(in);
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
