@@ -1,109 +1,138 @@
 package cn.offway.athena.controller;
 
-import cn.offway.athena.domain.*;
-import cn.offway.athena.properties.QiniuProperties;
-import cn.offway.athena.service.*;
+import cn.offway.athena.domain.PhAdmin;
+import cn.offway.athena.domain.PhUserInfo;
+import cn.offway.athena.domain.PhWardrobe;
+import cn.offway.athena.domain.PhWardrobeAudit;
+import cn.offway.athena.service.PhBrandService;
+import cn.offway.athena.service.PhUserInfoService;
+import cn.offway.athena.service.PhWardrobeAuditService;
+import cn.offway.athena.service.PhWardrobeService;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- * 衣柜审核
- *
- * @author wn
- */
 @Controller
 public class WardrobeAuditController {
-
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
-    private PhOfflineOrdersService offlineOrdersService;
+    private PhWardrobeAuditService wardrobeAuditService;
     @Autowired
-    private PhOfflineOrdersGoodsService offlineOrdersGoodsService;
-    @Autowired
-    private QiniuProperties qiniuProperties;
-    @Autowired
-    private PhOrderInfoService orderInfoService;
-    @Autowired
-    private PhGoodsService goodsService;
-    @Autowired
-    private PhGoodsImageService goodsImageService;
-    @Autowired
-    private PhGoodsStockService goodsStockService;
-    @Autowired
-    private PhOfflineRemarkService offlineRemarkService;
+    private PhWardrobeService wardrobeService;
     @Autowired
     private PhBrandService brandService;
+    @Autowired
+    private PhUserInfoService userInfoService;
 
-    @RequestMapping("/offline.html")
-    public String order(ModelMap map) {
-        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
-        map.addAttribute("theId", "XYZ");
-        return "offline";
+    @RequestMapping("/audit.html")
+    public String index(ModelMap map, Authentication authentication) {
+        PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
+        if (phAdmin.getRoleIds().contains(BigInteger.ONE)) {
+            map.addAttribute("brands", brandService.findAll());
+        } else {
+            List<Long> brandIds = phAdmin.getBrandIds();
+            map.addAttribute("brands", brandService.findByIds(brandIds));
+        }
+        return "audit_index";
     }
 
     @ResponseBody
-    @RequestMapping("/offline_brand_list")
-    public List<PhBrand> getBrandList() {
-        return brandService.findAll();
-    }
-
-    /**
-     * 查询数据
-     */
-    @ResponseBody
-    @RequestMapping("/offline-data")
-    public Map<String, Object> offlineData(HttpServletRequest request, String realName, String users, String state, String ordersNo,String brandName, String sTime, String eTime) {
-
-        String sortCol = request.getParameter("iSortCol_0");
-        String sortName = request.getParameter("mDataProp_" + sortCol);
-        String sortDir = request.getParameter("sSortDir_0");
-        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
-        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-
-        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Direction.fromString(sortDir), sortName);
-        Date sTimeDate = null, eTimeDate = null;
-        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        if (StringUtils.isNotBlank(sTime)) {
-            sTimeDate = DateTime.parse(sTime, format).toDate();
+    @RequestMapping("/audit_list")
+    public Map<String, Object> getStockList(int sEcho, int iDisplayStart, int iDisplayLength, String brandId, String goodsName, String goodsId, String state, Authentication authentication) {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        PhAdmin phAdmin = (PhAdmin) authentication.getPrincipal();
+        List<Long> brandIds;
+        if (phAdmin.getRoleIds().contains(BigInteger.ONE)) {
+            brandIds = null;
+        } else {
+            brandIds = phAdmin.getBrandIds();
         }
-        if (StringUtils.isNotBlank(eTime)) {
-            eTimeDate = DateTime.parse(eTime, format).toDate();
-        }
-        ObjectMapper objectMapper = new ObjectMapper();
-        Page<PhOfflineOrders> pages = offlineOrdersService.findByPage(realName, users, state, ordersNo, sTimeDate, eTimeDate, brandName, pr);
-        List<Object> list = new ArrayList<>();
-        for (PhOfflineOrders tmp : pages.getContent()) {
-            Map m = objectMapper.convertValue(tmp, Map.class);
-            m.put("msg", offlineRemarkService.findLatest(tmp.getId()));
-            list.add(m);
-        }
-        // 为操作次数加1，必须这样做
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhWardrobeAudit> pages = wardrobeAuditService.listAll(brandId, goodsName, goodsId, state, brandIds, pr);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
-        map.put("iTotalRecords", pages.getTotalElements());//数据总条数  
-        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数  
-        map.put("aData", list);//数据集合
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
         return map;
     }
 
+    @ResponseBody
+    @RequestMapping("/audit_findOne")
+    public PhWardrobeAudit findOne(Long id) {
+        return wardrobeAuditService.findOne(id);
+    }
+
+    @ResponseBody
+    @RequestMapping("/audit_up")
+    public boolean allow(Long id) {
+        PhWardrobeAudit obj = wardrobeAuditService.findOne(id);
+        if (obj != null) {
+            PhWardrobe wardrobe = wardrobeService.findOne(obj.getWardrobeId());
+            obj.setState("1");
+            wardrobeAuditService.save(obj);
+            wardrobe.setState("1");
+            wardrobeService.save(wardrobe);
+            PhUserInfo userInfo = userInfoService.findByUnionid(obj.getUnionid());
+            if (userInfo != null) {
+                sendMsg(userInfo.getMiniopenid(), null);
+            }
+        }
+        return true;
+    }
+
+    private void sendMsg(String openid, String approvalContent) {
+        String result = "审核通知";
+        String content = "你在OFFWAY MODE SHOWROOM申请的服装已通过审核，请及时提交订单借衣。";
+        if (StringUtils.isNotBlank(approvalContent)) {
+            result = "审核失败";
+            content = "您在OFFWAY MODE SHOWROOM申请的借衣未通过审核，理由：" + approvalContent;
+        }
+        Map<String, Object> args = new HashMap<>();
+        args.put("touser", openid);
+        args.put("template_id", "Kp9iDQ5mUycHBTroqgGttJB5fQyxBZcmBpI-zTHAUwc");
+        Map<String, Object> data = new HashMap<>();
+        Map<String, String> k1 = new HashMap<>();
+        k1.put("value", result);
+        data.put("thing4", k1);
+        Map<String, String> k2 = new HashMap<>();
+        k2.put("value", content);
+        data.put("thing5", k2);
+        args.put("data", data);
+//        PhAuthServiceImpl.sendSubscribeMsg(args, PhAuthServiceImpl.getToken());
+    }
+
+    @ResponseBody
+    @RequestMapping("/audit_down")
+    public boolean deny(Long id, String str) {
+        PhWardrobeAudit obj = wardrobeAuditService.findOne(id);
+        if (obj != null) {
+            PhWardrobe wardrobe = wardrobeService.findOne(obj.getWardrobeId());
+            obj.setState("2");
+            obj.setReason(str);
+            wardrobeAuditService.save(obj);
+            wardrobe.setState("2");
+            wardrobeService.save(wardrobe);
+            PhUserInfo userInfo = userInfoService.findByUnionid(obj.getUnionid());
+            if (userInfo != null) {
+                sendMsg(userInfo.getMiniopenid(), str);
+            }
+        }
+        return true;
+    }
 }
