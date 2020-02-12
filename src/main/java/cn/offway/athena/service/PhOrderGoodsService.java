@@ -18,6 +18,8 @@ public interface PhOrderGoodsService {
 
     PhOrderGoods findOne(Long id);
 
+    List<PhOrderGoods> findByOrderNo(String orderNo, String batch);
+
     List<PhOrderGoods> findByOrderNo(String orderNo);
 
     List<PhOrderGoods> findNormalByOrderNo(String orderNo);

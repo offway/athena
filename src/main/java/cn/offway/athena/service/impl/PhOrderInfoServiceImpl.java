@@ -198,6 +198,43 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
 
     @Override
+    public Page<PhOrderInfo> findByPage(String realName, String position, String orderNo, String unionid, Long brandId, String isOffway, Pageable page) {
+        return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (StringUtils.isNotBlank(orderNo)) {
+                    params.add(cb.equal(root.get("orderNo"), orderNo));
+                }
+                if (StringUtils.isNotBlank(realName)) {
+                    params.add(cb.like(root.get("realName"), "%" + realName + "%"));
+                }
+                if (StringUtils.isNotBlank(position)) {
+                    params.add(cb.like(root.get("position"), "%" + position + "%"));
+                }
+                if (StringUtils.isNotBlank(unionid)) {
+                    params.add(cb.equal(root.get("unionid"), unionid));
+                }
+                if (null != brandId) {
+                    params.add(cb.equal(root.get("brandId"), brandId));
+                }
+                if (StringUtils.isNotBlank(isOffway)) {
+                    params.add(cb.equal(root.get("isOffway"), isOffway));
+                }
+                In<Object> in = cb.in(root.get("status"));
+                String[] statusArr = new String[]{"0", "7"};
+                for (Object status : statusArr) {
+                    in.value(status);
+                }
+                params.add(in);
+                Predicate[] predicates = new Predicate[params.size()];
+                query.where(params.toArray(predicates));
+                return null;
+            }
+        }, page);
+    }
+
+    @Deprecated
     public JsonResult saveOrder(String orderNo, String[] ids) {
         /*
          * 1.修改订单状态
@@ -265,7 +302,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
     @Override
-    public void cancel(String orderNo) throws Exception {
+    public void cancel(String orderNo){
         PhOrderInfo phOrderInfo = findByOrderNo(orderNo);
         phOrderInfo.setStatus("4");
         save(phOrderInfo);

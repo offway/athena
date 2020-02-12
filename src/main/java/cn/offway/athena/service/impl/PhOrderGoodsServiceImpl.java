@@ -50,6 +50,11 @@ public class PhOrderGoodsServiceImpl implements PhOrderGoodsService {
     }
 
     @Override
+    public List<PhOrderGoods> findByOrderNo(String orderNo, String batch) {
+        return phOrderGoodsRepository.findByOrderNoAndBatch(orderNo, Long.valueOf(batch));
+    }
+
+    @Override
     public List<PhOrderGoods> findNormalByOrderNo(String orderNo) {
         return phOrderGoodsRepository.findAll(new Specification<PhOrderGoods>() {
             @Override
