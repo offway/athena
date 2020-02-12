@@ -191,7 +191,26 @@
 				<h4 class="modal-title">温馨提示</h4>
 			</div>
 
-			<div class="modal-body"></div>
+			<div class="modal-body">
+				<form role="form" id="methodForm">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label>平台发货<input type="radio" name="method" checked="checked" onclick="toggleMethod(true)" style="height:25px" class="form-control" /></label>
+								<label>品牌发货<input type="radio" name="method" onclick="toggleMethod(false)" style="height:25px" class="form-control" /></label>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="method_expressNo" style="display: none">
+						<div class="col-md-12">
+							<div class="form-group">
+								<input type="text" name="expressNo" class="form-control" placeholder="快递单号"/>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
 			<div class="modal-footer">
 				<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
 				<button type="button" class="btn btn-info" onclick="submitDeliver()">确定</button>
@@ -222,6 +241,16 @@
 <script th:inline="javascript">
 	/*<![CDATA[*/
 
+    function toggleMethod(v) {
+        var div = $("#method_expressNo");
+        if (v) {
+            div.hide();
+            div.find("input[name='expressNo']").val("");
+        } else {
+            div.show();
+        }
+    }
+
     function submitDeliver() {
         var activityPrizeId = $("#modal-deliver").find("input[name='id']:checked");
         var ids = [];
@@ -229,8 +258,8 @@
             ids.push(e.value);
         });
         // var expressNo = prompt("非平台发货请输入快递单号，平台发货请留空", "");
-        // var expressNo = $("#modal-method").find("input[name='expressNo']").val();
-        $.post("/deliver-save", {"ids": ids, "orderNo": ORDER_NO}, function (data) {
+        var expressNo = $("#modal-method").find("input[name='expressNo']").val();
+        $.post("/deliver-save", {"ids": ids, "expressNo": expressNo, "orderNo": ORDER_NO}, function (data) {
             if (data) {
                 jQuery('#modal-method').modal('hide');
                 jQuery('#modal-deliver').modal('hide');
@@ -434,10 +463,10 @@
             } else {
                 activityPrizeId = activityPrizeId[0].value;
                 ORDER_NO = activityPrizeId;
-                // $.get("/deliver-address", {orderNo: activityPrizeId}, function (data) {
-                // 	var h4 = $('#modal-deliver h4.modal-title')[0];
-                // 	h4.innerText = "发货" + data["province"] + data["city"] + data["county"] + data["content"] + data["realName"] + data["phone"];
-                // });
+                $.get("/deliver-address", {orderNo: activityPrizeId}, function (data) {
+                    var h4 = $('#modal-deliver h4.modal-title')[0];
+                    h4.innerText = "发货" + data["province"] + data["city"] + data["county"] + data["content"] + data["realName"] + data["phone"];
+                });
                 $.get("/deliver-goods", {orderNo: activityPrizeId}, function (data) {
                     var tbody = $('#modal-deliver tbody');
                     var html = "";
