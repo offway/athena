@@ -1,9 +1,6 @@
 package cn.offway.athena.controller;
 
-import cn.offway.athena.domain.PhAdmin;
-import cn.offway.athena.domain.PhOrderGoods;
-import cn.offway.athena.domain.PhOrderInfo;
-import cn.offway.athena.domain.PhOrderRemark;
+import cn.offway.athena.domain.*;
 import cn.offway.athena.service.*;
 import cn.offway.athena.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSON;
@@ -192,6 +189,13 @@ public class OrderController {
         }
         return true;
     }
+
+    @ResponseBody
+    @RequestMapping("/order-express")
+    public PhOrderExpressInfo phOrderExpress(String orderNo, String type) {
+        return phOrderExpressInfoService.findByOrderNoAndType(orderNo, type);
+    }
+
 
     @ResponseBody
     @RequestMapping("/order_trackOrder")
