@@ -22,7 +22,7 @@ public class PhOrderInfo implements Serializable {
 
     /** 使用日期 **/
     private Date useDate;
-    
+
     /** 使用者 **/
     private String users;
 
@@ -41,9 +41,9 @@ public class PhOrderInfo implements Serializable {
     /** 是否自营[0-否,1-是] **/
     private String isOffway;
 
-    /** 状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货] **/
+    /** 状态状态[0-已下单,1-已发货,2-已寄回,3-已收货,4-已取消,5-已部分收货,6-审核,7-部分寄出,8-部分寄回]  **/
     private String status;
-    
+
     /** 是否返图[0-否,1-是]**/
     private String isUpload;
 
@@ -52,16 +52,16 @@ public class PhOrderInfo implements Serializable {
 
     /** 寄回时间 **/
     private Date returnTime;
-    
+
     /** 收货时间 **/
     private Date receiptTime;
 
     /** 返图时间 **/
     private Date showTime;
-    
+
     /** 备注 **/
     private String remark;
-    
+
     /** 职位 **/
     private String position;
 
@@ -70,6 +70,9 @@ public class PhOrderInfo implements Serializable {
 
     /** 备注 **/
     private String extra;
+
+    /** 地址id **/
+    private Long addressId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -100,15 +103,15 @@ public class PhOrderInfo implements Serializable {
     public void setUseDate(Date useDate) {
         this.useDate = useDate;
     }
-    
+
     @Column(name = "users", length = 50)
     public String getUsers() {
-		return users;
-	}
+        return users;
+    }
 
-	public void setUsers(String users) {
-		this.users = users;
-	}
+    public void setUsers(String users) {
+        this.users = users;
+    }
 
     @Column(name = "unionid", length = 200)
     public String getUnionid() {
@@ -196,14 +199,14 @@ public class PhOrderInfo implements Serializable {
 
     @Column(name = "is_upload", length = 2)
     public String getIsUpload() {
-		return isUpload;
-	}
+        return isUpload;
+    }
 
-	public void setIsUpload(String isUpload) {
-		this.isUpload = isUpload;
-	}
+    public void setIsUpload(String isUpload) {
+        this.isUpload = isUpload;
+    }
 
-	@Column(name = "remark", length = 200)
+    @Column(name = "remark", length = 200)
     public String getRemark() {
         return remark;
     }
@@ -214,15 +217,15 @@ public class PhOrderInfo implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "receipt_time")
-	public Date getReceiptTime() {
-		return receiptTime;
-	}
+    public Date getReceiptTime() {
+        return receiptTime;
+    }
 
-	public void setReceiptTime(Date receiptTime) {
-		this.receiptTime = receiptTime;
-	}
-	
-	@Column(name = "position", length = 20)
+    public void setReceiptTime(Date receiptTime) {
+        this.receiptTime = receiptTime;
+    }
+
+    @Column(name = "position", length = 20)
     public String getPosition() {
         return position;
     }
@@ -247,5 +250,14 @@ public class PhOrderInfo implements Serializable {
 
     public void setExtra(String extra) {
         this.extra = extra;
+    }
+
+    @Column(name = "address_id", length = 11)
+    public Long getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
     }
 }
