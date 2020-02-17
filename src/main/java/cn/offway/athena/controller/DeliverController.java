@@ -239,7 +239,7 @@ public class DeliverController {
         //保存订单物流
         PhAddress toAddress = addressService.findOne(orderInfo.getAddressId());
         PhBrand phBrand = brandService.findOne(orderInfo.getBrandId());
-        PhAddressBrand brandAddress = addressBrandService.findOne(phBrand.getAddrId());
+        PhAddressBrand brandAddress = addressBrandService.findOne(phBrand.getAddrId() == null ? 1L : phBrand.getAddrId());
         PhOrderExpressInfo phOrderExpressInfo = new PhOrderExpressInfo();
         phOrderExpressInfo.setCreateTime(new Date());
         phOrderExpressInfo.setExpressOrderNo("无");
@@ -258,7 +258,7 @@ public class DeliverController {
         phOrderExpressInfo.setToProvince(toAddress.getProvince());
         phOrderExpressInfo.setToRealName(toAddress.getRealName());
         phOrderExpressInfo.setType("0");
-        phOrderExpressInfo.setReturnId(phBrand.getReturnAddrId());
+        phOrderExpressInfo.setReturnId(phBrand.getReturnAddrId() == null ? 1L : phBrand.getReturnAddrId());
         return phOrderExpressInfo;
     }
 
