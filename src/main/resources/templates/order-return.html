@@ -267,9 +267,9 @@
                 {
                     targets: 9,
                     data: "isOffway",
-                    title: "是否自营",
+                    title: "是否限定",
                     render: function (data, type, row, meta) {
-                        return "1" == data ? "是" : "否";
+                        return "1" == data ? "否" : '<font color="red">是</font>';
                     }
                 },
                 {
