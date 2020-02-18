@@ -120,6 +120,22 @@ public class DeliverController {
     }
 
     @ResponseBody
+    @RequestMapping("/deliver-address-get")
+    public String getUserAddr(String orderNo) {
+        PhOrderInfo info = phOrderInfoService.findByOrderNo(orderNo);
+        if (info != null) {
+            if (info.getAddressId() != 1L) {
+                PhAddress address = addressService.findOne(info.getAddressId());
+                return address.getProvince() + address.getCity() + address.getCounty() + address.getContent() + address.getRealName() + address.getPhone();
+            } else {
+                PhOrderExpressInfo expressInfo = phOrderExpressInfoService.findByOrderNoAndType(orderNo, "0");
+                return expressInfo.getToProvince() + expressInfo.getToCity() + expressInfo.getToCounty() + expressInfo.getToContent() + expressInfo.getToRealName() + expressInfo.getToPhone();
+            }
+        }
+        return "";
+    }
+
+    @ResponseBody
     @RequestMapping("/deliver-cancel-goods")
     @Transactional
     public boolean cancelGoods(Long gid) {

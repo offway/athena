@@ -651,7 +651,10 @@
             $('#modal-goods .b .col-xs-4:nth-child(1)').text("姓名：" + tr.find("td:nth-child(5)").text());
             $('#modal-goods .b .col-xs-4:nth-child(2)').text("职位：" + tr.find("td:nth-child(6)").text());
             $('#modal-goods .b .col-xs-4:nth-child(3)').text("使用者：" + tr.find("td:nth-child(7)").text());
-
+            $.get("/deliver-address-get", {orderNo: orderNo}, function (data) {
+                var h4 = $('#modal-goods h4.modal-title')[0];
+                h4.innerText = "收件人:" + data;//["province"] + data["city"] + data["county"] + data["content"] + data["realName"] + data["phone"];
+            });
             $.get("/deliver-goods", {"orderNo": orderNo, "batch": batch}, function (data) {
                 var html = "";
                 $('#modal-goods tbody').html("");
