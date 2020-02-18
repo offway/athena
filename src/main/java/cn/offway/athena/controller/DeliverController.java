@@ -126,10 +126,10 @@ public class DeliverController {
         if (info != null) {
             if (info.getAddressId() != 1L) {
                 PhAddress address = addressService.findOne(info.getAddressId());
-                return address.getProvince() + address.getCity() + address.getCounty() + address.getContent() + address.getRealName() + address.getPhone();
+                return StringUtils.trimToEmpty(address.getProvince()) + StringUtils.trimToEmpty(address.getCity()) + StringUtils.trimToEmpty(address.getCounty()) + address.getContent() + address.getRealName() + address.getPhone();
             } else {
                 PhOrderExpressInfo expressInfo = phOrderExpressInfoService.findByOrderNoAndType(orderNo, "0");
-                return expressInfo.getToProvince() + expressInfo.getToCity() + expressInfo.getToCounty() + expressInfo.getToContent() + expressInfo.getToRealName() + expressInfo.getToPhone();
+                return StringUtils.trimToEmpty(expressInfo.getToProvince()) + StringUtils.trimToEmpty(expressInfo.getToCity()) + StringUtils.trimToEmpty(expressInfo.getToCounty()) + expressInfo.getToContent() + expressInfo.getToRealName() + expressInfo.getToPhone();
             }
         }
         return "";
