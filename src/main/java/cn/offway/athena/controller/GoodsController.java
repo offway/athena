@@ -63,8 +63,6 @@ public class GoodsController {
 
 	/**
 	 * 商品
-	 * @param map
-	 * @return
 	 */
 	@RequestMapping("/goods.html")
 	public String goods(ModelMap map,Authentication authentication){
@@ -80,9 +78,6 @@ public class GoodsController {
 	
 	/**
 	 * 查询数据
-	 * @param request
-	 * @param code
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/goods-data")
@@ -113,17 +108,6 @@ public class GoodsController {
 	@PostMapping("/goods-save")
 	public boolean save(PhGoods phGoods,String banner,String detail,Authentication authentication){
 		try {
-			
-			String isOffway = "0";
-			PhAdmin phAdmin = (PhAdmin)authentication.getPrincipal();
-			List<Long> roleIds = phAdmin.getRoleIds();
-			for (Object roleId : roleIds) {
-				if("8".equals(String.valueOf(roleId))){
-					isOffway = "1"; 
-				}
-			}
-			
-			phGoods.setIsOffway(isOffway);
 			phGoodsService.save(phGoods, banner, detail);
 			return true;
 		} catch (Exception e) {
@@ -131,7 +115,6 @@ public class GoodsController {
 			logger.error("保存商品异常,{}",JSON.toJSONString(phGoods),e);
 			return false;
 		}
-		
 	}
 	
 	@ResponseBody
