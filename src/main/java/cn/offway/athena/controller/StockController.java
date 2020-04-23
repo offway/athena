@@ -1,13 +1,13 @@
 package cn.offway.athena.controller;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import cn.offway.athena.domain.PhAdmin;
+import cn.offway.athena.domain.PhGoods;
+import cn.offway.athena.domain.PhGoodsStock;
+import cn.offway.athena.properties.QiniuProperties;
+import cn.offway.athena.service.PhBrandService;
+import cn.offway.athena.service.PhGoodsService;
+import cn.offway.athena.service.PhGoodsStockService;
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSON;
-
-import cn.offway.athena.domain.PhAdmin;
-import cn.offway.athena.domain.PhGoods;
-import cn.offway.athena.domain.PhGoodsStock;
-import cn.offway.athena.properties.QiniuProperties;
-import cn.offway.athena.service.PhBrandService;
-import cn.offway.athena.service.PhGoodsService;
-import cn.offway.athena.service.PhGoodsStockService;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 
 /**
@@ -58,8 +51,6 @@ public class StockController {
 
 	/**
 	 * 库存
-	 * @param map
-	 * @return
 	 */
 	@RequestMapping("/stock.html")
 	public String stock(ModelMap map,Authentication authentication){
@@ -74,9 +65,6 @@ public class StockController {
 	
 	/**
 	 * 查询数据
-	 * @param request
-	 * @param code
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping("/stock-data")
@@ -162,15 +150,17 @@ public class StockController {
 	public String image(String color,Long goodsId){
 		return phGoodsStockService.findImage(color, goodsId);
 	}
-	
+
+	@ResponseBody
+	@RequestMapping("/stock-list")
+	public List<PhGoodsStock> findByGoodsId(Long id) {
+		return phGoodsStockService.findByPid(id);
+	}
+
 	@ResponseBody
 	@PostMapping("/stock-delete")
-	public boolean delete(@RequestParam("ids[]") Long[] ids){
-		int count =  phGoodsStockService.deleteByIds(Arrays.asList(ids));
-		if(count>0){
-			return true;
-		}
-		return false;
+	public boolean delete(@RequestParam("ids[]") Long[] ids) {
+		int count = phGoodsStockService.deleteByIds(Arrays.asList(ids));
+		return count > 0;
 	}
-	
 }

@@ -1,11 +1,10 @@
 package cn.offway.athena.service;
 
-import java.util.List;
-
+import cn.offway.athena.domain.PhGoodsStock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import cn.offway.athena.domain.PhGoodsStock;
+import java.util.List;
 
 /**
  * 商品库存Service接口
@@ -13,24 +12,26 @@ import cn.offway.athena.domain.PhGoodsStock;
  * @author wn
  * @version $v: 1.0.0, $time:2018-02-12 11:26:00 Exp $
  */
-public interface PhGoodsStockService{
+public interface PhGoodsStockService {
 
-	PhGoodsStock save(PhGoodsStock phGoodsStock);
-	
-	PhGoodsStock findOne(Long id);
+    PhGoodsStock save(PhGoodsStock phGoodsStock);
 
-	int countByGoodsIdAndColorAndSize(Long goodsId, String color, String size);
+    PhGoodsStock findOne(Long id);
 
-	boolean updateStock(String orderNo) throws Exception;
+    int countByGoodsIdAndColorAndSize(Long goodsId, String color, String size);
 
-	String findImage(String color, Long goodsId);
+    boolean updateStock(String orderNo) throws Exception;
 
-	int updateImage(Long goodsId, String color, String image);
+    String findImage(String color, Long goodsId);
 
-	int deleteByGoodsIds(List<Long> goodsIds);
+    int updateImage(Long goodsId, String color, String image);
 
-	Page<PhGoodsStock> findByPage(String sku, Long brandId, String brandName, Long goodsId, String goodsName,
-			String isOffway, String color, String size, List<Long> brandIds, Pageable page);
+    int deleteByGoodsIds(List<Long> goodsIds);
 
-	int deleteByIds(List<Long> ids);
+    Page<PhGoodsStock> findByPage(String sku, Long brandId, String brandName, Long goodsId, String goodsName,
+                                  String isOffway, String color, String size, List<Long> brandIds, Pageable page);
+
+    int deleteByIds(List<Long> ids);
+
+    List<PhGoodsStock> findByPid(Long goodsId);
 }

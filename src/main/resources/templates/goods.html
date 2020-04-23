@@ -396,7 +396,6 @@
 					}
 
 				},
-
 				{
 					targets: 5,
 					data: "brandName",
@@ -440,6 +439,30 @@
 				},
 				{
 					targets: 11,
+					data: "id",
+					title: "库存编码",
+					render: function (data, type, row, meta) {
+						var str = "";
+						$.ajax({
+							"url": "/stock-list",
+							"async": false,
+							"data": {"id": data},
+							"dataType": "json",
+							"success": function (body) {
+								console.log(body);
+								if (body) {
+									// var json = JSON.parse(body);
+									for (var obj of body) {
+										str += obj["sku"] + ",";
+									}
+								}
+							}
+						});
+						return str;
+					}
+				},
+				{
+					targets: 12,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
